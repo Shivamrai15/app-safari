@@ -2,7 +2,7 @@
   "expo": {
     "name": "Safari",
     "slug": "Safari",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "safari",
@@ -20,7 +20,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.shivamrai6836.Safari"
+      "package": "com.shivamrai6836.Safari",
+      "allowBackup": false
     },
     "web": {
       "output": "static",
@@ -41,7 +42,8 @@
         }
       ],
       "expo-audio",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-asset"
     ],
     "experiments": {
       "typedRoutes": true,

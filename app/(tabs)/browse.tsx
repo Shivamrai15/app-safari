@@ -25,33 +25,38 @@ const Browse = () => {
             <SafeAreaView className="bg-background flex-1">
                 <ScrollView
                     className='flex-1'
-                    stickyHeaderIndices={[0]}
+                    stickyHeaderIndices={[1]}
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
+                    showsVerticalScrollIndicator={false}
                 >
-                    <View className='flex flex-row items-center gap-x-4 p-4 bg-background'>
+                    <View className="px-6 pt-8 pb-4">
+                        <Text className="text-white text-4xl font-extrabold">Browse</Text>
+                        <Text className="text-zinc-400 text-sm mt-2">Discover music by genre and mood</Text>
+                    </View>
+                    <View className='flex flex-row items-center gap-x-3 px-6 py-4 bg-background/95 backdrop-blur-lg'>
                         <Button 
                             variant={activeTab === "genre" ? "primary" : "secondary"}
-                            className="rounded-full px-4 h-10"
+                            className="rounded-full px-6 h-11"
                             onPress={()=>setActiveTab("genre")}
                         >
                             <Text
                                 className={cn(
-                                    "font-semibold",
+                                    "font-bold text-sm",
                                     activeTab === "genre" ? "text-zinc-900" : "text-zinc-300"
                                 )}
                             >
-                                Genre
+                                Genres
                             </Text>
                         </Button>
                         <Button
                             variant={activeTab === "mood" ? "primary" : "secondary"}
-                            className="rounded-full px-4 h-10"
+                            className="rounded-full px-6 h-11"
                             onPress={()=>setActiveTab("mood")}
                         >
                             <Text
                                 className={cn(
-                                    "font-semibold",
+                                    "font-bold text-sm",
                                     activeTab === "mood" ? "text-zinc-900" : "text-zinc-300"
                                 )}
                             >
@@ -59,7 +64,7 @@ const Browse = () => {
                             </Text>
                         </Button>
                     </View>
-                    <View className='mt-10 px-4'>
+                    <View className='mt-6 px-6'>
                         {
                             activeTab === "genre" ? (
                                 <Genre />
@@ -68,7 +73,7 @@ const Browse = () => {
                             )
                         }
                     </View>
-                    <View className='h-20' />
+                    <View className='h-24' />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

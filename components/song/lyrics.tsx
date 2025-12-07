@@ -33,6 +33,7 @@ export const Lyrics = ({ songId, position, onSeek }: Props) => {
         refetchOnWindowFocus : false,
         refetchOnReconnect : false,
         refetchOnMount : false,
+        meta: { persist: false },
     });
     
     if (lyrics.isPending) {

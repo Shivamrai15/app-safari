@@ -61,10 +61,11 @@ const Playlist = () => {
     return (
         <NetworkProvider>
             <SafeAreaView className="flex-1 bg-background jus">
-                <ScrollView className="p-6 pb-10 flex flex-col gap-y-10">
+                <ScrollView className="p-6 pb-10 flex flex-col gap-y-10" showsVerticalScrollIndicator={false}>
                     <View className='flex flex-col gap-y-6'>
-                        <View className='flex flex-row justify-between items-center'>
-                            <Text className="text-white font-bold text-2xl block">Playlists</Text>
+                        <View className='flex flex-col gap-y-2'>
+                            <Text className="text-white text-4xl font-extrabold">Playlists</Text>
+                            <Text className="text-zinc-400 text-sm">Your music collections</Text>
                         </View>
                         <View className='w-full flex-col justify-between gap-y-4 flex-wrap'>
                             <TouchableOpacity
@@ -126,7 +127,10 @@ const Playlist = () => {
                         </View>
                     </View>
                     <View className='flex flex-col gap-y-6 pt-10'>
-                        <Text className="text-white font-bold text-2xl block">Following</Text>
+                        <View className='flex flex-col gap-y-2'>
+                            <Text className="text-white text-4xl font-extrabold">Following</Text>
+                            <Text className="text-zinc-400 text-sm">Artists you follow</Text>
+                        </View>
                         <View className='w-full flex flex-row justify-between gap-y-4 flex-wrap'>
                             {
                                 userFollowings.data.map((artist: Artist) => (

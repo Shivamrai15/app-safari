@@ -39,6 +39,7 @@ const PlaylistSongs = () => {
             return data.data as PlaylistResponse;
         },
         queryKey : ["playlist", playlistId],
+        meta: { persist: false },
     });
 
 

@@ -120,7 +120,7 @@ export const Sheet = ({
                         }}
                     >
                         <View className='flex flex-col gap-y-4 flex-1'>
-                            <View className='p-6 flex-row items-center justify-between'>
+                            <View className='p-6 pb-3 flex-row items-center justify-between'>
                                 <TouchableOpacity
                                     activeOpacity={0.7}
                                     onPress={onClose}
@@ -138,7 +138,7 @@ export const Sheet = ({
                                         />
                                     </View>
                                 </View>
-                                <View className='flex flex-col gap-y-4 px-4 py-10'>
+                                <View className='flex flex-col gap-y-4 px-4 py-6'>
                                     <View className='flex flex-row items-center gap-x-4 px-4'>
                                         <Text className='text-white text-2xl font-bold flex-1' numberOfLines={1} ellipsizeMode='tail'>
                                             {data.name}
@@ -254,46 +254,46 @@ export const Sheet = ({
                                     </View>
                                 </View>
                             </View>
-                            <View className='p-6 flex flex-row items-center'>
-                                <View className='w-1/3 flex items-center justify-center'>
-                                    <TouchableOpacity
-                                        activeOpacity={0.7}
-                                        onPress={() => {
-                                            setFeatureNumber(0);
-                                            setFeaturesOpened(!featuresOpened);
-                                        }}
-                                    >
-                                        <Text className='text-zinc-300 font-semibold text-lg'>
-                                            UP NEXT
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View className='w-1/3 flex items-center justify-center'>
-                                    <TouchableOpacity
-                                        activeOpacity={0.7}
-                                        onPress={() => {
-                                            setFeatureNumber(1);
-                                            setFeaturesOpened(!featuresOpened);
-                                        }}
-                                    >
-                                        <Text className='text-zinc-300 font-semibold text-lg'>
-                                            LYRICS
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                                <View className='w-1/3 flex items-center justify-center'>
-                                    <TouchableOpacity
-                                        activeOpacity={0.7}
-                                        onPress={() => {
-                                            setFeatureNumber(2);
-                                            setFeaturesOpened(!featuresOpened);
-                                        }}
-                                    >
-                                        <Text className='text-zinc-300 font-semibold text-lg'>
-                                            RELATED
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
+                        </View>
+                        <View className='p-6 flex flex-row items-center'>
+                            <View className='w-1/3 flex items-center justify-center'>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => {
+                                        setFeatureNumber(0);
+                                        setFeaturesOpened(!featuresOpened);
+                                    }}
+                                >
+                                    <Text className='text-zinc-300 font-semibold text-lg'>
+                                        UP NEXT
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View className='w-1/3 flex items-center justify-center'>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => {
+                                        setFeatureNumber(1);
+                                        setFeaturesOpened(!featuresOpened);
+                                    }}
+                                >
+                                    <Text className='text-zinc-300 font-semibold text-lg'>
+                                        LYRICS
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View className='w-1/3 flex items-center justify-center'>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => {
+                                        setFeatureNumber(2);
+                                        setFeaturesOpened(!featuresOpened);
+                                    }}
+                                >
+                                    <Text className='text-zinc-300 font-semibold text-lg'>
+                                        RELATED
+                                    </Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </LinearGradient>
@@ -307,10 +307,10 @@ export const Sheet = ({
                         transparent={true}
                         onRequestClose={() => setFeaturesOpened(false)}
                     >
-                        <SafeAreaView className='flex-1'>
+                        <SafeAreaView className='flex-1 bg-background'>
                             <View
                                 style={{
-                                    backgroundColor : data.album.color
+                                    backgroundColor : `${data.album.color}5e`,
                                 }}
                             >
                                 <View className='py-2 flex flex-row items-center relative'>
@@ -365,7 +365,7 @@ export const Sheet = ({
                                 ref={pagerRef}
                                 style={{
                                     flex : 1,
-                                    backgroundColor : data.album.color,
+                                    backgroundColor : `${data.album.color}5e`,
                                 }}
                                 initialPage={featureNumber}
                                 onPageSelected={e=>setFeatureNumber(e.nativeEvent.position)}

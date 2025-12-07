@@ -33,19 +33,19 @@ export const Genre = () => {
     }
 
     return (
-        <View className='w-full flex flex-row justify-between gap-y-10 flex-wrap'>
+        <View className='w-full flex flex-row justify-between gap-y-6 flex-wrap'>
             {
                 data.map((genre)=>(
                     <TouchableOpacity
                         key={genre.id}
-                        className='w-[46%] flex flex-col gap-y-3'
-                        activeOpacity={0.7}
+                        className='w-[48%] flex flex-col'
+                        activeOpacity={0.8}
                         onPress={()=>router.push({
                             pathname : "/genre-songs/[genreId]",
                             params : { genreId : genre.id }
                         })}
                     >
-                        <View className='aspect-[3/4] rounded-3xl overflow-hidden'>
+                        <View className='aspect-[3/4] rounded-2xl overflow-hidden border border-zinc-800/50 shadow-lg'>
                             <Image
                                 source={{
                                     uri : genre.video?.image,
@@ -56,10 +56,13 @@ export const Genre = () => {
                                 }}
                                 contentFit="cover"
                             />
+                            <View className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent' />
+                            <View className='absolute bottom-0 left-0 right-0 p-4'>
+                                <Text className='text-white font-bold text-base' numberOfLines={2}>
+                                    {genre.name}
+                                </Text>
+                            </View>
                         </View>
-                        <Text className='text-white font-semibold text-center'>
-                            {genre.name}
-                        </Text>
                     </TouchableOpacity>
                 ))
             }
