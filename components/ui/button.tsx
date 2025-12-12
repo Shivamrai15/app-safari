@@ -20,19 +20,19 @@ const variantStyles: Record<variant, string> = {
 }
 
 export const Button = ({ children, onPress, disabled, className, variant }: Props) => {
-  return (
-    <TouchableOpacity
-        onPress={onPress}
-        disabled={disabled}
-        className={cn(
-          variantStyles[variant || "primary"],
-          "h-12 rounded-xl flex flex-row items-center gap-x-2 justify-center px-4 py-1",
-          className,
-          disabled ? "opacity-70" : "opacity-100"
-        )}
-        activeOpacity={0.8}
-    >
-        {children}
-    </TouchableOpacity>
-  )
+    return (
+        <TouchableOpacity
+            onPress={onPress}
+            disabled={disabled}
+            className={cn(
+            variantStyles[variant || "primary"],
+                "h-12 rounded-xl flex flex-row items-center gap-x-2 justify-center px-4 py-1",
+                className,
+                disabled ? "opacity-70" : "opacity-100"
+            )}
+            activeOpacity={0.8}
+        >
+            {children}
+        </TouchableOpacity>
+    )
 }

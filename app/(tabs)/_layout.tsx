@@ -1,4 +1,4 @@
-import { Tabs, usePathname } from 'expo-router';
+import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { HomeIcon,
 	HomeOutlineIcon,
@@ -10,19 +10,53 @@ import { HomeIcon,
 	SearchOutlineIcon
 } from "@/constants/icons";
 import { useAuth } from '@/hooks/use-auth';
-import { Text, View } from 'react-native';
+import { Text, View, BackHandler } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useQueue } from '@/hooks/use-queue';
 import { Player } from '@/components/song/player';
+import { useEffect, useRef } from 'react';
 
 
 const Layout = () => {
 
 	const pathname = usePathname();
+	const router = useRouter();
 	const insets = useSafeAreaInsets();
 
 	const { current } = useQueue();
 	const { isLoggedIn, user } = useAuth();
+
+	const navigationHistory = useRef<string[]>(['/home']);
+
+	useEffect(() => {
+		if (navigationHistory.current[navigationHistory.current.length - 1] !== pathname) {
+			navigationHistory.current = [...navigationHistory.current, pathname];
+
+			if (navigationHistory.current.length > 20) {
+				navigationHistory.current = navigationHistory.current.slice(-20);
+			}
+		}
+	}, [pathname]);
+
+	useEffect(() => {
+		const backAction = () => {
+
+			if (navigationHistory.current.length > 1) {
+				navigationHistory.current = navigationHistory.current.slice(0, -1);
+				const previousRoute = navigationHistory.current[navigationHistory.current.length - 1];
+				router.push(previousRoute as any);
+				return true;
+			}
+			return false;
+		};
+
+		const backHandler = BackHandler.addEventListener(
+			'hardwareBackPress',
+			backAction
+		);
+
+		return () => backHandler.remove();
+	}, [pathname, router]);
 
 
 	return (

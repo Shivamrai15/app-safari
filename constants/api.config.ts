@@ -1,3 +1,4 @@
-export const AUTH_BASE_URL = "https://safari-auth-apis.onrender.com";
-export const PUBLIC_BASE_URL = "https://safari-public-rest-apis.onrender.com";
-export const PROTECTED_BASE_URL = "https://safari-protected-rest-api.onrender.com";
+export const AUTH_BASE_URL = "https://auth-safari.onrender.com";
+export const PUBLIC_BASE_URL = "https://catalog-safari.onrender.com";
+export const PROTECTED_BASE_URL = "https://user-safari.onrender.com";
+export const MAINTENANCE_BASE_URL = "https://maintenance-safari.onrender.com";
