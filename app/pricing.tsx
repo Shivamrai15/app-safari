@@ -1,14 +1,215 @@
-import { View, Text } from 'react-native';
+import { router } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+
+const PriceLists = {
+    "price_1PLVQoSF9kH75ipG3YQe4k4Y": {
+        planName: "Basic",
+        color: "#ff9e95",
+        price: 99,
+        months: 1
+    },
+    "price_1PLVX8SF9kH75ipGU9rTB5HC": {
+        planName: "Lite",
+        color: "#8bf76a",
+        price: 189,
+        months: 2
+    },
+    "price_1PLVZkSF9kH75ipG33UoFPOx": {
+        planName: "Elite",
+        color: "#ffa875",
+        price: 499,
+        months: 6
+    },
+    "price_1PLVcJSF9kH75ipGigh23CQ9": {
+        planName: "Prime",
+        color: "#a96af7",
+        price: 899,
+        months: 12
+    }
+};
+
+const features = [
+    { name: "Ad-Free Experience", free: false, premium: true },
+    { name: "Unlimited Skips", free: false, premium: true },
+    { name: "Organize queue", free: false, premium: true },
+    { name: "Play songs in any order", free: false, premium: true },
+    { name: "Song seek control", free: false, premium: true },
+    { name: "Unlimited custom playlists", free: false, premium: true },
+];
+
+const planBenefits = [
+    "1 Premium Account",
+    "Add free listening",
+    "Unlimited playlists",
+    "Cancel anytime",
+    "One time payment",
+];
 
 const Pricing = () => {
+
+    const priceListArray = Object.entries(PriceLists);
+
     return (
-        <SafeAreaView className='bg-background flex-1 items-center justify-center'>
-            <View>
-                <Text className='text-white'>Pricing</Text>
-            </View>
+        <SafeAreaView className='bg-background flex-1'>
+            <ScrollView className='flex-1' showsVerticalScrollIndicator={false}>
+                <LinearGradient
+                    colors={['#454545ff', '#2b2b2bff', '#00000000']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    className='px-6 pt-12 pb-10'
+                >
+                    <Text className='text-white text-4xl font-bold leading-tight'>
+                        Skip the ads, unlock everything. Try 2 months of Premium for ₹189.
+                    </Text>
+                    <Text className='text-zinc-300 mt-4 text-base'>
+                        Cancel anytime*
+                    </Text>
+                </LinearGradient>
+                <View className='px-6 py-10'>
+                    <Text className='text-white text-3xl font-bold text-center mb-10'>
+                        Feel the Premium
+                    </Text>
+                    <View className='flex-row border-b border-zinc-800 pb-4 mb-2'>
+                        <View className='flex-1' />
+                        <Text className='text-white font-semibold text-base w-24 text-center'>
+                            Free Plan
+                        </Text>
+                        <Text className='text-white font-semibold text-base w-24 text-center'>
+                            Premium
+                        </Text>
+                    </View>
+                    {features.map((feature, index) => (
+                        <View
+                            key={index}
+                            className='flex-row items-center py-4 border-b border-zinc-900'
+                        >
+                            <Text className='flex-1 text-zinc-300 text-base'>
+                                {feature.name}
+                            </Text>
+                            <View className='w-24 items-center'>
+                                {feature.free ? (
+                                    <View className='bg-white rounded-full w-6 h-6 items-center justify-center'>
+                                        <Ionicons name="checkmark" size={16} color="#000" />
+                                    </View>
+                                ) : (
+                                    <Text className='text-zinc-500 text-xl'>—</Text>
+                                )}
+                            </View>
+                            <View className='w-24 items-center'>
+                                {feature.premium ? (
+                                    <View className='bg-white rounded-full w-6 h-6 items-center justify-center'>
+                                        <Ionicons name="checkmark" size={16} color="#000" />
+                                    </View>
+                                ) : (
+                                    <Text className='text-zinc-500 text-xl'>—</Text>
+                                )}
+                            </View>
+                        </View>
+                    ))}
+                </View>
+                <View className='px-6 py-10'>
+                    <Text className='text-white text-3xl font-bold text-center mb-10'>
+                        Choose a plan that fits you
+                    </Text>
+                    <View className='flex flex-col gap-4'>
+                        {priceListArray.map(([priceId, plan]) => {
+                            const originalPrice = Math.round(plan.price * 1.3);
+                            const savingsPercent = Math.round(((originalPrice - plan.price) / originalPrice) * 100);
+
+                            return (
+                                <LinearGradient
+                                    key={priceId}
+                                    colors={['#2a2a2a', '#1f1f1f', '#171717']}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 0, y: 1 }}
+                                    style={{ borderRadius: 24, padding: 24, borderWidth: 1, borderColor: '#333', position: 'relative', overflow: 'hidden' }}
+                                >
+                                    {/* Save Badge */}
+                                    <View
+                                        className='absolute top-4 right-4 px-3 py-1 rounded-full'
+                                        style={{ backgroundColor: plan.color }}
+                                    >
+                                        <Text className='text-black text-xs font-semibold'>
+                                            Save {savingsPercent}%
+                                        </Text>
+                                    </View>
+
+                                    {/* Plan Name */}
+                                    <Text
+                                        className='text-2xl font-bold text-center mt-2 mb-4'
+                                        style={{ color: plan.color }}
+                                    >
+                                        {plan.planName}
+                                    </Text>
+
+                                    {/* Price Section */}
+                                    <View className='flex-row items-baseline justify-center mb-1'>
+                                        <Text className='text-zinc-500 text-lg line-through mr-2'>
+                                            ₹{originalPrice}
+                                        </Text>
+                                        <Text className='text-white text-3xl font-bold'>
+                                            ₹{plan.price}
+                                        </Text>
+                                        <Text className='text-zinc-400 text-sm ml-1'>
+                                            / {plan.months} month{plan.months > 1 ? 's' : ''}
+                                        </Text>
+                                    </View>
+                                    <Text className='text-zinc-500 text-sm text-center mb-4'>
+                                        One time payment
+                                    </Text>
+
+                                    {/* Description */}
+                                    <Text className='text-zinc-400 text-sm text-center mb-6'>
+                                        Premium music experience with unlimited access to all features
+                                    </Text>
+
+                                    {/* Dotted Divider */}
+                                    <View className='border-t border-dashed border-zinc-700 mb-6' />
+
+                                    {/* Features List */}
+                                    <View className='mb-6'>
+                                        {planBenefits.map((benefit, idx) => (
+                                            <View key={idx} className='flex-row items-center mb-3'>
+                                                <View className='w-5 h-5 rounded-full bg-green-500/20 items-center justify-center mr-3'>
+                                                    <Ionicons name="checkmark" size={12} color="#22c55e" />
+                                                </View>
+                                                <Text className='text-zinc-300 text-sm flex-1'>
+                                                    {benefit}
+                                                </Text>
+                                            </View>
+                                        ))}
+                                        {/* Excluded features shown with X */}
+                                        <View className='flex-row items-center mb-3'>
+                                            <View className='w-5 h-5 rounded-full items-center justify-center mr-3'>
+                                                <Ionicons name="close" size={14} color="#71717a" />
+                                            </View>
+                                            <Text className='text-zinc-500 text-sm flex-1'>
+                                                Family sharing
+                                            </Text>
+                                        </View>
+                                    </View>
+
+                                    {/* CTA Button */}
+                                    <TouchableOpacity
+                                        className='py-4 rounded-full'
+                                        style={{ backgroundColor: plan.color }}
+                                        activeOpacity={0.8}
+                                    >
+                                        <Text className='text-black font-semibold text-center text-base'>
+                                            Get {plan.planName}
+                                        </Text>
+                                    </TouchableOpacity>
+                                </LinearGradient>
+                            );
+                        })}
+                    </View>
+                </View>
+            </ScrollView>
         </SafeAreaView>
-    )
-}
+    );
+};
 
 export default Pricing;
