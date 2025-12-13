@@ -56,7 +56,13 @@ const History = () => {
     return (
         <NetworkProvider>
             <SafeAreaView className='flex-1 bg-background'>
-                <ScrollView className='flex-1 p-4' onScroll={handleScroll} scrollEventThrottle={16} >
+                <ScrollView
+                    className='flex-1 p-4'
+                    onScroll={handleScroll}
+                    scrollEventThrottle={16}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
                     <Text className='text-white text-2xl font-bold'>Your History</Text>
                     <View className='flex flex-col mt-10 gap-y-6'>
                         {

@@ -29,6 +29,7 @@ const Browse = () => {
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
                     showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 >
                     <View className="px-6 pt-8 pb-4">
                         <Text className="text-white text-4xl font-extrabold">Browse</Text>

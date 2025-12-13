@@ -65,7 +65,11 @@ const ArtistPage = () => {
     return (
         <NetworkProvider>
             <SafeAreaView className="flex-1 bg-background">
-                <ScrollView className="w-full flex-1">
+                <ScrollView
+                    className="w-full flex-1"
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
                     <Header
                         name={artist.data.name}
                         image={artist.data.image}

@@ -5,83 +5,137 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DownloadIcon, HistoryIcon, PlaylistRecoverIcon, ReceiptIcon, UserIcon } from '@/constants/icons';
 import { NetworkProvider } from '@/providers/network.provider';
 
+const MenuItem = ({ 
+    item, 
+    isLast, 
+    isDestructive = false 
+}: { 
+    item: any, 
+    isLast: boolean, 
+    isDestructive?: boolean 
+}) => (
+    <TouchableOpacity
+        onPress={() => router.push(item.path)}
+        className={`flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors ${
+            !isLast ? 'border-b border-neutral-800' : ''
+        }`}
+        activeOpacity={0.7}
+    >
+        <View className={`size-12 rounded-full flex items-center justify-center flex-shrink-0 ${
+            isDestructive ? 'bg-red-500/10' : 'bg-neutral-800'
+        }`}>
+            <Image
+                source={item.icon}
+                style={{ width: item.width, height: item.height }}
+                tintColor={isDestructive ? "#ef4444" : "#e4e4e7"}
+            />
+        </View>
+
+        <View className="flex-1 justify-center gap-y-0.5">
+            <Text className={`font-medium text-[17px] ${isDestructive ? 'text-red-500' : 'text-white'}`}>
+                {item.name}
+            </Text>
+            {item.description && (
+                <Text className="text-zinc-500 text-xs font-medium">
+                    {item.description}
+                </Text>
+            )}
+        </View>
+        <View className="items-center justify-center opacity-30">
+            <Text className="text-zinc-400 text-lg font-light leading-none">›</Text>
+        </View>
+    </TouchableOpacity>
+);
 
 const Account = () => {
 
-    const routes : { path: Href, name: string, icon: any, height: number, width: number }[] = [
+    const profileRoute = {
+        name: "Your profile",
+        description: "Manage account details",
+        path: "/(tabs)/account/profile" as Href,
+        icon: UserIcon,
+        height: 18,
+        width: 18
+    };
+
+    const generalRoutes = [
         {
-            name : "Your profile",
-            path : "/(tabs)/account/profile",
-            icon : UserIcon,
-            height: 24,
-            width: 24
+            name: "Downloads",
+            description: "Manage offline content",
+            path: "/(tabs)/downloads" as Href,
+            icon: DownloadIcon,
+            height: 20,
+            width: 20
         },
         {
-            name : "Delete history",
-            path : "/(tabs)/account/delete-history",
-            icon : HistoryIcon,
-            height: 24,
-            width: 24
+            name: "Recover playlists",
+            description: "Restore deleted collections",
+            path: "/" as Href,
+            icon: PlaylistRecoverIcon,
+            height: 18,
+            width: 18
         },
         {
-            name : "Recover playlists",
-            path : "/",
-            icon : PlaylistRecoverIcon,
-            height: 28,
-            width: 28
+            name: "Transaction history",
+            description: "Billing and receipts",
+            path: "/" as Href,
+            icon: ReceiptIcon,
+            height: 18,
+            width: 18
         },
+    ];
+
+    const dangerRoutes = [
         {
-            name : "Transaction history",
-            path : "/",
-            icon : ReceiptIcon,
-            height: 24,
-            width: 24
+            name: "Delete history",
+            description: "Clear listening data",
+            path: "/(tabs)/account/delete-history" as Href,
+            icon: HistoryIcon,
+            height: 20,
+            width: 20
         },
-        {
-            name : "Downloads",
-            path : "/(tabs)/downloads",
-            icon : DownloadIcon,
-            height: 24,
-            width: 24
-        }
-    ]
+    ];
 
     return (
         <NetworkProvider>
-            <SafeAreaView className="bg-background flex-1">
-                <ScrollView className='flex-1' showsVerticalScrollIndicator={false}>
-                    <View className="px-6 pt-8 pb-6">
-                        <Text className="text-white text-4xl font-extrabold">Settings</Text>
-                        <Text className="text-zinc-400 text-sm mt-2">Manage your account and preferences</Text>
+            <SafeAreaView className="bg-background flex-1" edges={['top']}>
+                <ScrollView
+                    className='flex-1'
+                    contentContainerStyle={{ paddingBottom: 40 }}
+                    showsVerticalScrollIndicator={false}
+                >
+
+                    <View className="px-6 pt-6 pb-8">
+                        <Text className="text-white text-3xl font-bold tracking-tight">Settings</Text>
                     </View>
                     
-                    <View className="px-6 pb-8">
-                        <View className="bg-zinc-900/50 rounded-2xl border border-zinc-800 overflow-hidden">
-                            {
-                                routes.map((route, index) => (
-                                    <TouchableOpacity
-                                        key={route.name}
-                                        onPress={() => router.push(route.path)}
-                                        className={`flex flex-row items-center gap-x-4 px-5 py-4 ${
-                                            index !== routes.length - 1 ? 'border-b border-zinc-800' : ''
-                                        }`}
-                                        activeOpacity={0.6}
-                                    >
-                                        <View className="w-11 h-11 bg-red-600/10 rounded-xl items-center justify-center">
-                                            <Image
-                                                source={route.icon}
-                                                style={{ width: route.width, height: route.height}}
-                                                tintColor="#ef4444"
-                                            />
-                                        </View>
-                                        <Text className="text-white font-semibold text-base flex-1">{route.name}</Text>
-                                        <View className="w-6 h-6 items-center justify-center">
-                                            <Text className="text-zinc-500 text-xl">›</Text>
-                                        </View>
-                                    </TouchableOpacity>
-                                ))
-                            }
+                    <View className="px-5 gap-y-6">
+                        <View className="bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800/50">
+                            <MenuItem item={profileRoute} isLast={true} />
                         </View>
+                        <View className="bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800/50">
+                            {generalRoutes.map((route, index) => (
+                                <MenuItem 
+                                    key={route.name} 
+                                    item={route} 
+                                    isLast={index === generalRoutes.length - 1} 
+                                />
+                            ))}
+                        </View>
+                        <View className="bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800/50">
+                            {dangerRoutes.map((route, index) => (
+                                <MenuItem 
+                                    key={route.name} 
+                                    item={route} 
+                                    isLast={index === dangerRoutes.length - 1}
+                                    isDestructive={true}
+                                />
+                            ))}
+                        </View>
+                        <View className="items-center py-4">
+                            <Text className="text-zinc-600 text-xs">Version 1.0.0</Text>
+                        </View>
+
                     </View>
                 </ScrollView>
             </SafeAreaView>

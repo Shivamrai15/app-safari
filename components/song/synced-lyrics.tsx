@@ -63,6 +63,7 @@ export const SyncedLyrics = ({ position, onSeek, lyrics }: Props) => {
                 ref={lyricsContainerRef}
                 style={{ flex: 1 }}
                 showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
                 bounces={true}
                 decelerationRate="normal"
                 contentContainerStyle={{

@@ -91,7 +91,11 @@ const Home = () => {
     return (
         <NetworkProvider>
             <SafeAreaView className="flex-1 bg-background">
-                <ScrollView className="p-4 pt-10 pb-20">
+                <ScrollView
+                    className="p-4 pt-10 pb-20"
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
                     <View className="flex flex-row items-center justify-end gap-x-6">
                         <Button
                             className="px-4 rounded-full"

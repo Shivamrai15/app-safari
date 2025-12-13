@@ -63,9 +63,8 @@ const PlaylistSearch = () => {
         onSuccess : async()=>{
             setSelectedSongId([]);
             await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ['playlist-existing-songs', playlistId] }),
-                queryClient.invalidateQueries({ queryKey: ['user-playlists'] }),
-                queryClient.invalidateQueries({ queryKey: ['playlist', playlistId] })
+                queryClient.invalidateQueries({ queryKey: [`playlist-songs-${playlistId}`] }),
+                queryClient.invalidateQueries({ queryKey: ['user-playlists'] })
             ]);
         },
         onError : ( error ) => {
@@ -94,6 +93,8 @@ const PlaylistSearch = () => {
             >
                 <ScrollView
                     className='flex-1'
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 >
                     <View className='p-6'>
                         <View className='flex flex-row items-center bg-neutral-800 rounded-full px-4 py-3'>

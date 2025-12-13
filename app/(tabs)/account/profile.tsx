@@ -17,6 +17,8 @@ const Profile = () => {
             <SafeAreaView className='flex-1 bg-background'>
                 <ScrollView 
                     className='flex-1 p-6'
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 >
                     <View className='flex flex-row items-center gap-x-6'>
                         <View className='size-28 rounded-full overflow-hidden'>

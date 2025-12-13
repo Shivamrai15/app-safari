@@ -117,6 +117,8 @@ export const Options = () => {
                 >
                     <ScrollView
                         className='flex-1 h-full'
+                        showsVerticalScrollIndicator={false}
+                        showsHorizontalScrollIndicator={false}
                     >
                         <View className='flex flex-row items-center px-4 gap-x-6'>
                             <View className='size-16 rounded-xl overflow-hidden'>

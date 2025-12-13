@@ -39,7 +39,11 @@ export const RelatedSongs = ({ songId }: Props) => {
 
 
     return (
-        <ScrollView className='flex-1'>
+        <ScrollView
+            className='flex-1'
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+        >
             <View className='flex flex-col gap-y-4'>
                 {
                     data.map((song) => (

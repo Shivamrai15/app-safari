@@ -75,6 +75,8 @@ const Mood = () => {
                 <ScrollView
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 >
                     <Header
                         id={data.id}

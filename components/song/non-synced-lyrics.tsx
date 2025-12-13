@@ -6,7 +6,11 @@ interface Props {
 
 export const UnsyncedLyrics = ({ lyrics }: Props) => {
     return (
-        <ScrollView className="flex-1">
+        <ScrollView
+            className="flex-1"
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+        >
             <View className="p-6 flex flex-col gap-y-2">
                 {
                     lyrics.map((line, index) => (

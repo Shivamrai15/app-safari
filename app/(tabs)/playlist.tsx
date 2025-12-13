@@ -61,7 +61,11 @@ const Playlist = () => {
     return (
         <NetworkProvider>
             <SafeAreaView className="flex-1 bg-background jus">
-                <ScrollView className="p-6 pb-10 flex flex-col gap-y-10" showsVerticalScrollIndicator={false}>
+                <ScrollView
+                    className="p-6 pb-10 flex flex-col gap-y-10"
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
                     <View className='flex flex-col gap-y-6'>
                         <View className='flex flex-col gap-y-2'>
                             <Text className="text-white text-4xl font-extrabold">Playlists</Text>

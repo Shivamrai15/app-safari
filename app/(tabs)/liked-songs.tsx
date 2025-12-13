@@ -42,7 +42,11 @@ const LikedSongs = () => {
     return (
         <NetworkProvider>
             <SafeAreaView className="flex-1 bg-background">
-                <ScrollView className="flex flex-col gap-y-10">
+                <ScrollView
+                    className="flex flex-col gap-y-10"
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
                     <LinearGradient
                         colors={['#111111', '#87141b']}
                         locations={[0.8, 1.0]}

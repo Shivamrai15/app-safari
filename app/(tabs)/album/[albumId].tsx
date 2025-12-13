@@ -42,7 +42,11 @@ const AlbumPage = () => {
     return (
         <NetworkProvider>
             <SafeAreaView className="flex-1 bg-background">
-                <ScrollView className="w-full h-full flex-1">
+                <ScrollView
+                    className="w-full h-full flex-1"
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                >
                     <LinearGradient
                         colors={['#111111', `${data.color}5a`]}
                         locations={[0.8, 1.0]}

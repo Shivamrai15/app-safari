@@ -56,6 +56,7 @@ const PlaylistSongs = () => {
         token: user?.tokens.accessToken,
         paramKey: "",
         paramValue: "",
+        persist : false,
     });
 
     useEffect(()=>{
@@ -79,6 +80,8 @@ const PlaylistSongs = () => {
                     className='flex-1'
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
                 >
                     <Header
                         name={data.name}
