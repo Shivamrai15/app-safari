@@ -16,7 +16,7 @@ import { albumDuration } from '@/lib/utils';
 import { Album, Song } from '@/types/response.types';
 import Entypo from '@expo/vector-icons/Entypo';
 import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
-import Slider from "@react-native-community/slider";
+import { Slider } from '@miblanchard/react-native-slider';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -160,21 +160,19 @@ export const Sheet = ({
                                             </TouchableOpacity>
                                         </View>
                                     </View>
-                                    <View className='flex flex-col gap-y-2'>
+                                    <View className='flex flex-col gap-y-2 px-4'>
                                         <Slider
                                             step={1}
                                             minimumValue={0}
-                                            tapToSeek={true}
                                             value={position}
-                                            onSlidingComplete={onSeek}
+                                            onValueChange={(value)=>onSeek(value[0])}
                                             maximumValue={data.duration}
-                                            style={{ padding: 0, margin: 0, width: '100%' }}
                                             minimumTrackTintColor="#ef4444"
                                             maximumTrackTintColor="#D3D3D3"
                                             thumbTintColor="transparent"
                                             disabled={!isSubscribed}
                                         />
-                                        <View className='flex flex-row items-center justify-between px-4'>
+                                        <View className='flex flex-row items-center justify-between'>
                                             <Text className='text-zinc-300 text-sm'>
                                                 {albumDuration(Math.floor(position))}
                                             </Text>

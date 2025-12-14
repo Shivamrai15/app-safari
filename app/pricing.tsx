@@ -127,25 +127,20 @@ const Pricing = () => {
                                     end={{ x: 0, y: 1 }}
                                     style={{ borderRadius: 24, padding: 24, borderWidth: 1, borderColor: '#333', position: 'relative', overflow: 'hidden' }}
                                 >
-                                    {/* Save Badge */}
                                     <View
-                                        className='absolute top-4 right-4 px-3 py-1 rounded-full'
+                                        className='absolute top-0 right-0 flex items-center justify-center w-24 h-10 rounded-bl-2xl'
                                         style={{ backgroundColor: plan.color }}
                                     >
                                         <Text className='text-black text-xs font-semibold'>
                                             Save {savingsPercent}%
                                         </Text>
                                     </View>
-
-                                    {/* Plan Name */}
                                     <Text
                                         className='text-2xl font-bold text-center mt-2 mb-4'
                                         style={{ color: plan.color }}
                                     >
                                         {plan.planName}
                                     </Text>
-
-                                    {/* Price Section */}
                                     <View className='flex-row items-baseline justify-center mb-1'>
                                         <Text className='text-zinc-500 text-lg line-through mr-2'>
                                             ₹{originalPrice}
@@ -160,16 +155,10 @@ const Pricing = () => {
                                     <Text className='text-zinc-500 text-sm text-center mb-4'>
                                         One time payment
                                     </Text>
-
-                                    {/* Description */}
                                     <Text className='text-zinc-400 text-sm text-center mb-6'>
                                         Premium music experience with unlimited access to all features
                                     </Text>
-
-                                    {/* Dotted Divider */}
                                     <View className='border-t border-dashed border-zinc-700 mb-6' />
-
-                                    {/* Features List */}
                                     <View className='mb-6'>
                                         {planBenefits.map((benefit, idx) => (
                                             <View key={idx} className='flex-row items-center mb-3'>
@@ -181,7 +170,6 @@ const Pricing = () => {
                                                 </Text>
                                             </View>
                                         ))}
-                                        {/* Excluded features shown with X */}
                                         <View className='flex-row items-center mb-3'>
                                             <View className='w-5 h-5 rounded-full items-center justify-center mr-3'>
                                                 <Ionicons name="close" size={14} color="#71717a" />
@@ -191,8 +179,6 @@ const Pricing = () => {
                                             </Text>
                                         </View>
                                     </View>
-
-                                    {/* CTA Button */}
                                     <TouchableOpacity
                                         className='py-4 rounded-full'
                                         style={{ backgroundColor: plan.color }}

@@ -122,7 +122,7 @@ const Account = () => {
                                 padding: 24,
                             }}
                         >
-                            <Text className="text-white text-lg font-bold mb-1">
+                            <Text className="text-white text-xl font-bold mb-1">
                                 Upgrade to Premium
                             </Text>
                             <Text className="text-zinc-400 text-sm mb-4">
