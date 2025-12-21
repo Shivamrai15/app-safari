@@ -16,7 +16,7 @@ export const UnsyncedLyrics = ({ lyrics }: Props) => {
                     lyrics.map((line, index) => (
                         <Text
                             key={index}
-                            className="text-2xl font-bold text-left leading-8 text-zinc-200"
+                            className="text-xl font-bold text-left leading-8 text-zinc-200"
                         >
                             {line}
                         </Text>

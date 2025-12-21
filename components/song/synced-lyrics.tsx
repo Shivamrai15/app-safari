@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, View } from 'react-native';
 
 interface Props {
     position: number;
     onSeek: (value: number) => void;
-    lyrics : {
+    lyrics: {
         time: number;
         text: string;
     }[];
@@ -14,8 +14,28 @@ interface Props {
 export const SyncedLyrics = ({ position, onSeek, lyrics }: Props) => {
     const [currentLineIndex, setCurrentLineIndex] = useState<number>(-1);
     const [containerHeight, setContainerHeight] = useState<number>(0);
+    const [lineHeights, setLineHeights] = useState<number[]>([]);
     const lyricsContainerRef = useRef<ScrollView | null>(null);
-    const lineHeight = 70;
+
+    const handleLineLayout = useCallback((index: number, height: number) => {
+        setLineHeights(prev => {
+            const newHeights = [...prev];
+            newHeights[index] = height;
+            return newHeights;
+        });
+    }, []);
+
+    const getLineOffset = useCallback((lineIndex: number) => {
+        let offset = 0;
+        for (let i = 0; i < lineIndex; i++) {
+            offset += lineHeights[i] || 0;
+        }
+        return offset;
+    }, [lineHeights]);
+
+    const getLineHeight = useCallback((lineIndex: number) => {
+        return lineHeights[lineIndex] || 0;
+    }, [lineHeights]);
 
     useEffect(() => {
         if (lyrics.length > 0 && position >= 0) {
@@ -24,35 +44,26 @@ export const SyncedLyrics = ({ position, onSeek, lyrics }: Props) => {
             if (nextLineIndex !== currentLineIndex && nextLineIndex >= 0) {
                 setCurrentLineIndex(nextLineIndex);
 
-                if (lyricsContainerRef.current && containerHeight > 0) {
-
-                    const linePosition = nextLineIndex * lineHeight;
+                if (lyricsContainerRef.current && containerHeight > 0 && lineHeights.length > 0) {
+                    const linePosition = getLineOffset(nextLineIndex);
+                    const currentLineHeight = getLineHeight(nextLineIndex);
                     const screenMiddle = containerHeight / 2;
-                    
-                    if (linePosition > screenMiddle) {
-                        const scrollOffset = linePosition - screenMiddle + (lineHeight / 2);
-                        
-                        setTimeout(() => {
-                            lyricsContainerRef.current?.scrollTo({
-                                y: scrollOffset,
-                                animated: true
-                            });
-                        }, 100);
-                    } else {
-                        setTimeout(() => {
-                            lyricsContainerRef.current?.scrollTo({
-                                y: 0,
-                                animated: true
-                            });
-                        }, 100);
-                    }
+
+                    const scrollOffset = linePosition - screenMiddle + (currentLineHeight / 2);
+
+                    setTimeout(() => {
+                        lyricsContainerRef.current?.scrollTo({
+                            y: Math.max(0, scrollOffset),
+                            animated: true
+                        });
+                    }, 100);
                 }
             }
         }
-    }, [lyrics, position, currentLineIndex, containerHeight]);
+    }, [lyrics, position, currentLineIndex, containerHeight, lineHeights, getLineOffset, getLineHeight]);
 
     return (
-        <View 
+        <View
             className="flex-1 p-6 relative"
             onLayout={(event) => {
                 const { height } = event.nativeEvent.layout;
@@ -74,14 +85,18 @@ export const SyncedLyrics = ({ position, onSeek, lyrics }: Props) => {
                     <Pressable
                         key={index}
                         onPress={() => onSeek(line.time)}
-                        style={{ 
-                            paddingVertical: 16,
+                        onLayout={(event) => {
+                            const { height } = event.nativeEvent.layout;
+                            handleLineLayout(index, height);
+                        }}
+                        style={{
+                            paddingVertical: 10,
                             justifyContent: 'center'
                         }}
                     >
                         <Text
                             className={cn(
-                                "text-2xl font-bold text-left leading-8",
+                                "text-xl font-bold text-left leading-8",
                                 index === currentLineIndex ? 'text-white opacity-100' : 'text-gray-200 opacity-60',
                             )}
                         >

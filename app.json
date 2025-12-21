@@ -21,7 +21,13 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.shivamrai6836.Safari",
-      "allowBackup": false
+      "allowBackup": false,
+      "permissions": [
+        "INTERNET",
+        "WAKE_LOCK",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ]
     },
     "web": {
       "output": "static",

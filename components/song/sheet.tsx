@@ -107,7 +107,7 @@ export const Sheet = ({
                 bottomInset={insets.bottom}
             >
                 <BottomSheetView
-                    style={{ flex: 1 }}
+                    style={{ flex: 1, borderRadius : 0 }}
                 >
                     <LinearGradient
                         colors={[`${data.album.color}5e`, "#111111"]}
@@ -116,7 +116,8 @@ export const Sheet = ({
                             display : "flex",
                             flexDirection : "column",
                             justifyContent : "space-between",
-                            gap : 24
+                            gap : 24,
+                            borderRadius : 0
                         }}
                     >
                         <View className='flex flex-col gap-y-4 flex-1'>

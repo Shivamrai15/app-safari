@@ -64,7 +64,8 @@ const PlaylistSearch = () => {
             setSelectedSongId([]);
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: [`playlist-songs-${playlistId}`] }),
-                queryClient.invalidateQueries({ queryKey: ['user-playlists'] })
+                queryClient.invalidateQueries({ queryKey: ['user-playlists'] }),
+                queryClient.invalidateQueries({ queryKey: ['playlist-existing-songs', playlistId] })
             ]);
         },
         onError : ( error ) => {

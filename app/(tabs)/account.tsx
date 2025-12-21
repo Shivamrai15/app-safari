@@ -3,8 +3,9 @@ import { Href, router } from 'expo-router';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { DownloadIcon, HistoryIcon, PlaylistRecoverIcon, ReceiptIcon, UserIcon } from '@/constants/icons';
+import { DownloadIcon, PlaylistRecoverIcon, ReceiptIcon, UserIcon } from '@/constants/icons';
 import { NetworkProvider } from '@/providers/network.provider';
+import { DeleteHistoryButton } from '@/components/account/delete-history-button';
 
 const MenuItem = ({
     item,
@@ -84,17 +85,6 @@ const Account = () => {
         },
     ];
 
-    const dangerRoutes = [
-        {
-            name: "Delete history",
-            description: "Clear listening data",
-            path: "/(tabs)/account/delete-history" as Href,
-            icon: HistoryIcon,
-            height: 20,
-            width: 20
-        },
-    ];
-
     return (
         <NetworkProvider>
             <SafeAreaView className="bg-background flex-1" edges={['top']}>
@@ -150,14 +140,7 @@ const Account = () => {
                             ))}
                         </View>
                         <View className="bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800/50">
-                            {dangerRoutes.map((route, index) => (
-                                <MenuItem
-                                    key={route.name}
-                                    item={route}
-                                    isLast={index === dangerRoutes.length - 1}
-                                    isDestructive={true}
-                                />
-                            ))}
+                            <DeleteHistoryButton />
                         </View>
                         <View className="items-center py-4">
                             <Text className="text-zinc-600 text-xs">Version 1.0.0</Text>
