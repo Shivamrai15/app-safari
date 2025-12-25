@@ -1,16 +1,17 @@
-import { useState } from 'react';
 import { Image } from 'expo-image';
 import { View, Text, ScrollView, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/use-auth';
 import { NetworkProvider } from '@/providers/network.provider';
 import { SubscriptionCard } from '@/components/account/subscription-card';
+import { useSettings, useSettingsUpdater } from '@/hooks/use-settings';
 
 
 const Profile = () => {
 
     const { user } = useAuth();
-    const [isPrivateSession, setIsPrivateSession] = useState(false);
+    const { settings } = useSettings();
+    const { updateSettings } = useSettingsUpdater(user?.tokens.accessToken);
 
     return (
         <NetworkProvider>    
@@ -48,8 +49,9 @@ const Profile = () => {
                                     <Text className='text-zinc-300 font-medium text-sm'>Turn on Private Session to listen without sharing your activity.</Text>
                                 </View>
                                 <Switch
-                                    value={isPrivateSession}
-                                    onValueChange={setIsPrivateSession}
+                                    value={settings?.subscription.isActive ? settings.privateSession : false}
+                                    onValueChange={(value) => updateSettings({ privateSession: value })}
+                                    disabled={!settings?.subscription.isActive}
                                     thumbColor="white"
                                     trackColor={{ false: '#3f3f46', true: '#a1a1aa' }}
                                     style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
@@ -61,8 +63,9 @@ const Profile = () => {
                                     <Text className='text-zinc-300 font-medium text-sm'>Allow Safari to recommend songs based on your activity.</Text>
                                 </View>
                                 <Switch
-                                    value={isPrivateSession}
-                                    onValueChange={setIsPrivateSession}
+                                    value={settings?.subscription.isActive ? settings.showRecommendations : true}
+                                    onValueChange={(value) => updateSettings({ showRecommendations: value })}
+                                    disabled={!settings?.subscription.isActive}
                                     thumbColor="white"
                                     trackColor={{ false: '#3f3f46', true: '#a1a1aa' }}
                                     style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}

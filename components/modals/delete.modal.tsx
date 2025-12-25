@@ -6,6 +6,7 @@ interface Props {
     title: string;
     message: string;
     visible: boolean;
+    isPending: boolean;
     onClose: () => void;
     onDelete: () => void;
 }
@@ -15,6 +16,7 @@ export const DeleteModal = ({
     title,
     message,
     visible,
+    isPending,
     onClose,
     onDelete
 }: Props) => {
@@ -50,7 +52,11 @@ export const DeleteModal = ({
                             className='h-12 rounded-2xl'
                         >
                             <Text className='text-white font-semibold'>
-                                Delete
+                                {
+                                    isPending
+                                        ? "Deleting..."
+                                        : "Delete"
+                                }
                             </Text>
                         </Button>
                     </View>

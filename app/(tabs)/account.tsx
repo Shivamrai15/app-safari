@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { DownloadIcon, PlaylistRecoverIcon, ReceiptIcon, UserIcon } from '@/constants/icons';
 import { NetworkProvider } from '@/providers/network.provider';
 import { DeleteHistoryButton } from '@/components/account/delete-history-button';
+import { useSettings } from '@/hooks/use-settings';
 
 const MenuItem = ({
     item,
@@ -49,6 +50,8 @@ const MenuItem = ({
 
 const Account = () => {
 
+    const { settings } = useSettings();
+
     const profileRoute = {
         name: "Your profile",
         description: "Manage account details",
@@ -70,7 +73,7 @@ const Account = () => {
         {
             name: "Recover playlists",
             description: "Restore deleted collections",
-            path: "/" as Href,
+            path: "/(tabs)/account/recover-playlist" as Href,
             icon: PlaylistRecoverIcon,
             height: 18,
             width: 18
@@ -78,7 +81,7 @@ const Account = () => {
         {
             name: "Transaction history",
             description: "Billing and receipts",
-            path: "/" as Href,
+            path: "/(tabs)/account/transaction-history" as Href,
             icon: ReceiptIcon,
             height: 18,
             width: 18
@@ -97,35 +100,37 @@ const Account = () => {
                     <View className="px-6 pt-6 pb-4">
                         <Text className="text-white text-3xl font-bold tracking-tight">Settings</Text>
                     </View>
-
-                    <TouchableOpacity
-                        onPress={() => router.push('/pricing')}
-                        activeOpacity={0.9}
-                        className="mx-5 mb-6"
-                    >
-                        <LinearGradient
-                            colors={['#292929ff', '#1f1f1fff', '#1a1a1a']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={{
-                                borderRadius: 20,
-                                padding: 24,
-                            }}
-                        >
-                            <Text className="text-white text-xl font-bold mb-1">
-                                Upgrade to Premium
-                            </Text>
-                            <Text className="text-zinc-400 text-sm mb-4">
-                                Ad-free listening, unlimited skips & more
-                            </Text>
-                            <View className="bg-white self-start px-6 py-3 rounded-full">
-                                <Text className="text-zinc-800 font-semibold text-sm">
-                                    Get Premium
-                                </Text>
-                            </View>
-                        </LinearGradient>
-                    </TouchableOpacity>
-
+                    {
+                        !(settings?.subscription.isActive) && (
+                            <TouchableOpacity
+                                onPress={() => router.push('/pricing')}
+                                activeOpacity={0.9}
+                                className="mx-5 mb-6"
+                            >
+                                <LinearGradient
+                                    colors={['#292929ff', '#1f1f1fff', '#1a1a1a']}
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    style={{
+                                        borderRadius: 20,
+                                        padding: 24,
+                                    }}
+                                >
+                                    <Text className="text-white text-xl font-bold mb-1">
+                                        Upgrade to Premium
+                                    </Text>
+                                    <Text className="text-zinc-400 text-sm mb-4">
+                                        Ad-free listening, unlimited skips & more
+                                    </Text>
+                                    <View className="bg-white self-start px-6 py-3 rounded-full">
+                                        <Text className="text-zinc-800 font-semibold text-sm">
+                                            Get Premium
+                                        </Text>
+                                    </View>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                        )
+                    }
                     <View className="px-5 gap-y-6">
                         <View className="bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800/50">
                             <MenuItem item={profileRoute} isLast={true} />

@@ -1,8 +1,8 @@
-import { SettingsResponse } from "@/types/response.types";
+import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SettingsResponse } from "@/types/response.types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import axios from "axios";
 import { AppState, AppStateStatus } from "react-native";
 import { useEffect, useRef } from "react";
 import { fetcher } from "@/lib/fetcher";
@@ -98,10 +98,14 @@ export const useSettings = create(
                         'Content-Type': 'application/json'
                     };
 
-                    const response = await axios.post(`${PROTECTED_BASE_URL}/api/v2/user/account`, updates, {
-                        headers,
-                        timeout: 10000
-                    });
+                    const payload : {
+                        showRecommendations : boolean,
+                        privateSession : boolean,
+                    } = {
+                        privateSession : updates.privateSession || false,
+                        showRecommendations : updates.showRecommendations || false,
+                        ...updates,
+                    }
 
                     const currentSettings = get().settings;    
 
@@ -131,6 +135,11 @@ export const useSettings = create(
                         lastSynced: Date.now()
                     });
 
+                    await axios.post(`${PROTECTED_BASE_URL}/api/v2/user/account`, payload, {
+                        headers,
+                        timeout: 10000
+                    });
+
                 } catch (error: any) {
                     console.error('Error updating settings:', error);
                     
@@ -150,7 +159,7 @@ export const useSettings = create(
     )
 );
 
-// Hook for one-time app open sync
+
 export const useSettingsSync = (token?: string) => {
     const { 
         settings, 
@@ -163,7 +172,6 @@ export const useSettingsSync = (token?: string) => {
     const hasSyncedThisSession = useRef(false);
     const isFirstMount = useRef(true);
 
-    // Sync only once when app opens (on first mount with token)
     useEffect(() => {
         if (isFirstMount.current && token && !hasSyncedThisSession.current) {
             fetchSettings(token);
@@ -172,14 +180,11 @@ export const useSettingsSync = (token?: string) => {
         }
     }, [token]);
 
-    // Reset sync flag when app goes to background (prepare for next app open)
     useEffect(() => {
         const handleAppStateChange = (nextAppState: AppStateStatus) => {
             if (nextAppState.match(/inactive|background/)) {
-                // Reset for next time app becomes active
                 hasSyncedThisSession.current = false;
             } else if (nextAppState === 'active' && !hasSyncedThisSession.current && token) {
-                // Sync when app becomes active (only if not synced this session)
                 fetchSettings(token);
                 hasSyncedThisSession.current = true;
             }
@@ -201,7 +206,6 @@ export const useSettingsSync = (token?: string) => {
     };
 };
 
-// Utility hook for updating settings
 export const useSettingsUpdater = (token?: string) => {
     const { updateSettings } = useSettings();
 

@@ -1,17 +1,41 @@
+import axios from 'axios';
 import { useState } from 'react';
 import { Image } from 'expo-image';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { HistoryIcon } from '@/constants/icons';
 import { DeleteModal } from '../modals/delete.modal';
+import { useMutation } from '@tanstack/react-query';
+import { useAuth } from '@/hooks/use-auth';
+import { PROTECTED_BASE_URL } from '@/constants/api.config';
+
 
 export const DeleteHistoryButton = () => {
 
+    const { user } = useAuth();
     const [visible, setVisible] = useState(false);
+
+    const deleteMutation = useMutation({
+        mutationFn: async() => {
+            const response = await axios.delete(`${PROTECTED_BASE_URL}/api/v2/user/history`, {
+                headers: {
+                    Authorization: `Bearer ${user?.tokens.accessToken}`
+                }
+            });
+            return response.data;
+        },
+        onSuccess: () => {
+            setVisible(false);
+        },
+        onError: () => {
+            alert("Failed to delete history");
+            setVisible(false);
+        }
+    });
 
     return (
         <>
             <TouchableOpacity
-                className='flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors border-b border-neutral-800'
+                className='flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors'
                 activeOpacity={0.7}
                 onPress={() => setVisible(true)}
             >
@@ -37,9 +61,10 @@ export const DeleteHistoryButton = () => {
             <DeleteModal
                 title="Delete history"
                 message="Deletion is permanent and affects recommendations. Use Private Sessions instead. Click to confirm."
-                visible={visible}
+                visible={deleteMutation.isPending ? true : visible}
+                isPending={deleteMutation.isPending}
                 onClose={() => setVisible(false)}
-                onDelete={() => { }}
+                onDelete={() => deleteMutation.mutate()}
             />
         </>
     )

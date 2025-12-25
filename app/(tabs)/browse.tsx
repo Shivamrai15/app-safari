@@ -32,7 +32,7 @@ const Browse = () => {
                     showsHorizontalScrollIndicator={false}
                 >
                     <View className="px-6 pt-8 pb-4">
-                        <Text className="text-white text-4xl font-extrabold">Browse</Text>
+                        <Text className="text-white text-3xl font-bold tracking-tight">Browse</Text>
                         <Text className="text-zinc-400 text-sm mt-2">Discover music by genre and mood</Text>
                     </View>
                     <View className='flex flex-row items-center gap-x-3 px-6 py-4 bg-background/95 backdrop-blur-lg'>

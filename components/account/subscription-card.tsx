@@ -33,8 +33,7 @@ export const SubscriptionCard = () => {
     
     const { settings } = useSettings();
     
-    // Get the color for the current subscription
-    const currentPlan = settings?.subscription?.priceId || "free";
+    const currentPlan = settings?.subscription.isActive ? settings?.subscription?.priceId : "free";
     const planColor = PriceLists[currentPlan as keyof typeof PriceLists]?.color || PriceLists["free"].color;
     
     return (
@@ -60,7 +59,7 @@ export const SubscriptionCard = () => {
                     </View>
                     <View className='flex flex-row items-center justify-end mt-10'>
                         {
-                            settings?.subscription?.currentPeriodEnd
+                            (settings?.subscription.isActive && settings?.subscription?.currentPeriodEnd)
                             ? (
                                 <Text className='text-white font-semibold'>
                                     Expires on {format(settings.subscription.currentPeriodEnd, "dd MMM yyyy")}

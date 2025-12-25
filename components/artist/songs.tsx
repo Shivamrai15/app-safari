@@ -1,4 +1,4 @@
-import { FlatList, View } from 'react-native'
+import { View } from 'react-native'
 import { useInfinite } from '@/hooks/use-infinite';
 import { PrimaryLoader, SecondaryLoader } from '@/components/ui/loader';
 import { Fragment, useEffect } from 'react';

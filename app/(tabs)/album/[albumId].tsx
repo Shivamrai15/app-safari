@@ -61,7 +61,7 @@ const AlbumPage = () => {
                                 <AlbumLabel label={data.label} releaseDate={data.release} />
                             )
                         }
-                    <View className="h-40" />
+                    <View className="h-20" />
                     </LinearGradient>
                 </ScrollView>
             </SafeAreaView>

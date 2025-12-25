@@ -260,6 +260,20 @@ const Layout = () => {
 						href : null
 					}}
 				/>
+				<Tabs.Screen
+					name="account/recover-playlist" 
+					options={{
+						tabBarIcon : ()=>null,
+						href : null
+					}}
+				/>
+				<Tabs.Screen
+					name="account/transaction-history" 
+					options={{
+						tabBarIcon : ()=>null,
+						href : null
+					}}
+				/>
 			</Tabs>
 		</>
 	)
