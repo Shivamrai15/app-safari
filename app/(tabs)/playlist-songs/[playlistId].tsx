@@ -89,6 +89,7 @@ const PlaylistSongs = () => {
                         songCount={data._count.songs}
                         id={data.id}
                         color={data.color ?? undefined}
+                        isPrivate={data?.private || false}
                     />
                     <View className="w-full flex flex-col gap-y-6 px-6">
                         <View className="w-full flex flex-row items-center justify-between gap-4">

@@ -3,7 +3,12 @@ import { Button } from '@/components/ui/button';
 import { ShuffleIcon } from '@/constants/icons';
 import { useQueue } from '@/hooks/use-queue';
 
-export const ShuffleButton = () => {
+interface Props {
+    height ?: number;
+    width ?: number;
+}
+
+export const ShuffleButton = ({height=32, width=32}: Props) => {
     
     const { shuffle } = useQueue();
     
@@ -13,7 +18,7 @@ export const ShuffleButton = () => {
             variant='ghost'
             onPress={()=>shuffle()}
         >
-            <Image source={ShuffleIcon} style={{ width: 32, height: 32 }} />
+            <Image source={ShuffleIcon} style={{ width: width, height: height }} />
         </Button>
     )
 }
