@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Stack, router } from "expo-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Options } from "@/components/song/options";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { PortalProvider } from "@gorhom/portal";
 import * as SplashScreen from 'expo-splash-screen';
@@ -85,7 +84,6 @@ export default function RootLayout() {
                 <PortalProvider>
                     <BottomSheetModalProvider>
                         <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: "#000" } }} />
-                        <Options />
                     </BottomSheetModalProvider>
                 </PortalProvider>
             </GestureHandlerRootView>

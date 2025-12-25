@@ -107,7 +107,7 @@ const PlaylistSongs = () => {
                                     <Fragment key={i} >
                                         {
                                             group.items.map((playlistSong: PlaylistSongResponse) => (
-                                                <SongItem key={playlistSong.id} data={playlistSong.song} />
+                                                <SongItem key={playlistSong.id} data={playlistSong.song} playlistId={data.id} />
                                             ))
                                         }
                                     </Fragment>

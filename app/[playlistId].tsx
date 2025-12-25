@@ -18,9 +18,9 @@ import { PROTECTED_BASE_URL } from '@/constants/api.config';
 
 const PlaylistSearch = () => {
 
+    const queryClient = useQueryClient();
     const { playlistId } = useLocalSearchParams();
     const [ query, setQuery ] = useState("");
-    const queryClient = useQueryClient();
     const { user } = useAuth();
     const [ selectedSongId, setSelectedSongId ] = useState<string[]>([]);
 
