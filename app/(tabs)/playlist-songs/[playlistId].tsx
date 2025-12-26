@@ -21,6 +21,7 @@ import Feather from '@expo/vector-icons/Feather';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { useInfinite } from '@/hooks/use-infinite';
 import { SongItem } from '@/components/song/item';
+import { UpdatePlaylistModal } from '@/components/modals/update-playlist.modal';
 
 
 const PlaylistSongs = () => {
@@ -28,22 +29,23 @@ const PlaylistSongs = () => {
     const { user } = useAuth();
     const [atEnd, setAtEnd] = useState(false);
     const { playlistId } = useLocalSearchParams();
+    const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
 
     const { data, error, isPending } = useQuery({
-        queryFn : async() => {
+        queryFn: async () => {
             const data = await fetcher({
-                prefix : "PROTECTED_BASE_URL",
-                suffix : `api/v2/playlist/${playlistId}`,
-                token : user?.tokens.accessToken
+                prefix: "PROTECTED_BASE_URL",
+                suffix: `api/v2/playlist/${playlistId}`,
+                token: user?.tokens.accessToken
             });
             return data.data as PlaylistResponse;
         },
-        queryKey : ["playlist", playlistId],
+        queryKey: ["playlist", playlistId],
         meta: { persist: false },
     });
 
 
-        
+
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
         const isEnd = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
@@ -56,11 +58,11 @@ const PlaylistSongs = () => {
         token: user?.tokens.accessToken,
         paramKey: "",
         paramValue: "",
-        persist : false,
+        persist: false,
     });
 
-    useEffect(()=>{
-        if(atEnd && hasNextPage){
+    useEffect(() => {
+        if (atEnd && hasNextPage) {
             fetchNextPage();
         }
     }, [atEnd, hasNextPage]);
@@ -84,12 +86,8 @@ const PlaylistSongs = () => {
                     showsHorizontalScrollIndicator={false}
                 >
                     <Header
-                        name={data.name}
-                        image={data.image ?? undefined}
-                        songCount={data._count.songs}
-                        id={data.id}
-                        color={data.color ?? undefined}
-                        isPrivate={data?.private || false}
+                        data={data}
+                        onEditPress={() => setIsUpdateModalVisible(true)}
                     />
                     <View className="w-full flex flex-col gap-y-6 px-6">
                         <View className="w-full flex flex-row items-center justify-between gap-4">
@@ -101,25 +99,30 @@ const PlaylistSongs = () => {
                                 <Feather name="clock" size={20} color="white" />
                             </View>
                         </View>
-                        <View className="bg-zinc-600 h-0.5 w-full rounded-full"/>
+                        <View className="bg-zinc-600 h-0.5 w-full rounded-full" />
                         {
-                            songData?.pages.map((group, i)=>(
-                                    <Fragment key={i} >
-                                        {
-                                            group.items.map((playlistSong: PlaylistSongResponse) => (
-                                                <SongItem key={playlistSong.id} data={playlistSong.song} playlistId={data.id} />
-                                            ))
-                                        }
-                                    </Fragment>
-                                ))
+                            songData?.pages.map((group, i) => (
+                                <Fragment key={i} >
+                                    {
+                                        group.items.map((playlistSong: PlaylistSongResponse) => (
+                                            <SongItem key={playlistSong.id} data={playlistSong.song} playlistId={data.id} />
+                                        ))
+                                    }
+                                </Fragment>
+                            ))
                         }
                         {
                             isFetchingNextPage && (<View className='w-full h-6'>
                                 <SecondaryLoader />
-                            </View>) 
+                            </View>)
                         }
                     </View>
-                    <View className='h-40'/>
+                    <UpdatePlaylistModal
+                        isModalVisible={isUpdateModalVisible}
+                        onCloseModal={() => setIsUpdateModalVisible(false)}
+                        data={data}
+                    />
+                    <View className='h-40' />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

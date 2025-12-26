@@ -7,44 +7,43 @@ import { Button } from "../ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { PROTECTED_BASE_URL } from "@/constants/api.config";
 import { useAuth } from "@/hooks/use-auth";
-import { PlayList } from "@/types/response.types";
+import { PlaylistResponse } from "@/types/response.types";
 import { PrimaryLoader } from "../ui/loader";
 
 interface Props {
     isModalVisible: boolean;
     onCloseModal: () => void;
-    totalPlaylists?: number;
+    data: PlaylistResponse
 }
 
-export const CreatePlaylistModal = ({ isModalVisible, onCloseModal, totalPlaylists }: Props) => {
+export const UpdatePlaylistModal = ({ isModalVisible, onCloseModal, data }: Props) => {
     
     const { user } = useAuth();
     const queryClient = useQueryClient();
-    const [playlistName, setPlaylistName] = useState(`My Playlist ${totalPlaylists ? totalPlaylists + 1 : ''}`);
+    const [playlistName, setPlaylistName] = useState<string>(data.name);
 
     const { mutateAsync, isPending } = useMutation({
-        mutationFn : async (playlistName: string) => {
-            const response = await axios.post(
-                `${PROTECTED_BASE_URL}/api/v2/playlist`,
+        mutationFn: async () => {
+            const response = await axios.patch(
+                `${PROTECTED_BASE_URL}/api/v2/playlist/${data.id}`,
                 {
                     name: playlistName,
-                    private : true
+                    private: data.private,
+                    description: data.description||undefined
                 },
                 {
                     headers : {
-                        Authorization : `Bearer ${user?.tokens.accessToken}`
+                        Authorization : `Bearer ${user?.tokens.accessToken}`,
+                        'Content-Type' : 'application/json'
                     }
                 }
             );
-            return response.data.data as PlayList;
+            return response;
         },
-        onSuccess : async( data ) => {
+        onSuccess : async( ) => {
             await queryClient.invalidateQueries({ queryKey: ['user-playlists'] });
+            await queryClient.invalidateQueries({ queryKey: ["playlist", data.id]});
             onCloseModal();
-            router.push({
-                pathname : "/(tabs)/playlist-songs/[playlistId]",
-                params : { playlistId : data.id }
-            })
         }
     });
 
@@ -78,9 +77,9 @@ export const CreatePlaylistModal = ({ isModalVisible, onCloseModal, totalPlaylis
                                 variant="secondary"
                                 className="w-full h-16 rounded-full"
                                 disabled={playlistName.trim().length === 0}
-                                onPress={async() => mutateAsync(playlistName.trim())}
+                                onPress={async() => mutateAsync()}
                             >
-                                <Text className="text-white font-semibold text-xl">Create</Text>
+                                <Text className="text-white font-semibold text-xl">Update</Text>
                             </Button>
                         </>
                     )

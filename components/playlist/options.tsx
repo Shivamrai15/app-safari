@@ -1,5 +1,7 @@
-import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
+import axios from 'axios';
 import { Image } from 'expo-image';
+import { router } from 'expo-router';
+import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { useSettings } from '@/hooks/use-settings';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -8,24 +10,24 @@ import { useAuth } from '@/hooks/use-auth';
 import { cn } from '@/lib/utils';
 import { DeleteModal } from '../modals/delete.modal';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
-import { router } from 'expo-router';
+import { PlaylistResponse } from '@/types/response.types';
+import { ActionModal } from '../modals/action.modal';
+
 
 interface Props {
-    playlistId: string;
-    image?: string;
-    name: string;
-    isPrivate: boolean
+    data : PlaylistResponse
+    onEditPress : () => void
 }
 
-export const Options = ({ playlistId, image, name, isPrivate }: Props) => {
+export const Options = ({ data, onEditPress }: Props) => {
 
     const insets = useSafeAreaInsets();
     const queryClient = useQueryClient();
     const { settings } = useSettings();
     const { user } = useAuth();
     const [ openDeleteModal, setOpenDeleteModal ] = useState(false);
+    const [ openActionModal, setOpenActionModal ] = useState(false);
     
     const sheetRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => [], []);
@@ -47,12 +49,12 @@ export const Options = ({ playlistId, image, name, isPrivate }: Props) => {
 
     const handleDeleteMutation = useMutation({
         mutationFn: async () => {
-            const response = await axios.delete(`${PROTECTED_BASE_URL}/api/v2/playlist/${playlistId}`, {
-                    headers : {
-                        Authorization : `Bearer ${user?.tokens.accessToken}`,
-                        'Content-Type' : 'application/json'
-                    }
-                });
+            const response = await axios.delete(`${PROTECTED_BASE_URL}/api/v2/playlist/${data.id}`, {
+                headers : {
+                    Authorization : `Bearer ${user?.tokens.accessToken}`,
+                    'Content-Type' : 'application/json'
+                }
+            });
             return response;
         },
         onSuccess: async() => {
@@ -63,6 +65,33 @@ export const Options = ({ playlistId, image, name, isPrivate }: Props) => {
         },
         onError: (error) => {
             console.log(error);
+        }
+    });
+
+    const handleVisibilityMutation = useMutation({
+        mutationFn: async () => {
+            const response = await axios.patch(
+                `${PROTECTED_BASE_URL}/api/v2/playlist/${data.id}`,
+                {
+                    name: data.name,
+                    private: !data.private,
+                    description: data.description||undefined
+                },
+                {
+                    headers : {
+                        Authorization : `Bearer ${user?.tokens.accessToken}`,
+                        'Content-Type' : 'application/json'
+                    }
+                }
+            );
+            return response;
+        },
+        onSuccess: async() => {
+            await queryClient.invalidateQueries({ queryKey: ["playlist", data.id]});
+            setOpenActionModal(false);
+        },
+        onError: (error) => {
+            console.log(error.message);
         }
     });
 
@@ -94,12 +123,12 @@ export const Options = ({ playlistId, image, name, isPrivate }: Props) => {
                 >
                     <View className='flex flex-row items-center gap-4 p-4 border-b border-zinc-600'>
                         <Image
-                            source={image? { uri: image } : require("@/assets/icons/playlist.png")}
+                            source={data.image? { uri: data.image } : require("@/assets/icons/playlist.png")}
                             style={{ width: 50, height: 50, borderRadius: 8, overflow: "hidden" }}
                             contentFit='cover'
                         />
                         <View className="flex flex-col gap-y-2">
-                            <Text className="text-white text-xl font-bold">{name}</Text>
+                            <Text className="text-white text-xl font-bold">{data.name}</Text>
                             <Text className="text-zinc-300 text-base font-medium">Created by {user?.user.name}</Text>
                         </View>
                     </View>
@@ -120,6 +149,10 @@ export const Options = ({ playlistId, image, name, isPrivate }: Props) => {
                         <TouchableOpacity
                             activeOpacity={0.7}
                             className="flex flex-row items-center gap-4"
+                            onPress={()=>{
+                                handleClose();
+                                onEditPress();
+                            }}
                         >
                             <Image source={require("@/assets/icons/pen-clip.png")} style={{ width: 22, height: 22, marginRight: 4 }} />
                             <Text className="text-white text-lg font-semibold">Edit Playlist</Text>
@@ -142,9 +175,13 @@ export const Options = ({ playlistId, image, name, isPrivate }: Props) => {
                         <TouchableOpacity
                             activeOpacity={0.7}
                             className="flex flex-row items-center gap-4"
+                            onPress={()=>{
+                                handleClose();
+                                setOpenActionModal(true);
+                            }}
                         >
                             <Image source={require("@/assets/icons/lock.png")} style={{ width: 22, height: 22, marginRight: 4 }} />
-                            <Text className="text-white text-lg font-semibold">Make {isPrivate ? "Public" : "Private"}</Text>
+                            <Text className="text-white text-lg font-semibold">Make { data.private ? "Public" : "Private"}</Text>
                         </TouchableOpacity>
                     </View>
                 </BottomSheetView>
@@ -156,6 +193,16 @@ export const Options = ({ playlistId, image, name, isPrivate }: Props) => {
                 message="Are you sure you want to delete this playlist?"
                 onDelete={()=>handleDeleteMutation.mutate()}
                 isPending={handleDeleteMutation.isPending}
+            />
+            <ActionModal
+                visible={openActionModal}
+                onClose={() => setOpenActionModal(false)}
+                title={`Make playlist ${data.private ? "public" : "private"}`}
+                message={data.private ? "This playlist is public — anyone can view it." : "This playlist is private — only you and the people you invite can view it."}
+                onConfirm={()=>handleVisibilityMutation.mutate()}
+                action={`Make ${data.private ? "public" : "private"}`}
+                pendingAction={`Making ${data.private ? "public" : "private"}`}
+                isPending={handleVisibilityMutation.isPending}
             />
         </>
     )

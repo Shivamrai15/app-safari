@@ -8,21 +8,18 @@ import { PlayButton } from './play-button';
 import { Button } from '../ui/button';
 import { DownloadButton } from './download-button';
 import { Options } from './options';
+import { PlaylistResponse } from '@/types/response.types';
 
 
 interface Props {
-    name: string;
-    image?: string;
-    songCount: number;
-    id : string;
-    color?: string;
-    isPrivate: boolean;
+    data : PlaylistResponse
+    onEditPress : () => void
 }
 
-export const Header = ({ name, image, songCount, id, color="#242424", isPrivate }: Props) => {
+export const Header = ({ data, onEditPress }: Props) => {
     return (
         <LinearGradient
-            colors={[`${color}5e`, '#111111']}
+            colors={[`${data.color || "#242424"}5e`, '#111111']}
             locations={[0, 0.6]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0.5, y: 1 }}
@@ -35,7 +32,7 @@ export const Header = ({ name, image, songCount, id, color="#242424", isPrivate 
                     <View className='flex flex-row items-center gap-x-6'>
                         <View className="relative shrink-0 aspect-square h-40 w-40 overflow-hidden rounded-lg">
                             <Image
-                                source={image ? { uri: image } : require("@/assets/images/playlist.png")}
+                                source={data.image ? { uri: data.image } : require("@/assets/images/playlist.png")}
                                 style={{
                                     width: '100%',
                                     height: '100%',
@@ -45,21 +42,21 @@ export const Header = ({ name, image, songCount, id, color="#242424", isPrivate 
                         </View>
                         <View className="flex flex-col gap-y-2 flex-1">
                             <Text className="text-white text-4xl font-extrabold line-clamp-1 py-1 overflow-hidden">
-                                {name}
+                                {data.name}
                             </Text>
                             <Text className="text-white font-semibold">
-                                {songCount} Songs
+                                {data._count.songs} Songs
                             </Text>
                             <View className='flex flex-row items-center gap-3 pt-4'>
                                 <PlayButton
-                                    playlistId={id}
+                                    playlistId={data.id}
                                 />
                                 <Button
                                     className='h-12 rounded-full w-fit px-4'
                                     onPress={() => router.push({
                                         pathname : "/[playlistId]",
                                         params : {
-                                            playlistId : id as string
+                                            playlistId : data.id as string
                                         }
                                     })}
                                     variant='secondary'
@@ -83,17 +80,16 @@ export const Header = ({ name, image, songCount, id, color="#242424", isPrivate 
                                 width={26}
                             />
                             <DownloadButton
-                                playlistId={id}
+                                playlistId={data.id}
                             />
                             <Options
-                                playlistId={id}
-                                image={image}
-                                name={name}
-                                isPrivate={isPrivate}
+                                data={data}
+                                onEditPress={onEditPress}
                             />
                             <Button
                                 className='h-10 rounded-full w-fit px-4'
                                 variant='secondary'
+                                onPress={onEditPress}
                             >
                                 <Image
                                     source={require('@/assets/icons/pen-clip.png')}
