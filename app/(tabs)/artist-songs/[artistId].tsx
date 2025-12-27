@@ -18,6 +18,7 @@ import { ArtistProfileResponse } from "@/types/response.types";
 import { Songs } from "@/components/artist/songs";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useQuery } from "@tanstack/react-query";
+import { Spacer } from "@/components/ui/spacer";
 
 
 const ArtistSongs = () => {
@@ -87,7 +88,7 @@ const ArtistSongs = () => {
                         </View>
                     </View>
                     <Songs isAtEnd={atEnd} artistId={data.id} />
-                    <View className="h-40" />
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

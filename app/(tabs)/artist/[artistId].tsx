@@ -16,6 +16,7 @@ import { AlbumCarousel } from "@/components/carousel/album";
 import { SongItem } from "@/components/song/item";
 import { ShuffleButton } from "@/components/song/shuffle-button";
 import { useQueries } from "@tanstack/react-query";
+import { Spacer } from "@/components/ui/spacer";
 
 
 const ArtistPage = () => {
@@ -113,7 +114,7 @@ const ArtistPage = () => {
                         image={artist.data.image}
                         description={artist.data.about}
                     />
-                    <View className="h-20" />
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

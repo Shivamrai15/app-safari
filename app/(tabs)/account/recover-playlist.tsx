@@ -3,6 +3,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { fetcher } from '@/lib/fetcher';
 import { useAuth } from '@/hooks/use-auth';
+import { Spacer } from '@/components/ui/spacer';
 
 const Page = () => {
 
@@ -33,6 +34,7 @@ const Page = () => {
                 </View>
                 <View className='mt-6 px-4'>
                 </View>
+                <Spacer />
             </ScrollView>
         </SafeAreaView>
     )

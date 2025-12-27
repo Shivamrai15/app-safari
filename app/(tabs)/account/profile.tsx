@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { NetworkProvider } from '@/providers/network.provider';
 import { SubscriptionCard } from '@/components/account/subscription-card';
 import { useSettings, useSettingsUpdater } from '@/hooks/use-settings';
+import { Spacer } from '@/components/ui/spacer';
 
 
 const Profile = () => {
@@ -73,6 +74,7 @@ const Profile = () => {
                             </View>
                         </View>
                     </View>
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

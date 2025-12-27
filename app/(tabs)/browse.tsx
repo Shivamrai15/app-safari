@@ -6,6 +6,7 @@ import { Moods } from '@/components/browse/moods';
 import { useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Spacer } from '@/components/ui/spacer';
 
 type tab = "genre" | "mood";
 
@@ -74,7 +75,7 @@ const Browse = () => {
                             )
                         }
                     </View>
-                    <View className='h-24' />
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

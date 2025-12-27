@@ -19,6 +19,7 @@ import { AlbumTab } from '@/components/search/album-tab';
 import { ArtistTab } from '@/components/search/artist-tab';
 import { SongTab } from '@/components/search/song-tab';
 import { NetworkProvider } from '@/providers/network.provider';
+import { Spacer } from '@/components/ui/spacer';
 
 
 
@@ -108,7 +109,7 @@ const Search = () => {
                         {
                             currentTab === "SONG" && query && <SongTab currentTab={currentTab} query={query} />
                         }
-                        <View className='h-28'/>
+                        <Spacer />
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>

@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { ListenAgainCarousel } from "@/components/carousel/listen-again";
 import { ArtistCarousel } from "@/components/carousel/artist";
 import { NetworkProvider } from "@/providers/network.provider";
+import { Spacer } from "@/components/ui/spacer";
 
 const Home = () => {
     const { user, setUser } = useAuth();
@@ -167,7 +168,7 @@ const Home = () => {
                         data={favoriteArtists.data}
                         slug="Your favorite artists"
                     />
-                    <View className="h-40" />
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

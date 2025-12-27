@@ -20,6 +20,7 @@ import Feather from "@expo/vector-icons/Feather";
 import { SongItem } from "@/components/song/item";
 import { PUBLIC_BASE_URL } from "@/constants/api.config";
 import { NetworkProvider } from "@/providers/network.provider";
+import { Spacer } from "@/components/ui/spacer";
 
 const GenreSongs = () => {
     const { user } = useAuth();
@@ -115,7 +116,7 @@ const GenreSongs = () => {
                             }
                         </View>
                     </View>
-                    <View className="h-40" />
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useDownloads } from '@/hooks/use-downloads';
 import { useSettings } from '@/hooks/use-settings';
 import { OfflineItem } from '@/components/song/offline-item';
+import { Spacer } from '@/components/ui/spacer';
 
 interface CollectionCardProps {
     id: string;
@@ -179,6 +180,7 @@ const Download = () => {
                         </View>
                     </View>
                 )}
+                <Spacer />
             </ScrollView>
         </SafeAreaView>
     )

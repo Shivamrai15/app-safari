@@ -12,6 +12,7 @@ import { fetcher } from "@/lib/fetcher";
 import { Error } from "@/components/ui/error";
 import { useAuth } from "@/hooks/use-auth";
 import { NetworkProvider } from "@/providers/network.provider";
+import { Spacer } from "@/components/ui/spacer";
 
 
 const AlbumPage = () => {
@@ -62,7 +63,7 @@ const AlbumPage = () => {
                                 <AlbumLabel label={data.label} releaseDate={data.release} />
                             )
                         }
-                        <View className="h-20" />
+                        <Spacer />
                     </LinearGradient>
                 </ScrollView>
             </SafeAreaView>

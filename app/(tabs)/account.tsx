@@ -7,6 +7,7 @@ import { DownloadIcon, PlaylistRecoverIcon, ReceiptIcon, UserIcon } from '@/cons
 import { NetworkProvider } from '@/providers/network.provider';
 import { DeleteHistoryButton } from '@/components/account/delete-history-button';
 import { useSettings } from '@/hooks/use-settings';
+import { Spacer } from '@/components/ui/spacer';
 
 const MenuItem = ({
     item,
@@ -152,6 +153,7 @@ const Account = () => {
                         </View>
 
                     </View>
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

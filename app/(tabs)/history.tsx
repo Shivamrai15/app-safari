@@ -11,6 +11,7 @@ import { SongItem } from '@/components/song/item';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { useAuth } from '@/hooks/use-auth';
 import { NetworkProvider } from '@/providers/network.provider';
+import { Spacer } from '@/components/ui/spacer';
 
 
 
@@ -98,7 +99,7 @@ const History = () => {
                             <SecondaryLoader />
                         </View>)
                     }
-                    <View className='h-40' />
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

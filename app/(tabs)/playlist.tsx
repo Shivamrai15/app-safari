@@ -12,6 +12,7 @@ import { NetworkProvider } from '@/providers/network.provider';
 import { Artist, PlayList } from '@/types/response.types';
 import { Card } from '@/components/artist/card';
 import { CreatePlaylistModal } from '@/components/modals/create-playlist.modal';
+import { Spacer } from '@/components/ui/spacer';
 
 
 const Playlist = () => {
@@ -147,7 +148,7 @@ const Playlist = () => {
                             }
                         </View>
                     </View>
-                    <View className="h-40" />
+                    <Spacer />
                 </ScrollView>
                 <CreatePlaylistModal
                     isModalVisible={isModalVisible}

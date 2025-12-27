@@ -1,5 +1,6 @@
 import { Error } from '@/components/ui/error';
 import { PrimaryLoader, SecondaryLoader } from '@/components/ui/loader';
+import { Spacer } from '@/components/ui/spacer';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { ReceiptIcon } from '@/constants/icons';
 import { useAuth } from '@/hooks/use-auth';
@@ -229,7 +230,7 @@ const TransactionHistory = () => {
                         </View>
                     )}
 
-                    <View className='h-24' />
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>
