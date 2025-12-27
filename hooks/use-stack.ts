@@ -33,21 +33,16 @@ const createStackStore = (): StateCreator<StackProps> => (set, get) => ({
 
     isPlaying: (targetId: string) => {
         const { activeId, songs } = get();
-        const { current, queue, stack } = useQueue.getState();
+        const { current } = useQueue.getState();
 
         if (activeId !== targetId) {
             return false;
         }
 
         if (songs.length === 0 || !current) {
-            set({ activeId: "" });
             return false;
         }
-        const allSongsInQueueOrStack = songs.every((song) =>
-            stack.some(s => s.id === song.id) || queue.some(q => q.id === song.id)
-        );
-        const currentSongInData = songs.some(s => s.id === current.id);
-        return allSongsInQueueOrStack && currentSongInData;
+        return songs.some(s => s.id === current.id);
     }
 });
 

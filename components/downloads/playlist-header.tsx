@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { DownloadedPlaylist } from '@/hooks/use-downloads';
 import { ShuffleButton } from '../song/shuffle-button';
 import { DeleteButton } from './delete-button';
+import { PlaylistPlayButton } from './playlist-play-button';
 
 
 interface Props {
@@ -42,7 +43,10 @@ export const Header = ({ data }: Props) => {
                                 {data.songs.length} Songs
                             </Text>
                             <View className='flex flex-row items-center gap-3 pt-4'>
-                                
+                                <PlaylistPlayButton
+                                    id={data.id}
+                                    songs={data.songs}
+                                />
                             </View>
                         </View>
                     </View>

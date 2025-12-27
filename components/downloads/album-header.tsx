@@ -65,6 +65,7 @@ export const AlbumHeader = ({ data }: Props) => {
                                         }
                                     }))}
                                     className="h-9 w-9"
+                                    id={data.id}
                                 />
                                 <ShuffleButton
                                     height={28}
