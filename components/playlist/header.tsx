@@ -12,8 +12,8 @@ import { PlaylistResponse } from '@/types/response.types';
 
 
 interface Props {
-    data : PlaylistResponse
-    onEditPress : () => void
+    data: PlaylistResponse
+    onEditPress: () => void
 }
 
 export const Header = ({ data, onEditPress }: Props) => {
@@ -36,7 +36,7 @@ export const Header = ({ data, onEditPress }: Props) => {
                                 style={{
                                     width: '100%',
                                     height: '100%',
-                                    objectFit : "cover"
+                                    objectFit: "cover"
                                 }}
                             />
                         </View>
@@ -54,9 +54,9 @@ export const Header = ({ data, onEditPress }: Props) => {
                                 <Button
                                     className='h-12 rounded-full w-fit px-4'
                                     onPress={() => router.push({
-                                        pathname : "/[playlistId]",
-                                        params : {
-                                            playlistId : data.id as string
+                                        pathname: "/[playlistId]",
+                                        params: {
+                                            playlistId: data.id as string
                                         }
                                     })}
                                     variant='secondary'
@@ -80,7 +80,7 @@ export const Header = ({ data, onEditPress }: Props) => {
                                 width={26}
                             />
                             <DownloadButton
-                                playlistId={data.id}
+                                data={data}
                             />
                             <Options
                                 data={data}

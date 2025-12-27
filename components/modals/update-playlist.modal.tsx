@@ -69,7 +69,7 @@ export const UpdatePlaylistModal = ({ isModalVisible, onCloseModal, data }: Prop
                                 className="mt-4 w-full border-b-2 border-zinc-700"
                                 placeholder="Enter playlist name"
                                 placeholderTextColor="#ffffff"
-                                style={{ color: 'white', fontSize: 24 }}
+                                style={{ color: 'white', fontSize: 20 }}
                                 value={playlistName}
                                 onChange={(e) => setPlaylistName(e.nativeEvent.text)}
                             />

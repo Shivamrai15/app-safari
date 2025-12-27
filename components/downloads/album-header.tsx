@@ -2,17 +2,19 @@ import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import Entypo from '@expo/vector-icons/Entypo';
-import { AlbumResponse } from "@/types/response.types";
 import { albumDuration } from "@/lib/utils";
-import { PlayButton } from "./play-button";
-import { ShuffleButton } from "../song/shuffle-button";
-import { DownloadButton } from "./download-button";
+import { DownloadedAlbum } from "@/hooks/use-downloads";
+import { ShuffleButton } from "@/components/song/shuffle-button";
+import { DownloadButton } from "@/components/album/download-button";
+import { AlbumPlayButton } from "@/components/downloads/album-play-button";
+import { DeleteButton } from "../downloads/delete-button";
+
 
 interface Props {
-    data: AlbumResponse;
+    data: DownloadedAlbum;
 }
 
-export const Header = ({ data }: Props) => {
+export const AlbumHeader = ({ data }: Props) => {
     return (
         <LinearGradient
             colors={[data.color, '#111111']}
@@ -35,7 +37,7 @@ export const Header = ({ data }: Props) => {
                             }}
                         />
                     </View>
-                    <View className="flex flex-col gap-y-2 mt-4 text-center">
+                    <View className="flex flex-col gap-y-2 mt-4 text-center w-full">
                         <Text className="text-white text-center text-4xl font-extrabold line-clamp-1 py-1 overflow-hidden">
                             {data.name}
                         </Text>
@@ -45,17 +47,31 @@ export const Header = ({ data }: Props) => {
                             </Text>
                             <Entypo name="dot-single" size={24} color="white" />
                             <Text className="text-white font-semibold">
-                                {new Date(data.release).getFullYear()}
-                            </Text>
-                            <Entypo name="dot-single" size={24} color="white" />
-                            <Text className="text-white font-semibold">
                                 {albumDuration(data.songs.reduce((acc, song) => acc + song.duration, 0))}
                             </Text>
                         </View>
-                        <View className="flex flex-row justify-center items-center gap-6 pt-2">
-                            <PlayButton songs={data.songs} id={data.id} />
-                            <ShuffleButton height={28} width={28} />
-                            <DownloadButton data={data}  />
+                        <View className="w-full flex flex-row items-center justify-center pt-2">
+                            <View className="flex flex-row justify-center items-center gap-4 px-4 py-1 rounded-full bg-neutral-900">
+                                <AlbumPlayButton
+                                    songs={data.songs.map((song) => ({
+                                        ...song, album: {
+                                            id: data.id,
+                                            name: data.name,
+                                            image: data.image,
+                                            color: data.color,
+                                            songs: data.songs,
+                                            release: "",
+                                            labelId: ""
+                                        }
+                                    }))}
+                                    className="h-9 w-9"
+                                />
+                                <ShuffleButton
+                                    height={28}
+                                    width={28}
+                                />
+                                <DeleteButton id={data.id} type="album" size={28} />
+                            </View>
                         </View>
                     </View>
                 </View>
@@ -63,4 +79,3 @@ export const Header = ({ data }: Props) => {
         </LinearGradient>
     )
 }
-

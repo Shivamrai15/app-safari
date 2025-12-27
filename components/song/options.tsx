@@ -19,14 +19,15 @@ interface Props {
     playlistId?: string,
     open: boolean,
     onClose: () => void
+    isDownloaded?: boolean
 }
 
-export const Options = ({ data, playlistId, open, onClose }: Props) => {
+export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }: Props) => {
 
     const insets = useSafeAreaInsets();
     const sheetRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => [], []);
-    const { enQueue, priorityEnqueue } = useQueue();
+    const { enQueue, priorityEnqueue, playNext } = useQueue();
     const { settings } = useSettings();
     const { getSongById } = useDownloads();
 
@@ -183,7 +184,7 @@ export const Options = ({ data, playlistId, open, onClose }: Props) => {
                             className='justify-start gap-x-6'
                             onPress={() => {
                                 if (data) {
-                                    priorityEnqueue([data]);
+                                    playNext(data);
                                 }
                                 handleDismiss();
                             }}
@@ -222,82 +223,100 @@ export const Options = ({ data, playlistId, open, onClose }: Props) => {
                             }
                         </Button>
                         {
-                            playlistId && (
+                            playlistId && (!isDownloaded) &&(
                                 <DeleteSongButton
                                     playlistId={playlistId}
                                     songId={data?.id}
                                 />
                             )
                         }
-                        <Button
-                            variant='ghost'
-                            className='justify-start gap-x-6'
-                            onPress={() => { }}
-                        >
-                            <Image
-                                source={PlusIcon}
-                                style={{ width: 24, height: 24 }}
-                            />
-                            <Text className='text-zinc-100 text-lg'>Add to playlist</Text>
-                        </Button>
-                        <Button
-                            variant='ghost'
-                            className='justify-start gap-x-6'
-                            onPress={() => { }}
-                        >
-                            <Image
-                                source={HotsPot}
-                                style={{ width: 24, height: 24 }}
-                            />
-                            <Text className='text-zinc-100 text-lg'>Go to song radio</Text>
-                        </Button>
-                        <Button
-                            variant='ghost'
-                            className='justify-start gap-x-6'
-                            onPress={() => {
-                                handleDismiss();
-                                router.push({
-                                    pathname: "/(tabs)/album/[albumId]",
-                                    params: {
-                                        albumId: data?.album.id || ""
-                                    }
-                                });
-                            }}
-                        >
-                            <Image
-                                source={DiscIcon}
-                                style={{ width: 24, height: 24 }}
-                            />
-                            <Text className='text-zinc-100 text-lg'>Go to album</Text>
-                        </Button>
-                    </View>
-                    <View className='h-[1px] bg-zinc-600 w-full mt-4' />
-                    <View className='flex flex-col mt-4 pb-12'>
                         {
-                            data?.artists.map((artist) => (
+                            (!isDownloaded) && (
                                 <Button
-                                    key={artist.id}
+                                    variant='ghost'
+                                    className='justify-start gap-x-6'
+                                    onPress={() => {}}
+                                >
+                                    <Image
+                                        source={PlusIcon}
+                                        style={{ width: 24, height: 24 }}
+                                    />
+                                    <Text className='text-zinc-100 text-lg'>Add to playlist</Text>
+                                </Button>
+                            )
+                        }
+                        {
+                            (!isDownloaded) && (
+                                <Button
+                                    variant='ghost'
+                                    className='justify-start gap-x-6'
+                                    onPress={() => { }}
+                                >
+                                    <Image
+                                        source={HotsPot}
+                                        style={{ width: 24, height: 24 }}
+                                    />
+                                    <Text className='text-zinc-100 text-lg'>Go to song radio</Text>
+                                </Button>
+                            )
+                        }
+                        {
+                            (!isDownloaded) && (
+                                <Button
                                     variant='ghost'
                                     className='justify-start gap-x-6'
                                     onPress={() => {
                                         handleDismiss();
                                         router.push({
-                                            pathname: "/(tabs)/artist/[artistId]",
+                                            pathname: "/(tabs)/album/[albumId]",
                                             params: {
-                                                artistId: artist.id
+                                                albumId: data?.album.id || ""
                                             }
                                         });
                                     }}
                                 >
                                     <Image
-                                        source={MicIcon}
+                                        source={DiscIcon}
                                         style={{ width: 24, height: 24 }}
                                     />
-                                    <Text className='text-zinc-100 text-lg'>{artist.name}</Text>
+                                    <Text className='text-zinc-100 text-lg'>Go to album</Text>
                                 </Button>
-                            ))
+                            )
                         }
                     </View>
+                    {
+                        (!isDownloaded) && (
+                            <>
+                                <View className='h-[1px] bg-zinc-600 w-full mt-4' />
+                                    <View className='flex flex-col mt-4 pb-12'>
+                                        {
+                                            data?.artists.map((artist) => (
+                                                <Button
+                                                    key={artist.id}
+                                                    variant='ghost'
+                                                    className='justify-start gap-x-6'
+                                                    onPress={() => {
+                                                        handleDismiss();
+                                                        router.push({
+                                                            pathname: "/(tabs)/artist/[artistId]",
+                                                            params: {
+                                                                artistId: artist.id
+                                                            }
+                                                        });
+                                                    }}
+                                                >
+                                                    <Image
+                                                        source={MicIcon}
+                                                        style={{ width: 24, height: 24 }}
+                                                    />
+                                                    <Text className='text-zinc-100 text-lg'>{artist.name}</Text>
+                                                </Button>
+                                            ))
+                                        }
+                                    </View>
+                            </>
+                        )
+                    }
                 </BottomSheetScrollView>
             </BottomSheetView>
         </BottomSheetModal>

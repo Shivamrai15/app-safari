@@ -274,6 +274,20 @@ const Layout = () => {
 						href : null
 					}}
 				/>
+				<Tabs.Screen
+					name="downloads/album/[albumId]" 
+					options={{
+						tabBarIcon : ()=>null,
+						href : null
+					}}
+				/>
+				<Tabs.Screen
+					name="downloads/playlist/[playlistId]" 
+					options={{
+						tabBarIcon : ()=>null,
+						href : null
+					}}
+				/>
 			</Tabs>
 		</>
 	)
