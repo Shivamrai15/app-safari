@@ -160,8 +160,7 @@ export class DownloadManager {
                     updatePlaylistProgress(playlist.id, progress);
                     continue;
                 }
-
-                // Download song and store in playlist
+                
                 await this.downloadSongForPlaylist(
                     playlist.id,
                     song,

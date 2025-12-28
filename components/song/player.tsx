@@ -16,6 +16,8 @@ import usePlayerSettings from '@/hooks/use-player-settings';
 import { usePlayer } from '@/hooks/use-player';
 import { useAuth } from '@/hooks/use-auth';
 import { usePlayerService } from '@/services/player.service';
+import { ADS } from '@/constants/ads';
+import { Ad } from '@/types/auth.types';
 
 
 interface Props {
@@ -36,8 +38,12 @@ export const Player = ({ bottom, isOffline }: Props) => {
 		onSongStart,
 		checkAndTrackAfterDelay,
 		checkShouldShowAd,
-		shouldShowAd
+		setAdShown
 	} = usePlayerService();
+
+	const [isPlayingAd, setIsPlayingAd] = useState(false);
+	const [currentAd, setCurrentAd] = useState<Ad | null>(null);
+	const pendingSongUrl = useRef<string | null>(null);
 
 	const player = useAudioPlayer(current?.url || '');
 	const status = useAudioPlayerStatus(player);
@@ -68,30 +74,41 @@ export const Player = ({ bottom, isOffline }: Props) => {
 
 	useEffect(() => {
 		if (current?.url && current.url !== currentSongUrl.current) {
-			player.replace(current.url);
-			setSongId(current.id);
-			hasAutoPlayed.current = false;
-			currentSongUrl.current = current.url;
-			setIsPlaying(true);
+			const needsAd = !isOffline && checkShouldShowAd(isSubscribed);
 
-			onSongStart(current.id);
+			if (needsAd && ADS.length > 0) {
+				const randomAd = ADS[Math.floor(Math.random() * ADS.length)];
+				setCurrentAd(randomAd);
+				setIsPlayingAd(true);
+				pendingSongUrl.current = current.url;
 
-			if (trackingTimeoutRef.current) {
-				clearTimeout(trackingTimeoutRef.current);
-			}
+				player.replace(randomAd.url);
+				hasAutoPlayed.current = false;
+				currentSongUrl.current = randomAd.url;
+				setIsPlaying(true);
+			} else {
 
-			if (!isOffline) {
-				checkShouldShowAd(isSubscribed);
-			}
+				player.replace(current.url);
+				setSongId(current.id);
+				hasAutoPlayed.current = false;
+				currentSongUrl.current = current.url;
+				setIsPlaying(true);
 
-			if (!isOffline && user?.tokens?.accessToken) {
-				trackingTimeoutRef.current = setTimeout(() => {
-					checkAndTrackAfterDelay(
-						current.id,
-						user.tokens.accessToken,
-						settings?.privateSession
-					);
-				}, 5000);
+				onSongStart(current.id);
+
+				if (trackingTimeoutRef.current) {
+					clearTimeout(trackingTimeoutRef.current);
+				}
+
+				if (!isOffline && user?.tokens?.accessToken) {
+					trackingTimeoutRef.current = setTimeout(() => {
+						checkAndTrackAfterDelay(
+							current.id,
+							user.tokens.accessToken,
+							settings?.privateSession
+						);
+					}, 5000);
+				}
 			}
 		}
 	}, [current?.url]);
@@ -105,11 +122,17 @@ export const Player = ({ bottom, isOffline }: Props) => {
 	}, []);
 
 	useEffect(() => {
-		if (status.isLoaded && !hasAutoPlayed.current && current?.url === currentSongUrl.current) {
-			player.play();
-			hasAutoPlayed.current = true;
+		if (status.isLoaded && !hasAutoPlayed.current) {
+			const shouldAutoPlay = isPlayingAd
+				? currentAd?.url === currentSongUrl.current
+				: current?.url === currentSongUrl.current;
+
+			if (shouldAutoPlay) {
+				player.play();
+				hasAutoPlayed.current = true;
+			}
 		}
-	}, [status.isLoaded, status.playing]);
+	}, [status.isLoaded, status.playing, isPlayingAd]);
 
 	useEffect(() => {
 		player.loop = isLooped;
@@ -126,13 +149,44 @@ export const Player = ({ bottom, isOffline }: Props) => {
 	};
 
 	useEffect(() => {
-		if (player.currentStatus.didJustFinish && !isLooped) {
-			deQueue();
-			if (queue.length > 0) {
-				hasAutoPlayed.current = false;
+		if (player.currentStatus.didJustFinish) {
+			if (isPlayingAd) {
+				setAdShown();
+				setIsPlayingAd(false);
+				setCurrentAd(null);
+
+				if (pendingSongUrl.current && current) {
+					player.replace(pendingSongUrl.current);
+					setSongId(current.id);
+					hasAutoPlayed.current = false;
+					currentSongUrl.current = pendingSongUrl.current;
+					pendingSongUrl.current = null;
+					setIsPlaying(true);
+
+					onSongStart(current.id);
+
+					if (trackingTimeoutRef.current) {
+						clearTimeout(trackingTimeoutRef.current);
+					}
+
+					if (!isOffline && user?.tokens?.accessToken) {
+						trackingTimeoutRef.current = setTimeout(() => {
+							checkAndTrackAfterDelay(
+								current.id,
+								user.tokens.accessToken,
+								settings?.privateSession
+							);
+						}, 5000);
+					}
+				}
+			} else if (!isLooped) {
+				deQueue();
+				if (queue.length > 0) {
+					hasAutoPlayed.current = false;
+				}
 			}
 		}
-	}, [player.currentStatus.didJustFinish, isLooped, queue.length]);
+	}, [player.currentStatus.didJustFinish, isLooped, queue.length, isPlayingAd]);
 
 
 	if (!current) return null;
@@ -153,7 +207,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 				<Pressable
 					className='h-16 w-full rounded-xl relative flex flex-col overflow-hidden'
 					style={{
-						backgroundColor: current.album.color,
+						backgroundColor: isPlayingAd && currentAd ? currentAd.color : current.album.color,
 					}}
 					onPress={() => setIsOpen(true)}
 				>
@@ -166,7 +220,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 						<View className='flex-1 flex flex-row items-center gap-x-4'>
 							<View className='h-full aspect-square my-2 rounded-lg overflow-hidden'>
 								<Image
-									source={{ uri: current.album.image }}
+									source={{ uri: isPlayingAd && currentAd ? currentAd.image : current.album.image }}
 									style={{
 										height: "100%",
 										width: "100%",
@@ -176,10 +230,10 @@ export const Player = ({ bottom, isOffline }: Props) => {
 							</View>
 							<View className='flex-1 flex flex-col'>
 								<Text className='text-white font-semibold' numberOfLines={1} ellipsizeMode='tail'>
-									{current.name}
+									{isPlayingAd && currentAd ? currentAd.name : current.name}
 								</Text>
 								<Text className='text-neutral-300 text-sm' numberOfLines={1} ellipsizeMode='tail'>
-									{current.album.name}
+									{isPlayingAd ? 'Advertisement' : current.album.name}
 								</Text>
 							</View>
 						</View>
@@ -202,6 +256,8 @@ export const Player = ({ bottom, isOffline }: Props) => {
 				handlePlayPause={togglePlayback}
 				onSeek={(number) => player.seekTo(number)}
 				isOffline={isOffline}
+				isAdvertisement={isPlayingAd}
+				advertisement={currentAd ?? undefined}
 			/>
 		</>
 	)

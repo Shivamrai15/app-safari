@@ -1,11 +1,20 @@
 import { create } from "zustand";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { PROTECTED_BASE_URL } from "@/constants/api.config";
+
+const AD_STORAGE_KEY = "@player_service_ad_data";
+
+interface AdStorageData {
+    lastAdTime: number;
+    totalPlayTime: number;
+}
 
 interface PlayerServiceState {
     lastAdTime: number;
     adIntervalMs: number;
     shouldShowAd: boolean;
+    isHydrated: boolean;
 
     currentSongStartTime: number;
     hasTrackedView: boolean;
@@ -29,6 +38,10 @@ interface PlayerServiceActions {
     trackPlayDuration: (songId: string, duration: number, token?: string) => Promise<void>;
     updateTotalPlayTime: (timeMs: number) => void;
 
+    hydrateFromStorage: () => Promise<void>;
+    persistToStorage: () => Promise<void>;
+    clearStorage: () => Promise<void>;
+
     reset: () => void;
 }
 
@@ -39,16 +52,57 @@ const VIEW_TRACK_DELAY_MS = 5 * 1000;
 const TRACKING_INTERVAL_MS = 60 * 1000;
 
 export const usePlayerService = create<PlayerServiceProps>((set, get) => ({
-    
-    lastAdTime: Date.now(),
+
+    lastAdTime: 0,
     adIntervalMs: AD_INTERVAL_MS,
     shouldShowAd: false,
+    isHydrated: false,
     currentSongStartTime: 0,
     hasTrackedView: false,
     hasTrackedHistory: false,
     totalPlayTime: 0,
     trackingIntervalMs: TRACKING_INTERVAL_MS,
     lastTrackingTime: 0,
+
+    hydrateFromStorage: async () => {
+        try {
+            const storedData = await AsyncStorage.getItem(AD_STORAGE_KEY);
+            if (storedData) {
+                const parsed: AdStorageData = JSON.parse(storedData);
+                set({
+                    lastAdTime: parsed.lastAdTime,
+                    totalPlayTime: parsed.totalPlayTime,
+                    isHydrated: true
+                });
+            } else {
+                set({ isHydrated: true });
+            }
+        } catch (error) {
+            console.error("Failed to hydrate ad data from storage:", error);
+            set({ isHydrated: true });
+        }
+    },
+
+    persistToStorage: async () => {
+        try {
+            const { lastAdTime, totalPlayTime } = get();
+            const dataToStore: AdStorageData = {
+                lastAdTime,
+                totalPlayTime
+            };
+            await AsyncStorage.setItem(AD_STORAGE_KEY, JSON.stringify(dataToStore));
+        } catch (error) {
+            console.error("Failed to persist ad data to storage:", error);
+        }
+    },
+
+    clearStorage: async () => {
+        try {
+            await AsyncStorage.removeItem(AD_STORAGE_KEY);
+        } catch (error) {
+            console.error("Failed to clear ad data from storage:", error);
+        }
+    },
 
     checkShouldShowAd: (isSubscribed: boolean) => {
         if (isSubscribed) {
@@ -62,17 +116,21 @@ export const usePlayerService = create<PlayerServiceProps>((set, get) => ({
     },
 
     resetAdTimer: () => {
+        const newTime = Date.now();
         set({
-            lastAdTime: Date.now(),
+            lastAdTime: newTime,
             shouldShowAd: false
         });
+        get().persistToStorage();
     },
 
     setAdShown: () => {
+        const newTime = Date.now();
         set({
-            lastAdTime: Date.now(),
+            lastAdTime: newTime,
             shouldShowAd: false
         });
+        get().persistToStorage();
     },
 
     onSongStart: () => {
@@ -160,6 +218,10 @@ export const usePlayerService = create<PlayerServiceProps>((set, get) => ({
         set((state) => ({
             totalPlayTime: state.totalPlayTime + timeMs
         }));
+        const { totalPlayTime } = get();
+        if (totalPlayTime % (5 * 60 * 1000) < timeMs) {
+            get().persistToStorage();
+        }
     },
 
     reset: () => {
@@ -170,6 +232,7 @@ export const usePlayerService = create<PlayerServiceProps>((set, get) => ({
             totalPlayTime: 0,
             lastTrackingTime: 0
         });
+        get().persistToStorage();
     }
 }));
 
@@ -184,7 +247,11 @@ export const usePlayerTracking = () => {
         updateTotalPlayTime,
         shouldShowAd,
         totalPlayTime,
-        reset
+        reset,
+        hydrateFromStorage,
+        persistToStorage,
+        clearStorage,
+        isHydrated
     } = usePlayerService();
 
     return {
@@ -198,6 +265,11 @@ export const usePlayerTracking = () => {
         trackPlayDuration,
         updateTotalPlayTime,
         totalPlayTime,
+
+        hydrateFromStorage,
+        persistToStorage,
+        clearStorage,
+        isHydrated,
 
         reset
     };
