@@ -7,8 +7,7 @@ import { useAuth } from '@/hooks/use-auth';
 import { useInfinite } from '@/hooks/use-infinite';
 import { NetworkProvider } from '@/providers/network.provider';
 import { Image } from 'expo-image';
-import { router } from 'expo-router';
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, NativeSyntheticEvent, NativeScrollEvent, TouchableOpacity } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -209,7 +208,7 @@ const TransactionHistory = () => {
         <NetworkProvider>
             <SafeAreaView className='flex-1 bg-background'>
                 <View className="flex-row items-center px-4 py-6">
-                    <Text className="text-white text-3xl font-bold tracking-tight">Transaction History</Text>
+                    <Text className="text-white text-2xl font-bold tracking-tight">Transaction History</Text>
                 </View>
 
                 <ScrollView
