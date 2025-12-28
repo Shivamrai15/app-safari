@@ -104,7 +104,6 @@ const Download = () => {
                 className='flex-1 p-6'
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 100 }}
             >
                 <View className='flex flex-row justify-between items-center mb-8'>
                     <Text className='text-2xl font-bold text-white'>Downloads</Text>

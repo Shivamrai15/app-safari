@@ -1,6 +1,7 @@
 import { Image } from 'expo-image';
 import { Href, router } from 'expo-router';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { DownloadIcon, PlaylistRecoverIcon, ReceiptIcon, UserIcon } from '@/constants/icons';
@@ -8,6 +9,7 @@ import { NetworkProvider } from '@/providers/network.provider';
 import { DeleteHistoryButton } from '@/components/account/delete-history-button';
 import { useSettings } from '@/hooks/use-settings';
 import { Spacer } from '@/components/ui/spacer';
+import { useAuth } from '@/hooks/use-auth';
 
 const MenuItem = ({
     item,
@@ -51,7 +53,10 @@ const MenuItem = ({
 
 const Account = () => {
 
-    const { settings } = useSettings();
+
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const { user } = useAuth();
+    const { settings, fetchSettings } = useSettings();
 
     const profileRoute = {
         name: "Your profile",
@@ -61,6 +66,12 @@ const Account = () => {
         height: 18,
         width: 18
     };
+
+    const onRefresh = useCallback(async () => {
+        setIsRefreshing(true);
+        await fetchSettings(user?.tokens.accessToken);
+        setIsRefreshing(false);
+    }, [fetchSettings]);
 
     const generalRoutes = [
         {
@@ -96,8 +107,15 @@ const Account = () => {
                     className='flex-1'
                     contentContainerStyle={{ paddingBottom: 40 }}
                     showsVerticalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={onRefresh}
+                            tintColor="#ef4444"
+                            colors={["#ef4444"]}
+                        />
+                    }
                 >
-
                     <View className="px-6 pt-6 pb-4">
                         <Text className="text-white text-3xl font-bold tracking-tight">Settings</Text>
                     </View>
@@ -151,7 +169,6 @@ const Account = () => {
                         <View className="items-center py-4">
                             <Text className="text-zinc-600 text-xs">Version 1.0.0</Text>
                         </View>
-
                     </View>
                     <Spacer />
                 </ScrollView>

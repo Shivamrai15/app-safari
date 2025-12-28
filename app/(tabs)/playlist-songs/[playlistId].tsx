@@ -4,8 +4,9 @@ import {
     ScrollView,
     NativeScrollEvent,
     NativeSyntheticEvent,
+    RefreshControl,
 } from 'react-native';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -31,8 +32,9 @@ const PlaylistSongs = () => {
     const [atEnd, setAtEnd] = useState(false);
     const { playlistId } = useLocalSearchParams();
     const [isUpdateModalVisible, setIsUpdateModalVisible] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const { data, error, isPending } = useQuery({
+    const { data, error, isPending, refetch: refetchPlaylist } = useQuery({
         queryFn: async () => {
             const data = await fetcher({
                 prefix: "PROTECTED_BASE_URL",
@@ -53,7 +55,7 @@ const PlaylistSongs = () => {
         setAtEnd(isEnd);
     };
 
-    const { data: songData, status, hasNextPage, isFetchingNextPage, fetchNextPage } = useInfinite({
+    const { data: songData, status, hasNextPage, isFetchingNextPage, fetchNextPage, refetch: refetchSongs } = useInfinite({
         url: `${PROTECTED_BASE_URL}/api/v2/playlist/${playlistId}/songs`,
         queryKey: `playlist-songs-${playlistId}`,
         token: user?.tokens.accessToken,
@@ -61,6 +63,13 @@ const PlaylistSongs = () => {
         paramValue: "",
         persist: false,
     });
+
+    const onRefresh = useCallback(async () => {
+        setIsRefreshing(true);
+        await refetchPlaylist();
+        await refetchSongs();
+        setIsRefreshing(false);
+    }, [refetchPlaylist, refetchSongs]);
 
     useEffect(() => {
         if (atEnd && hasNextPage) {
@@ -85,6 +94,14 @@ const PlaylistSongs = () => {
                     scrollEventThrottle={16}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={onRefresh}
+                            tintColor="#ef4444"
+                            colors={["#ef4444"]}
+                        />
+                    }
                 >
                     <Header
                         data={data}

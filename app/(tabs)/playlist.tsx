@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { router } from 'expo-router';
 import { Image } from 'expo-image';
 import { useQueries } from '@tanstack/react-query';
@@ -13,6 +13,7 @@ import { Artist, PlayList } from '@/types/response.types';
 import { Card } from '@/components/artist/card';
 import { CreatePlaylistModal } from '@/components/modals/create-playlist.modal';
 import { Spacer } from '@/components/ui/spacer';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 
 const Playlist = () => {
@@ -20,6 +21,7 @@ const Playlist = () => {
     const { user } = useAuth();
 
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const onCloseModal = () => setIsModalVisible(false);
 
     const [ userPlaylists, userFollowings ] = useQueries({
@@ -49,6 +51,13 @@ const Playlist = () => {
         ]
     });
 
+    const onRefresh = useCallback(async () => {
+        setIsRefreshing(true);
+        await userPlaylists.refetch();
+        await userFollowings.refetch();
+        setIsRefreshing(false);
+    }, [userPlaylists.refetch, userFollowings.refetch]);
+
     if (userPlaylists.isPending || userFollowings.isPending) {
         return <PrimaryLoader />
     }
@@ -66,6 +75,14 @@ const Playlist = () => {
                     className="p-6 pb-10 flex flex-col gap-y-10"
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={onRefresh}
+                            tintColor="#ef4444"
+                            colors={["#ef4444"]}
+                        />
+                    }
                 >
                     <View className='flex flex-col gap-y-6'>
                         <View className='flex flex-col gap-y-2'>

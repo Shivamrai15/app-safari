@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Header } from '@/components/liked/header';
 import { SongItem } from '@/components/song/item';
@@ -12,17 +12,19 @@ import { Error } from '@/components/ui/error';
 import Feather from '@expo/vector-icons/Feather';
 import { NetworkProvider } from '@/providers/network.provider';
 import { Spacer } from '@/components/ui/spacer';
+import { useCallback, useState } from 'react';
 
 const LikedSongs = () => {
 
     const { user } = useAuth();
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
-    const { data, isPending, error } = useQuery({
-        queryFn : async()=>{
+    const { data, isPending, error, refetch } = useQuery({
+        queryFn: async () => {
             const data = await fetcher({
-                prefix : "PROTECTED_BASE_URL",
-                suffix : 'api/v2/song/liked/tracks',
-                token : user?.tokens.accessToken
+                prefix: "PROTECTED_BASE_URL",
+                suffix: 'api/v2/song/liked/tracks',
+                token: user?.tokens.accessToken
             });
             return data.data as LikedSongTracksResponse[];
         },
@@ -30,11 +32,17 @@ const LikedSongs = () => {
         meta: { persist: false },
     });
 
+    const onRefresh = useCallback(async () => {
+        setIsRefreshing(true);
+        await refetch();
+        setIsRefreshing(false);
+    }, [refetch]);
+
     if (isPending) {
         return <PrimaryLoader />
     }
 
-    if (error || !data){
+    if (error || !data) {
         return <Error />
     }
 
@@ -47,13 +55,22 @@ const LikedSongs = () => {
                     className="flex flex-col gap-y-10"
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={onRefresh}
+                            tintColor="#ef4444"
+                            colors={["#ef4444"]}
+                        />
+                    }
                 >
                     <LinearGradient
                         colors={['#111111', '#87141b']}
                         locations={[0.8, 1.0]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
-                        style={{ height: "100%", width: "100%" }}
+                        style={{ flex: 1, width: "100%" }}
                     >
                         <Header
                             totalSongs={songs.length}
@@ -69,16 +86,15 @@ const LikedSongs = () => {
                                     <Feather name="clock" size={20} color="white" />
                                 </View>
                             </View>
-                            <View className="bg-zinc-600 h-0.5 w-full rounded-full"/>
+                            <View className="bg-zinc-600 h-0.5 w-full rounded-full" />
                             <View className='flex flex-col gap-y-5'>
                                 {songs.map(song => (
                                     <SongItem key={song.id} data={song} />
                                 ))}
                             </View>
                         </View>
-                        
+                        <Spacer />
                     </LinearGradient>
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

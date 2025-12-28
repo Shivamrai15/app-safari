@@ -1,18 +1,27 @@
 import { Image } from 'expo-image';
-import { View, Text, ScrollView, Switch } from 'react-native';
+import { View, Text, ScrollView, Switch, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/use-auth';
 import { NetworkProvider } from '@/providers/network.provider';
 import { SubscriptionCard } from '@/components/account/subscription-card';
 import { useSettings, useSettingsUpdater } from '@/hooks/use-settings';
 import { Spacer } from '@/components/ui/spacer';
+import { useCallback, useState } from 'react';
 
 
 const Profile = () => {
 
     const { user } = useAuth();
-    const { settings } = useSettings();
+    const { settings, fetchSettings } = useSettings();
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const { updateSettings } = useSettingsUpdater(user?.tokens.accessToken);
+
+    const onRefresh = useCallback(async () => {
+        setIsRefreshing(true);
+        await fetchSettings(user?.tokens.accessToken);
+        setIsRefreshing(false);
+    }, [fetchSettings]);
+
 
     return (
         <NetworkProvider>    
@@ -21,6 +30,14 @@ const Profile = () => {
                     className='flex-1 p-6'
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={onRefresh}
+                            tintColor="#ef4444"
+                            colors={["#ef4444"]}
+                        />
+                    }
                 >
                     <View className='flex flex-row items-center gap-x-6'>
                         <View className='size-28 rounded-full overflow-hidden'>

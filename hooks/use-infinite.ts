@@ -2,9 +2,9 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 interface UseSongQueryProps {
-    url : string
+    url: string
     paramKey: string
-    paramValue : string
+    paramValue: string
     queryKey: string
     token?: string,
     persist?: boolean
@@ -27,7 +27,7 @@ export const useInfinite = ({
         if (paramKey && paramValue) {
             params.append(paramKey, paramValue);
         }
-        
+
         const queryString = params.toString();
         const fetch_url = queryString ? `${url}?${queryString}` : url;
         const config = {
@@ -50,6 +50,7 @@ export const useInfinite = ({
         status,
         error,
         isLoading,
+        refetch,
     } = useInfiniteQuery({
         initialPageParam: undefined,
         queryKey: [queryKey, paramKey, paramValue],
@@ -66,6 +67,7 @@ export const useInfinite = ({
         isFetchingNextPage,
         status,
         error,
-        isLoading
+        isLoading,
+        refetch
     }
 }

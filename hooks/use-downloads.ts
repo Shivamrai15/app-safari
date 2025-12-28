@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { SongResponse } from "@/types/response.types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createJSONStorage, persist } from "zustand/middleware";
+import * as FileSystem from "expo-file-system";
 
 export type DownloadedSong = SongResponse & {
     download: {
@@ -100,6 +101,8 @@ interface Props {
     removeAlbum: (id: string) => void;
     getAlbumById: (id: string) => DownloadedAlbum | undefined;
     getAlbumSongById: (albumId: string, songId: string) => DownloadedSong | undefined;
+
+    deleteAllDownloads: () => Promise<void>;
 }
 
 export const useDownloads = create(
@@ -411,6 +414,43 @@ export const useDownloads = create(
             getAlbumSongById: (albumId, songId) => {
                 const album = get().albums.find((a) => a.id === albumId);
                 return album?.songs.find((s) => s.id === songId);
+            },
+
+            deleteAllDownloads: async () => {
+                const { songs, playlists, albums } = get();
+
+                const deleteFile = async (path: string | undefined) => {
+                    if (!path) return;
+                    try {
+                        const file = new FileSystem.File(path);
+                        if (file.exists) {
+                            file.delete();
+                        }
+                    } catch (error) {
+                        console.error(`Failed to delete file: ${path}`, error);
+                    }
+                };
+
+                for (const song of songs) {
+                    await deleteFile(song.download.localPath);
+                    await deleteFile(song.download.localImagePath);
+                }
+
+                for (const playlist of playlists) {
+                    for (const song of playlist.songs) {
+                        await deleteFile(song.download.localPath);
+                        await deleteFile(song.download.localImagePath);
+                    }
+                }
+
+                for (const album of albums) {
+                    for (const song of album.songs) {
+                        await deleteFile(song.download.localPath);
+                        await deleteFile(song.download.localImagePath);
+                    }
+                }
+
+                set({ songs: [], playlists: [], albums: [] });
             },
         }),
         {

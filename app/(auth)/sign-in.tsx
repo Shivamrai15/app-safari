@@ -15,18 +15,19 @@ import { User } from '@/types/auth.types';
 import { useAuth } from '@/hooks/use-auth';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SecondaryLoader } from '@/components/ui/loader';
+import { useSettings } from '@/hooks/use-settings';
 import { queryClient } from '@/lib/query-client';
-import { useDownloads } from '@/hooks/use-downloads';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SignIn = () => {
 
     const { setUser } = useAuth();
-    const { clearSongs } = useDownloads();
     const [form, setForm] = useState({
         email: "",
         password: ""
     });
+
+    const { fetchSettings } = useSettings();
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: { email: string; password: string; }) => {
@@ -34,11 +35,13 @@ const SignIn = () => {
             return response.data.data;
         },
         async onSuccess(data: User) {
-            queryClient.clear();
+            await queryClient.cancelQueries();
             await AsyncStorage.removeItem('REACT_QUERY_OFFLINE_CACHE');
-            alert("User logged in successfully!");
+            queryClient.clear();
+
             setUser(data);
-            clearSongs();
+            await fetchSettings(data.tokens.accessToken);
+            alert("User logged in successfully!");
             router.replace("/(tabs)/home");
         },
         onError(error) {

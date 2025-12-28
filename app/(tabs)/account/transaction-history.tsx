@@ -8,8 +8,9 @@ import { useInfinite } from '@/hooks/use-infinite';
 import { NetworkProvider } from '@/providers/network.provider';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, NativeSyntheticEvent, NativeScrollEvent, TouchableOpacity } from 'react-native';
+import { RefreshControl } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 
@@ -167,6 +168,7 @@ const TransactionHistory = () => {
 
     const { user } = useAuth();
     const [atEnd, setAtEnd] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -174,7 +176,7 @@ const TransactionHistory = () => {
         setAtEnd(isEnd);
     };
 
-    const { data, isFetchingNextPage, fetchNextPage, hasNextPage, status, error } = useInfinite({
+    const { data, isFetchingNextPage, fetchNextPage, hasNextPage, status, error, refetch } = useInfinite({
         url: `${PROTECTED_BASE_URL}/api/v2/user/payments/order-history`,
         paramKey: "",
         paramValue: "",
@@ -188,6 +190,12 @@ const TransactionHistory = () => {
             fetchNextPage();
         }
     }, [atEnd, hasNextPage, fetchNextPage]);
+
+    const onRefresh = useCallback(async () => {
+        setIsRefreshing(true);
+        await refetch();
+        setIsRefreshing(false);
+    }, [refetch]);
 
     const cleanedTransactions = useMemo(() => {
         if (!data?.pages) return [];
@@ -211,6 +219,14 @@ const TransactionHistory = () => {
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
                     contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 16 }}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={isRefreshing}
+                            onRefresh={onRefresh}
+                            tintColor="#ef4444"
+                            colors={["#ef4444"]}
+                        />
+                    }
                 >
                     {error && <Error />}
 

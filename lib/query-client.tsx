@@ -20,8 +20,12 @@ persistQueryClient({
     persister: asyncStoragePersister,
     maxAge: 1000 * 60 * 60 * 24,
     dehydrateOptions: {
-        shouldDehydrateQuery : (query) => {
-            return query.state.data !== false;
+        shouldDehydrateQuery: (query) => {
+            return (
+                query.state.status === 'success' &&
+                query.state.data !== undefined &&
+                query.state.data !== false
+            );
         }
     }
 });

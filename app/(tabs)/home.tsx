@@ -10,14 +10,18 @@ import { Error } from "@/components/ui/error";
 import { PrimaryLoader } from "@/components/ui/loader";
 import { AlbumCarousel } from "@/components/carousel/album";
 import { TrendingSongs } from "@/components/carousel/trending-songs";
-import { Button } from "@/components/ui/button";
 import { ListenAgainCarousel } from "@/components/carousel/listen-again";
 import { ArtistCarousel } from "@/components/carousel/artist";
 import { NetworkProvider } from "@/providers/network.provider";
 import { Spacer } from "@/components/ui/spacer";
+import { LogoutButton } from "@/components/auth/logout-button";
+import { useCallback, useState } from "react";
+import { RefreshControl } from "react-native-gesture-handler";
 
 const Home = () => {
-    const { user, setUser } = useAuth();
+
+    const { user } = useAuth();
+    const [refreshing, setRefreshing] = useState(false);
 
     const [ trendingSongs, recommendedAlbums, newAlbums, listenAgainSongs, favoriteArtists ] = useQueries({
         queries:[
@@ -79,6 +83,18 @@ const Home = () => {
         ]
     });
 
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await Promise.all([
+            trendingSongs.refetch(),
+            recommendedAlbums.refetch(),
+            newAlbums.refetch(),
+            listenAgainSongs.refetch(),
+            favoriteArtists.refetch()
+        ]);
+        setRefreshing(false);
+    }, []);
+
     if (trendingSongs.isLoading || recommendedAlbums.isLoading || newAlbums.isLoading || listenAgainSongs.isLoading || favoriteArtists.isLoading) {
         return <PrimaryLoader />;
     }
@@ -96,17 +112,17 @@ const Home = () => {
                     className="p-4 pt-10 pb-20"
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            tintColor="#ef4444"
+                            colors={["#ef4444"]}
+                        />
+                    }
                 >
                     <View className="flex flex-row items-center justify-end gap-x-6">
-                        <Button
-                            className="px-4 rounded-full"
-                            onPress={()=>{
-                                setUser(null);
-                                router.replace("/(auth)/sign-in")
-                            }}
-                        >
-                            <Text className="font-bold">Logout</Text>
-                        </Button>
+                        <LogoutButton/>
                     </View>
                     <View className="flex flex-row items-center gap-x-6 mt-16">
                         <View className="size-24 rounded-full overflow-hidden relative">
