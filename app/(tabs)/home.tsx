@@ -109,7 +109,7 @@ const Home = () => {
         <NetworkProvider>
             <SafeAreaView className="flex-1 bg-background">
                 <ScrollView
-                    className="p-4 pt-10 pb-20"
+                    className="p-4 pt-6 pb-28"
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     refreshControl={

@@ -1,6 +1,7 @@
+import { useQueue } from "@/hooks/use-queue";
 import { TrendingSong } from "@/types/response.types"
 import { Image } from "expo-image"
-import { Text, View } from "react-native"
+import { Text, TouchableOpacity, View } from "react-native"
 
 interface Props {
     song : TrendingSong;
@@ -8,8 +9,15 @@ interface Props {
 }
 
 export const Trending = ({ song, index }: Props) => {
+
+    const { priorityEnqueue } = useQueue();
+
     return (
-        <View className="flex flex-row w-auto items-end">
+        <TouchableOpacity
+            className="flex flex-row w-auto items-end"
+            onPress={()=> priorityEnqueue([song])}
+            activeOpacity={0.8}
+        >
             <Text className="font-extrabold text-[14rem] z-10 p-0 m-0 leading-none tracking-tighter  text-neutral-700" >
                 {index + 1}
             </Text>
@@ -26,6 +34,6 @@ export const Trending = ({ song, index }: Props) => {
                     </Text>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
