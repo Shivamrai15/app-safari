@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { AppState, AppStateStatus } from "react-native";
 import { Stack, router } from "expo-router";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -8,9 +9,12 @@ import { PortalProvider } from "@gorhom/portal";
 import * as SplashScreen from 'expo-splash-screen';
 import { queryClient } from "@/lib/query-client";
 import { useAuth } from "@/hooks/use-auth";
+import { useAiRecommendationStore } from "@/hooks/use-ai-recommendation";
 import { AUTH_BASE_URL } from "@/constants/api.config";
-
+import { useSettings } from "@/hooks/use-settings";
+import { useQueue } from "@/hooks/use-queue";
 import "./global.css"
+import usePlayerSettings from "@/hooks/use-player-settings";
 
 
 SplashScreen.preventAutoHideAsync();
@@ -28,8 +32,19 @@ async function refreshTokens(refreshToken: string) {
 }
 
 export default function RootLayout() {
+    const { queue, current } = useQueue();
+    const { settings } = useSettings();
+    const { isAiShuffled } = usePlayerSettings();
     const [appIsReady, setAppIsReady] = useState(false);
-    const { user, updateTokens, setUser } = useAuth();
+    const { updateTokens, setUser, isLoggedIn } = useAuth();
+    const { initializeBackgroundFetch, processPendingRecommendations, setAiRecommendationEnabled } = useAiRecommendationStore();
+    const appState = useRef(AppState.currentState);
+
+    const isAiRecommendationEnabled = isLoggedIn ? settings?.subscription.isActive ? isAiShuffled : false : false;
+
+    useEffect(() => {
+        setAiRecommendationEnabled(isAiRecommendationEnabled);
+    }, [isAiRecommendationEnabled]);
 
     useEffect(() => {
         async function prepare() {
@@ -71,8 +86,28 @@ export default function RootLayout() {
     useEffect(() => {
         if (appIsReady) {
             SplashScreen.hideAsync();
+            initializeBackgroundFetch();
         }
     }, [appIsReady]);
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', (nextAppState: AppStateStatus) => {
+            if (
+                appState.current.match(/inactive|background/) &&
+                nextAppState === 'active'
+            ) {
+                processPendingRecommendations({
+                    isAiRecommendationEnabled,
+                    currentIsPlaying: !!current && queue.length > 0 && queue[0] !== null
+                });
+            }
+            appState.current = nextAppState;
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, [isAiRecommendationEnabled]);
 
     if (!appIsReady) {
         return null;

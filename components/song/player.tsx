@@ -12,12 +12,13 @@ import { PauseIcon, PlayIcon } from '@/constants/icons';
 import { useAudioPlayer, useAudioPlayerStatus, setAudioModeAsync } from 'expo-audio';
 import { Sheet } from './sheet';
 import { useSettings } from '@/hooks/use-settings';
-import usePlayerSettings from '@/hooks/use-player-settings';
 import { usePlayer } from '@/hooks/use-player';
 import { useAuth } from '@/hooks/use-auth';
 import { usePlayerService } from '@/services/player.service';
+import { useAiRecommendationStore } from '@/hooks/use-ai-recommendation';
 import { ADS } from '@/constants/ads';
 import { Ad } from '@/types/auth.types';
+import usePlayerSettings from '@/hooks/use-player-settings';
 
 
 interface Props {
@@ -31,7 +32,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 	const { settings } = useSettings();
 	const { current, queue, deQueue } = useQueue();
 	const [isOpen, setIsOpen] = useState(false);
-	const { isLooped } = usePlayerSettings();
+	const { isLooped, isAiShuffled } = usePlayerSettings();
 	const { setIsPlaying, setSongId } = usePlayer();
 
 	const {
@@ -40,6 +41,8 @@ export const Player = ({ bottom, isOffline }: Props) => {
 		checkShouldShowAd,
 		setAdShown
 	} = usePlayerService();
+
+	const { fetchRecommendations } = useAiRecommendationStore();
 
 	const [isPlayingAd, setIsPlayingAd] = useState(false);
 	const [currentAd, setCurrentAd] = useState<Ad | null>(null);
@@ -71,6 +74,8 @@ export const Player = ({ bottom, isOffline }: Props) => {
 
 	const isPlaying = status.playing;
 	const isSubscribed = settings?.subscription?.isActive ?? false;
+	const isAiRecommendationEnabled = settings?.subscription.isActive ? isAiShuffled : false;
+
 
 	useEffect(() => {
 		if (current?.url && current.url !== currentSongUrl.current) {
@@ -96,6 +101,14 @@ export const Player = ({ bottom, isOffline }: Props) => {
 
 				onSongStart(current.id);
 
+				// Fetch AI recommendations if queue is low
+				if (!isOffline && queue.length < 3 && current.id) {
+					fetchRecommendations(current.id, {
+						isAiRecommendationEnabled: isAiRecommendationEnabled,
+						currentIsPlaying: true
+					});
+				}
+
 				if (trackingTimeoutRef.current) {
 					clearTimeout(trackingTimeoutRef.current);
 				}
@@ -120,6 +133,15 @@ export const Player = ({ bottom, isOffline }: Props) => {
 			}
 		};
 	}, []);
+
+	useEffect(() => {
+		if (isAiRecommendationEnabled && current?.id && !isOffline && queue.length < 3) {
+			fetchRecommendations(current.id, {
+				isAiRecommendationEnabled: isAiRecommendationEnabled,
+				currentIsPlaying: true
+			});
+		}
+	}, [isAiRecommendationEnabled]);
 
 	useEffect(() => {
 		if (status.isLoaded && !hasAutoPlayed.current) {
@@ -187,7 +209,6 @@ export const Player = ({ bottom, isOffline }: Props) => {
 			}
 		}
 	}, [player.currentStatus.didJustFinish, isLooped, queue.length, isPlayingAd]);
-
 
 	if (!current) return null;
 
