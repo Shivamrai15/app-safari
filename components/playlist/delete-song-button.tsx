@@ -5,6 +5,7 @@ import { Image } from 'expo-image'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { PROTECTED_BASE_URL } from '@/constants/api.config'
 import { useAuth } from '@/hooks/use-auth'
+import { log } from '@/services/log.service'
 
 interface Props {
     playlistId: string;
@@ -15,17 +16,17 @@ export const DeleteSongButton = ({ playlistId, songId }: Props) => {
 
     const queryClient = useQueryClient();
     const { user } = useAuth();
-    
+
     const { mutateAsync, isPending } = useMutation({
         mutationFn: async () => {
             await axios.delete(`${PROTECTED_BASE_URL}/api/v2/playlist/${playlistId}/songs/${songId}`, {
-                headers : {
-                    Authorization : `Bearer ${user?.tokens.accessToken}`,
-                    'Content-Type' : 'application/json'
+                headers: {
+                    Authorization: `Bearer ${user?.tokens.accessToken}`,
+                    'Content-Type': 'application/json'
                 }
             });
         },
-        onSuccess: async() => {
+        onSuccess: async () => {
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: [`playlist-songs-${playlistId}`] }),
                 queryClient.invalidateQueries({ queryKey: ['user-playlists'] }),
@@ -33,8 +34,21 @@ export const DeleteSongButton = ({ playlistId, songId }: Props) => {
                 queryClient.invalidateQueries({ queryKey: ['playlist', playlistId] })
             ]);
         },
-        onError : ( error ) => {
-            console.error("Error deleting song from playlist:", error);
+        onError: (error) => {
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'medium',
+                    errorCode: error.response?.data?.code || 'DELETE_SONG_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: { currentScreen: 'delete-song-button' },
+                });
+            }
         }
     });
 
@@ -49,7 +63,7 @@ export const DeleteSongButton = ({ playlistId, songId }: Props) => {
                 source={require("@/assets/icons/trash.png")}
                 style={{ width: 24, height: 24 }}
             />
-            <Text className='text-zinc-100 text-lg'>{isPending? "Removing" : "Remove" } from playlist</Text>
+            <Text className='text-zinc-100 text-lg'>{isPending ? "Removing" : "Remove"} from playlist</Text>
         </Button>
     )
 }

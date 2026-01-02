@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useMemo } from 'react';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
@@ -11,6 +12,7 @@ import { PauseDarkIcon, PlayDarkIcon } from '@/constants/icons';
 import { useMutation } from '@tanstack/react-query';
 import { fetcher } from '@/lib/fetcher';
 import { SongResponse } from '@/types/response.types';
+import { log } from '@/services/log.service';
 
 interface Props {
     id: string;
@@ -53,7 +55,20 @@ export const MoodPlayButton = ({ id, className }: Props) => {
             }
         },
         onError: (error) => {
-            console.log(error);
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'medium',
+                    errorCode: error.response?.data?.code || 'MOOD_PLAY_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: { currentScreen: 'mood-play-button' },
+                });
+            }
         }
     });
 

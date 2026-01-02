@@ -18,6 +18,7 @@ import { SecondaryLoader } from '@/components/ui/loader';
 import { useSettings } from '@/hooks/use-settings';
 import { queryClient } from '@/lib/query-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { log } from '@/services/log.service';
 
 const SignIn = () => {
 
@@ -47,6 +48,22 @@ const SignIn = () => {
         onError(error) {
             if (axios.isAxiosError(error)) {
                 alert(`Error logging in user: ${error.response?.data?.message || error.message}`);
+                if (error.status !== 401) {
+                    log({
+                        message: error.response?.data?.message || error.message,
+                        severity: 'high',
+                        errorCode: error.response?.data?.code || 'UNKNOWN_ERROR',
+                        networkInfo: {
+                            url: error.config?.url || '',
+                            method: error.config?.method || '',
+                            statusCode: error.status || null,
+                            responseBody: JSON.stringify(error.response?.data || {}),
+                        },
+                        navigationContext: {
+                            currentScreen: 'sign-in',
+                        },
+                    });
+                }
             }
         },
     });
@@ -103,7 +120,7 @@ const SignIn = () => {
                                         Continue without Password
                                     </Text>
                                 </Button>
-                                <GoogleOauth />
+                                {/* <GoogleOauth /> */}
                             </View>
                         </View>
                     </View>

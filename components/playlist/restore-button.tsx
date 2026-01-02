@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { useAuth } from '@/hooks/use-auth';
+import { log } from '@/services/log.service';
 
 interface RestoreButtonProps {
     playlistId: string;
@@ -24,12 +25,25 @@ export const RestoreButton = ({ playlistId }: RestoreButtonProps) => {
                 }
             );
         },
-        onSuccess: async() => {
+        onSuccess: async () => {
             await queryClient.invalidateQueries({ queryKey: ['recover-playlists'] });
             await queryClient.invalidateQueries({ queryKey: ['user-playlists'] });
         },
         onError: (error) => {
-            console.log("Error restoring playlist", error.message);
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'medium',
+                    errorCode: error.response?.data?.code || 'RESTORE_PLAYLIST_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: { currentScreen: 'restore-button' },
+                });
+            }
         }
     });
 

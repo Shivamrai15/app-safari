@@ -6,6 +6,7 @@ import { PROTECTED_BASE_URL } from "@/constants/api.config";
 import { createJSONStorage, persist } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { log } from "@/services/log.service";
 
 
 interface LikedSongsState {
@@ -42,59 +43,59 @@ export const useLikedSongs = create<LikedSongsStore>()(
     persist(
         (set, get) => ({
             ...initialState,
-            
-            setSongIds: (ids: string[]) => 
-                set({ 
-                    songIds: ids, 
+
+            setSongIds: (ids: string[]) =>
+                set({
+                    songIds: ids,
                     lastSynced: Date.now(),
-                    error: null 
+                    error: null
                 }),
-            
+
             addSongId: (id: string) => {
                 const currentIds = get().songIds;
                 if (!currentIds.includes(id)) {
-                    set({ 
+                    set({
                         songIds: [...currentIds, id],
-                        error: null 
+                        error: null
                     });
                 }
             },
-            
+
             removeSongId: (id: string) => {
                 const filteredIds = get().songIds.filter((songId) => songId !== id);
-                set({ 
+                set({
                     songIds: filteredIds,
-                    error: null 
+                    error: null
                 });
             },
-            
+
             toggleSongId: (id: string) => {
                 const currentIds = get().songIds;
                 const isLiked = currentIds.includes(id);
-                
+
                 if (isLiked) {
                     get().removeSongId(id);
                 } else {
                     get().addSongId(id);
                 }
             },
-            
+
             isLiked: (id: string) => get().songIds.includes(id),
-            
+
             setLoading: (loading: boolean) => set({ isLoading: loading }),
-            
+
             setError: (error: string | null) => set({ error }),
-            
+
             clearError: () => set({ error: null }),
-            
+
             reset: () => set(initialState),
         }),
         {
             name: 'liked-songs-storage',
             storage: createJSONStorage(() => AsyncStorage),
-            partialize: (state) => ({ 
+            partialize: (state) => ({
                 songIds: state.songIds,
-                lastSynced: state.lastSynced 
+                lastSynced: state.lastSynced
             }),
         }
     )
@@ -118,15 +119,15 @@ export const useLikedSongsSync = (token?: string, autoSync: boolean = true) => {
                 suffix: `api/v2/song/liked`,
                 token,
             });
-            
+
             if (data?.data && Array.isArray(data.data)) {
                 setSongIds(data.data as string[]);
             } else {
                 throw new Error('Invalid response format');
             }
         } catch (error) {
-            const errorMessage = error instanceof Error 
-                ? error.message 
+            const errorMessage = error instanceof Error
+                ? error.message
                 : "Error fetching liked songs";
             console.error("Error fetching liked songs:", error);
             setError(errorMessage);
@@ -176,11 +177,22 @@ export const useRemoveLikedSong = (token?: string) => {
             return { songId };
         },
         onError: (error, songId, context) => {
-            // Rollback on error
             if (context?.songId) {
                 addSongId(context.songId);
             }
-            console.error('Error removing liked song:', error);
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'low',
+                    errorCode: 'REMOVE_LIKED_SONG_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                    },
+                    navigationContext: { currentScreen: 'use-liked-songs' },
+                });
+            }
         },
         onSuccess: () => {
             // Invalidate related queries
@@ -220,7 +232,19 @@ export const useAddLikedSong = (token?: string) => {
             if (context?.songId) {
                 removeSongId(context.songId);
             }
-            console.error('Error adding liked song:', error);
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'low',
+                    errorCode: 'ADD_LIKED_SONG_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                    },
+                    navigationContext: { currentScreen: 'use-liked-songs' },
+                });
+            }
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['liked-songs'] });

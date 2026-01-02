@@ -3,7 +3,6 @@ import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import {
-    ScrollView,
     Text,
     View
 } from 'react-native';
@@ -12,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import GoogleOauth from '@/components/auth/google-oauth';
 import { AUTH_BASE_URL } from '@/constants/api.config';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { log } from '@/services/log.service';
 
 const SignUp = () => {
 
@@ -30,8 +30,23 @@ const SignUp = () => {
             alert("User registered successfully! Please sign in.");
         },
         onError(error) {
-            console.error("Error registering user:", error);
             alert("Error registering user. Please try again.");
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'high',
+                    errorCode: error.response?.data?.code || 'UNKNOWN_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: {
+                        currentScreen: 'sign-up',
+                    },
+                });
+            }
         },
     });
 
@@ -80,7 +95,7 @@ const SignUp = () => {
                                     <Text className='text-zinc-500 text-sm font-medium'>OR SIGN UP WITH</Text>
                                     <View className='flex-1 h-px bg-zinc-800' />
                                 </View>
-                                <GoogleOauth />
+                                {/* <GoogleOauth /> */}
                             </View>
                         </View>
                     </View>

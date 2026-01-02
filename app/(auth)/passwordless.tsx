@@ -13,6 +13,7 @@ import { AUTH_BASE_URL } from '@/constants/api.config';
 import { useSettings } from '@/hooks/use-settings';
 import { queryClient } from '@/lib/query-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { log } from '@/services/log.service';
 
 const CELL_COUNT = 6;
 
@@ -47,6 +48,20 @@ const PasswordLess = () => {
         onError: (error) => {
             if (axios.isAxiosError(error)) {
                 alert(`${error.response?.data?.message || error.message}`);
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'high',
+                    errorCode: error.response?.data?.code || 'UNKNOWN_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: {
+                        currentScreen: 'passwordless',
+                    },
+                });
             }
         },
         async onSuccess(data) {

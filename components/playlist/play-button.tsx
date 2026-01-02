@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useMemo } from 'react';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
@@ -11,6 +12,7 @@ import { PauseDarkIcon, PlayDarkIcon } from '@/constants/icons';
 import { fetcher } from '@/lib/fetcher';
 import { useMutation } from '@tanstack/react-query';
 import { SongResponse } from '@/types/response.types';
+import { log } from '@/services/log.service';
 
 interface Props {
     className?: string;
@@ -54,7 +56,20 @@ export const PlayButton = ({ className, playlistId }: Props) => {
             }
         },
         onError: (error) => {
-            console.log(error);
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'medium',
+                    errorCode: error.response?.data?.code || 'PLAYLIST_PLAY_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: { currentScreen: 'playlist-play-button' },
+                });
+            }
         }
     });
 

@@ -1,36 +1,38 @@
+import axios from "axios";
 import { create } from "zustand";
 import { use, useEffect, useMemo } from "react";
 import { fetcher } from "@/lib/fetcher";
 import { useMutation } from "@tanstack/react-query";
 import { Album, Artist, Song } from "@/types/response.types";
 import { useQueue } from "./use-queue";
+import { log } from "@/services/log.service";
 
 interface useFollowingProps {
-    followings : Artist[];
-    setFollowings : ( artists : Artist[] ) => void;
-    addFollowing : ( artist : Artist ) => void;
-    removeFollowing : ( artistId : string ) => void;
+    followings: Artist[];
+    setFollowings: (artists: Artist[]) => void;
+    addFollowing: (artist: Artist) => void;
+    removeFollowing: (artistId: string) => void;
 }
 
-export const useFollowing = create<useFollowingProps>((set, get)=>({
-    followings : [],
-    setFollowings : ( artists : Artist[] ) => set({ followings : artists }),
-    addFollowing : ( artist : Artist ) => {
+export const useFollowing = create<useFollowingProps>((set, get) => ({
+    followings: [],
+    setFollowings: (artists: Artist[]) => set({ followings: artists }),
+    addFollowing: (artist: Artist) => {
         const currentFollowings = get().followings;
         if (!currentFollowings.some(a => a.id === artist.id)) {
-            set({ followings : [...currentFollowings, artist] });
+            set({ followings: [...currentFollowings, artist] });
         }
     },
-    removeFollowing : ( artistId : string ) => {
+    removeFollowing: (artistId: string) => {
         const currentFollowings = get().followings;
-        set({ followings : currentFollowings.filter(a => a.id !== artistId) });
+        set({ followings: currentFollowings.filter(a => a.id !== artistId) });
     }
 }));
 
 export const useFollowingSync = (token?: string) => {
     const { setFollowings } = useFollowing();
     const mutation = useMutation({
-        mutationFn : async()=>{
+        mutationFn: async () => {
             const data = await fetcher({
                 prefix: "PROTECTED_BASE_URL",
                 suffix: `api/v2/artist/followings`,
@@ -38,24 +40,24 @@ export const useFollowingSync = (token?: string) => {
             });
             return data.data as Artist[];
         },
-        mutationKey : ['user-followings'],
-        onSuccess : ( data ) => {
+        mutationKey: ['user-followings'],
+        onSuccess: (data) => {
             setFollowings(data);
         }
     });
 
-    useEffect(()=>{
-        if(token){
+    useEffect(() => {
+        if (token) {
             mutation.mutate();
         }
     }, [token]);
-    
+
     return mutation;
 }
 
 export const useFollowArtist = (artist: Artist, token?: string) => {
     const { addFollowing, removeFollowing } = useFollowing();
-    
+
     return useMutation({
         mutationFn: async () => {
             await fetcher({
@@ -68,7 +70,20 @@ export const useFollowArtist = (artist: Artist, token?: string) => {
         onMutate: async () => {
             addFollowing(artist);
         },
-        onError: () => {
+        onError: (error) => {
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'low',
+                    errorCode: 'FOLLOW_ARTIST_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                    },
+                    navigationContext: { currentScreen: 'use-artist' },
+                });
+            }
             removeFollowing(artist.id);
         }
     });
@@ -77,7 +92,7 @@ export const useFollowArtist = (artist: Artist, token?: string) => {
 
 export const useUnfollowArtist = (artist: Artist, token?: string) => {
     const { addFollowing, removeFollowing } = useFollowing();
-    
+
     return useMutation({
         mutationFn: async () => {
             await fetcher({
@@ -90,7 +105,20 @@ export const useUnfollowArtist = (artist: Artist, token?: string) => {
         onMutate: async () => {
             removeFollowing(artist.id);
         },
-        onError: () => {
+        onError: (error) => {
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'low',
+                    errorCode: 'UNFOLLOW_ARTIST_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                    },
+                    navigationContext: { currentScreen: 'use-artist' },
+                });
+            }
             addFollowing(artist);
         }
     });
@@ -102,10 +130,10 @@ export const useArtist = (artist: Artist, token?: string) => {
     const { followings } = useFollowing();
     const followMutation = useFollowArtist(artist, token);
     const unfollowMutation = useUnfollowArtist(artist, token);
-    
+
     const isSubscribed = followings.some(a => a.id === artist.id);
     const isLoading = followMutation.isPending || unfollowMutation.isPending;
-    
+
     const toggleSubscription = async () => {
         try {
             if (isSubscribed) {
@@ -118,7 +146,7 @@ export const useArtist = (artist: Artist, token?: string) => {
             throw error;
         }
     };
-    
+
     return {
         isSubscribed,
         isLoading,
@@ -174,7 +202,7 @@ export const useArtistSongs = (artistId: string, token?: string) => {
             });
 
             const songsData = response?.data || response;
-            
+
             if (!Array.isArray(songsData)) {
                 console.error('Invalid artist songs response:', response);
                 return [];
@@ -193,7 +221,19 @@ export const useArtistSongs = (artistId: string, token?: string) => {
             }
         },
         onError: (error) => {
-            console.error('Error fetching artist songs:', error);
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'medium',
+                    errorCode: 'ARTIST_SONGS_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                    },
+                    navigationContext: { currentScreen: 'use-artist' },
+                });
+            }
         }
     });
 
@@ -226,10 +266,10 @@ export const useArtistSongs = (artistId: string, token?: string) => {
     return {
         songs: list,
         hasSongs,
-        
+
         isCurrentArtist,
         isLoadingSongs: mutation.isPending,
-        
+
         playArtistSongs,
         refetchSongs: mutation.mutate,
         error: mutation.error,

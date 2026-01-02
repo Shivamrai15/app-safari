@@ -15,26 +15,27 @@ import { PrimaryLoader } from '@/components/ui/loader';
 import { Error } from '@/components/ui/error';
 import { Button } from '@/components/ui/button';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
+import { log } from '@/services/log.service';
 
 const PlaylistSearch = () => {
 
     const queryClient = useQueryClient();
     const { playlistId } = useLocalSearchParams();
-    const [ query, setQuery ] = useState("");
+    const [query, setQuery] = useState("");
     const { user } = useAuth();
-    const [ selectedSongId, setSelectedSongId ] = useState<string[]>([]);
+    const [selectedSongId, setSelectedSongId] = useState<string[]>([]);
 
     const { data: existingSongIds, isPending, error } = useQuery({
-        queryFn : async()=>{
+        queryFn: async () => {
             const data = await fetcher({
-                prefix : "PROTECTED_BASE_URL",
-                suffix : `api/v2/playlist/${playlistId}/existing-songs`,
-                token : user?.tokens.accessToken
+                prefix: "PROTECTED_BASE_URL",
+                suffix: `api/v2/playlist/${playlistId}/existing-songs`,
+                token: user?.tokens.accessToken
             });
             return data.data as string[];
         },
-        queryKey : ['playlist-existing-songs', playlistId]
-    })
+        queryKey: ['playlist-existing-songs', playlistId],
+    });
 
     const toggleSelect = (id: string) => {
         if (selectedSongId.includes(id)) {
@@ -45,22 +46,22 @@ const PlaylistSearch = () => {
     }
 
     const { mutate, isPending: isMutating } = useMutation({
-        mutationFn : async()=>{
+        mutationFn: async () => {
             await axios.post(
                 `${PROTECTED_BASE_URL}/api/v2/playlist/songs`,
                 {
-                    playlistId : playlistId as string,
-                    songIds : selectedSongId
+                    playlistId: playlistId as string,
+                    songIds: selectedSongId
                 },
                 {
-                    headers : {
-                        Authorization : `Bearer ${user?.tokens.accessToken}`,
-                        'Content-Type' : 'application/json'
+                    headers: {
+                        Authorization: `Bearer ${user?.tokens.accessToken}`,
+                        'Content-Type': 'application/json'
                     }
-                }    
+                }
             )
         },
-        onSuccess : async()=>{
+        onSuccess: async () => {
             setSelectedSongId([]);
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: [`playlist-songs-${playlistId}`] }),
@@ -69,8 +70,21 @@ const PlaylistSearch = () => {
                 queryClient.invalidateQueries({ queryKey: ['playlist', playlistId] })
             ]);
         },
-        onError : ( error ) => {
-            console.error("Error adding songs to playlist:", error);
+        onError: (error) => {
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'medium',
+                    errorCode: error.response?.data?.code || 'ADD_SONGS_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: { currentScreen: '[playlistId]' },
+                });
+            }
         }
     });
 
@@ -128,7 +142,7 @@ const PlaylistSearch = () => {
                     </View>
                     <View className='px-6'>
                         {
-                            query && 
+                            query &&
                             <>
                                 <View className='flex flex-row items-center gap-x-4'>
                                     <Button
@@ -144,7 +158,7 @@ const PlaylistSearch = () => {
                                 <SearchList
                                     query={query}
                                     toggleSelect={toggleSelect}
-                                    existingSongIds={existingSongIds??[]}
+                                    existingSongIds={existingSongIds ?? []}
                                     selectedSongId={selectedSongId}
                                 />
                             </>

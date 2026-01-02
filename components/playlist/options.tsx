@@ -13,11 +13,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { PlaylistResponse } from '@/types/response.types';
 import { ActionModal } from '../modals/action.modal';
+import { log } from '@/services/log.service';
 
 
 interface Props {
-    data : PlaylistResponse
-    onEditPress : () => void
+    data: PlaylistResponse
+    onEditPress: () => void
 }
 
 export const Options = ({ data, onEditPress }: Props) => {
@@ -26,12 +27,12 @@ export const Options = ({ data, onEditPress }: Props) => {
     const queryClient = useQueryClient();
     const { settings } = useSettings();
     const { user } = useAuth();
-    const [ openDeleteModal, setOpenDeleteModal ] = useState(false);
-    const [ openActionModal, setOpenActionModal ] = useState(false);
-    
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
+    const [openActionModal, setOpenActionModal] = useState(false);
+
     const sheetRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => [], []);
-    
+
     const isActive = settings?.subscription.isActive;
 
     const handleOpen = useCallback(() => {
@@ -50,21 +51,34 @@ export const Options = ({ data, onEditPress }: Props) => {
     const handleDeleteMutation = useMutation({
         mutationFn: async () => {
             const response = await axios.delete(`${PROTECTED_BASE_URL}/api/v2/playlist/${data.id}`, {
-                headers : {
-                    Authorization : `Bearer ${user?.tokens.accessToken}`,
-                    'Content-Type' : 'application/json'
+                headers: {
+                    Authorization: `Bearer ${user?.tokens.accessToken}`,
+                    'Content-Type': 'application/json'
                 }
             });
             return response;
         },
-        onSuccess: async() => {
+        onSuccess: async () => {
             handleClose();
             setOpenDeleteModal(false);
             await queryClient.invalidateQueries({ queryKey: ['user-playlists'] }),
-            router.back();
+                router.back();
         },
         onError: (error) => {
-            console.log(error);
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'medium',
+                    errorCode: error.response?.data?.code || 'DELETE_PLAYLIST_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: { currentScreen: 'playlist-options' },
+                });
+            }
         }
     });
 
@@ -75,23 +89,36 @@ export const Options = ({ data, onEditPress }: Props) => {
                 {
                     name: data.name,
                     private: !data.private,
-                    description: data.description||undefined
+                    description: data.description || undefined
                 },
                 {
-                    headers : {
-                        Authorization : `Bearer ${user?.tokens.accessToken}`,
-                        'Content-Type' : 'application/json'
+                    headers: {
+                        Authorization: `Bearer ${user?.tokens.accessToken}`,
+                        'Content-Type': 'application/json'
                     }
                 }
             );
             return response;
         },
-        onSuccess: async() => {
-            await queryClient.invalidateQueries({ queryKey: ["playlist", data.id]});
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: ["playlist", data.id] });
             setOpenActionModal(false);
         },
         onError: (error) => {
-            console.log(error.message);
+            if (axios.isAxiosError(error)) {
+                log({
+                    message: error.response?.data?.message || error.message,
+                    severity: 'low',
+                    errorCode: error.response?.data?.code || 'VISIBILITY_UPDATE_ERROR',
+                    networkInfo: {
+                        url: error.config?.url || '',
+                        method: error.config?.method || '',
+                        statusCode: error.status || null,
+                        responseBody: JSON.stringify(error.response?.data || {}),
+                    },
+                    navigationContext: { currentScreen: 'playlist-options' },
+                });
+            }
         }
     });
 
@@ -123,7 +150,7 @@ export const Options = ({ data, onEditPress }: Props) => {
                 >
                     <View className='flex flex-row items-center gap-4 p-4 border-b border-zinc-600'>
                         <Image
-                            source={data.image? { uri: data.image } : require("@/assets/icons/playlist.png")}
+                            source={data.image ? { uri: data.image } : require("@/assets/icons/playlist.png")}
                             style={{ width: 50, height: 50, borderRadius: 8, overflow: "hidden" }}
                             contentFit='cover'
                         />
@@ -149,7 +176,7 @@ export const Options = ({ data, onEditPress }: Props) => {
                         <TouchableOpacity
                             activeOpacity={0.7}
                             className="flex flex-row items-center gap-4"
-                            onPress={()=>{
+                            onPress={() => {
                                 handleClose();
                                 onEditPress();
                             }}
@@ -175,13 +202,13 @@ export const Options = ({ data, onEditPress }: Props) => {
                         <TouchableOpacity
                             activeOpacity={0.7}
                             className="flex flex-row items-center gap-4"
-                            onPress={()=>{
+                            onPress={() => {
                                 handleClose();
                                 setOpenActionModal(true);
                             }}
                         >
                             <Image source={require("@/assets/icons/lock.png")} style={{ width: 22, height: 22, marginRight: 4 }} />
-                            <Text className="text-white text-lg font-semibold">Make { data.private ? "Public" : "Private"}</Text>
+                            <Text className="text-white text-lg font-semibold">Make {data.private ? "Public" : "Private"}</Text>
                         </TouchableOpacity>
                     </View>
                 </BottomSheetView>
@@ -191,7 +218,7 @@ export const Options = ({ data, onEditPress }: Props) => {
                 onClose={() => setOpenDeleteModal(false)}
                 title="Delete Playlist"
                 message="Are you sure you want to delete this playlist?"
-                onDelete={()=>handleDeleteMutation.mutate()}
+                onDelete={() => handleDeleteMutation.mutate()}
                 isPending={handleDeleteMutation.isPending}
             />
             <ActionModal
@@ -199,7 +226,7 @@ export const Options = ({ data, onEditPress }: Props) => {
                 onClose={() => setOpenActionModal(false)}
                 title={`Make playlist ${data.private ? "public" : "private"}`}
                 message={data.private ? "This playlist is public — anyone can view it." : "This playlist is private — only you and the people you invite can view it."}
-                onConfirm={()=>handleVisibilityMutation.mutate()}
+                onConfirm={() => handleVisibilityMutation.mutate()}
                 action={`Make ${data.private ? "public" : "private"}`}
                 pendingAction={`Making ${data.private ? "public" : "private"}`}
                 isPending={handleVisibilityMutation.isPending}
