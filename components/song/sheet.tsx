@@ -104,7 +104,7 @@ export const Sheet = ({
                 onDismiss={onClose}
                 backgroundStyle={{
                     backgroundColor: '#111111',
-                    
+                    borderRadius: 0
                 }}
                 handleIndicatorStyle={{ display: 'none' }}
                 handleComponent={null}
