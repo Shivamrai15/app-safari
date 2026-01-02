@@ -104,6 +104,7 @@ export const Sheet = ({
                 onDismiss={onClose}
                 backgroundStyle={{
                     backgroundColor: '#111111',
+                    
                 }}
                 handleIndicatorStyle={{ display: 'none' }}
                 handleComponent={null}
@@ -389,6 +390,7 @@ export const Sheet = ({
                                 }}
                                 initialPage={featureNumber}
                                 onPageSelected={e => setFeatureNumber(e.nativeEvent.position)}
+                                scrollEnabled={featureNumber !== 0}
                             >
                                 <View key="1" className='flex-1 p-6'>
                                     <UpNext />
