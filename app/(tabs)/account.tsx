@@ -22,11 +22,11 @@ const MenuItem = ({
 }) => (
     <TouchableOpacity
         onPress={() => router.push(item.path)}
-        className={`flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors ${!isLast ? 'border-b border-neutral-800' : ''
+        className={`flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors ${!isLast ? 'border-b border-neutral-700' : ''
             }`}
         activeOpacity={0.7}
     >
-        <View className={`size-12 rounded-full flex items-center justify-center flex-shrink-0 ${isDestructive ? 'bg-red-500/10' : 'bg-neutral-800'
+        <View className={`size-12 rounded-full flex items-center justify-center flex-shrink-0 ${isDestructive ? 'bg-red-500/10' : 'bg-neutral-700'
             }`}>
             <Image
                 source={item.icon}
@@ -122,19 +122,11 @@ const Account = () => {
                     {
                         !(settings?.subscription.isActive) && (
                             <TouchableOpacity
-                                onPress={() => router.push('/pricing')}
+                                onPress={() => router.push('/(tabs)/pricing')}
                                 activeOpacity={0.9}
-                                className="mx-5 mb-6"
+                                className="mx-5 mb-6 "
                             >
-                                <LinearGradient
-                                    colors={['#292929ff', '#1f1f1fff', '#1a1a1a']}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 1, y: 1 }}
-                                    style={{
-                                        borderRadius: 20,
-                                        padding: 24,
-                                    }}
-                                >
+                                <View className="p-6 bg-neutral-800 rounded-2xl">
                                     <Text className="text-white text-xl font-bold mb-1">
                                         Upgrade to Premium
                                     </Text>
@@ -146,15 +138,15 @@ const Account = () => {
                                             Get Premium
                                         </Text>
                                     </View>
-                                </LinearGradient>
+                                </View>
                             </TouchableOpacity>
                         )
                     }
                     <View className="px-5 gap-y-6">
-                        <View className="bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800/50">
+                        <View className="bg-neutral-800 rounded-2xl overflow-hidden">
                             <MenuItem item={profileRoute} isLast={true} />
                         </View>
-                        <View className="bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800/50">
+                        <View className="bg-neutral-800 rounded-2xl overflow-hidden">
                             {generalRoutes.map((route, index) => (
                                 <MenuItem
                                     key={route.name}
@@ -163,7 +155,7 @@ const Account = () => {
                                 />
                             ))}
                         </View>
-                        <View className="bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800/50">
+                        <View className="bg-neutral-800 rounded-2xl overflow-hidden">
                             <DeleteHistoryButton />
                         </View>
                         <View className="items-center py-4">

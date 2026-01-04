@@ -39,9 +39,9 @@ export const Header = ({ totalSongs, songs }: Props) => {
                             Liked Songs
                         </Text>
                         <Text className='text-zinc-300 font-medium text-center'>
-                            15 Songs
+                            {totalSongs} { totalSongs === 1 ? 'Song' : 'Songs' }
                         </Text>
-                        <View className="flex flex-row justify-center items-center gap-6 pt-2">
+                        <View className="flex flex-row justify-center items-center gap-4 pt-2">
                             <PlayButton songs={songs} />
                             <ShuffleButton />
                         </View>

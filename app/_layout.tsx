@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState, useRef } from "react";
 import { AppState, AppStateStatus } from "react-native";
 import { Stack, router } from "expo-router";
@@ -6,15 +7,14 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { PortalProvider } from "@gorhom/portal";
-import * as SplashScreen from 'expo-splash-screen';
 import { queryClient } from "@/lib/query-client";
 import { useAuth } from "@/hooks/use-auth";
 import { useAiRecommendationStore } from "@/hooks/use-ai-recommendation";
 import { AUTH_BASE_URL } from "@/constants/api.config";
 import { useSettings } from "@/hooks/use-settings";
 import { useQueue } from "@/hooks/use-queue";
-import "./global.css"
 import usePlayerSettings from "@/hooks/use-player-settings";
+import "./global.css"
 
 
 SplashScreen.preventAutoHideAsync();

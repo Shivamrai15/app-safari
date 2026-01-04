@@ -88,7 +88,7 @@ const Download = () => {
 
     if (settings ? !settings.subscription.isActive : true) {
         return (
-            <Redirect href="/pricing" />
+            <Redirect href="/(tabs)/pricing" />
         )
     }
 

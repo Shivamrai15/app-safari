@@ -177,7 +177,7 @@ export const Sheet = ({
                                             minimumValue={0}
                                             value={position}
                                             onValueChange={(value) => onSeek(value[0])}
-                                            maximumValue={data.duration}
+                                            maximumValue={isAdvertisement && advertisement ? advertisement.duration : data.duration}
                                             minimumTrackTintColor="#ef4444"
                                             maximumTrackTintColor="#D3D3D3"
                                             thumbTintColor="transparent"
@@ -243,6 +243,7 @@ export const Sheet = ({
                                                 className='h-10 aspect-square'
                                                 activeOpacity={0.7}
                                                 onPress={deQueue}
+                                                disabled={isAdvertisement}
                                             >
                                                 <Image
                                                     source={ForwardStepIcon}

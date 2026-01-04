@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Spacer } from '@/components/ui/spacer';
 
 const PriceLists = {
     "price_1PLVQoSF9kH75ipG3YQe4k4Y": {
@@ -31,12 +32,12 @@ const PriceLists = {
 };
 
 const features = [
-    { name: "Ad-Free Experience", free: false, premium: true },
-    { name: "Unlimited Skips", free: false, premium: true },
-    { name: "Organize queue", free: false, premium: true },
-    { name: "Play songs in any order", free: false, premium: true },
-    { name: "Song seek control", free: false, premium: true },
-    { name: "Unlimited custom playlists", free: false, premium: true },
+    { name: "Ad-Free Experience", free: false, premium: true, icon: "ban-outline" as const },
+    { name: "Unlimited Skips", free: false, premium: true, icon: "play-skip-forward-outline" as const },
+    { name: "Organize queue", free: false, premium: true, icon: "list-outline" as const },
+    { name: "Play songs in any order", free: false, premium: true, icon: "shuffle-outline" as const },
+    { name: "Song seek control", free: false, premium: true, icon: "play-forward-outline" as const },
+    { name: "Unlimited custom playlists", free: false, premium: true, icon: "albums-outline" as const },
 ];
 
 const planBenefits = [
@@ -85,9 +86,12 @@ const Pricing = () => {
                             key={index}
                             className='flex-row items-center py-4 border-b border-zinc-900'
                         >
-                            <Text className='flex-1 text-zinc-300 text-base'>
-                                {feature.name}
-                            </Text>
+                            <View className='flex-1 flex-row items-center gap-3'>
+                                <Ionicons name={feature.icon} size={24} color="#fff" />
+                                <Text className='text-zinc-300 text-base flex-1'>
+                                    {feature.name}
+                                </Text>
+                            </View>
                             <View className='w-24 items-center'>
                                 {feature.free ? (
                                     <View className='bg-white rounded-full w-6 h-6 items-center justify-center'>
@@ -119,13 +123,7 @@ const Pricing = () => {
                             const savingsPercent = Math.round(((originalPrice - plan.price) / originalPrice) * 100);
 
                             return (
-                                <LinearGradient
-                                    key={priceId}
-                                    colors={['#2a2a2a', '#1f1f1f', '#171717']}
-                                    start={{ x: 0, y: 0 }}
-                                    end={{ x: 0, y: 1 }}
-                                    style={{ borderRadius: 24, padding: 24, borderWidth: 1, borderColor: '#333', position: 'relative', overflow: 'hidden' }}
-                                >
+                                <View key={priceId} className='p-6 bg-neutral-800 rounded-2xl overflow-hidden'>
                                     <View
                                         className='absolute top-0 right-0 flex items-center justify-center w-24 h-10 rounded-bl-2xl'
                                         style={{ backgroundColor: plan.color }}
@@ -187,11 +185,12 @@ const Pricing = () => {
                                             Get {plan.planName}
                                         </Text>
                                     </TouchableOpacity>
-                                </LinearGradient>
+                                </View>
                             );
                         })}
                     </View>
                 </View>
+                <Spacer />
             </ScrollView>
         </SafeAreaView>
     );

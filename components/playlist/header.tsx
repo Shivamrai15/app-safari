@@ -54,7 +54,7 @@ export const Header = ({ data, onEditPress }: Props) => {
                                 <Button
                                     className='h-12 rounded-full w-fit px-4'
                                     onPress={() => router.push({
-                                        pathname: "/[playlistId]",
+                                        pathname: "/(tabs)/[playlistId]",
                                         params: {
                                             playlistId: data.id as string
                                         }

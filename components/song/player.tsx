@@ -48,12 +48,13 @@ export const Player = ({ bottom, isOffline }: Props) => {
 	const [currentAd, setCurrentAd] = useState<Ad | null>(null);
 	const pendingSongUrl = useRef<string | null>(null);
 
-	const player = useAudioPlayer(current?.url || '');
+	const player = useAudioPlayer('');
 	const status = useAudioPlayerStatus(player);
 
 	const hasAutoPlayed = useRef(false);
 	const currentSongUrl = useRef<string | null>(null);
 	const trackingTimeoutRef = useRef<number | null>(null);
+	const lockScreenInitialized = useRef(false);
 
 	useEffect(() => {
 		const configureAudio = async () => {
@@ -72,13 +73,46 @@ export const Player = ({ bottom, isOffline }: Props) => {
 		configureAudio();
 	}, []);
 
+	useEffect(() => {
+		if (current && player && !lockScreenInitialized.current) {
+			try {
+				if (typeof player.setActiveForLockScreen === 'function') {
+					player.setActiveForLockScreen(true, {
+						title: current.name,
+						albumTitle: current.album.name,
+						artworkUrl: current.image
+					});
+					lockScreenInitialized.current = true;
+				}
+			} catch (error) {
+				console.warn('Lock screen controls not available:', error);
+			}
+		}
+	}, [current, player]);
+
+	useEffect(() => {
+		if (current && player && lockScreenInitialized.current) {
+			try {
+				if (typeof player.updateLockScreenMetadata === 'function') {
+					player.updateLockScreenMetadata({
+						title: current.name,
+						albumTitle: current.album.name,
+						artworkUrl: current.image
+					});
+				}
+			} catch (error) {
+				console.warn('Failed to update lock screen metadata:', error);
+			}
+		}
+	}, [current?.id]);
+
 	const isPlaying = status.playing;
 	const isSubscribed = settings?.subscription?.isActive ?? false;
 	const isAiRecommendationEnabled = settings?.subscription.isActive ? isAiShuffled : false;
 
 
 	useEffect(() => {
-		if (current?.url && current.url !== currentSongUrl.current) {
+		if (current && current?.url && current.url !== currentSongUrl.current) {
 			const needsAd = !isOffline && checkShouldShowAd(isSubscribed);
 
 			if (needsAd && ADS.length > 0) {

@@ -9,7 +9,7 @@ import { PrimaryLoader } from '@/components/ui/loader';
 import { useAuth } from '@/hooks/use-auth';
 import { fetcher } from '@/lib/fetcher';
 import { NetworkProvider } from '@/providers/network.provider';
-import { Artist, PlayList } from '@/types/response.types';
+import { Artist, LikedSongTracksResponse, PlayList } from '@/types/response.types';
 import { Card } from '@/components/artist/card';
 import { CreatePlaylistModal } from '@/components/modals/create-playlist.modal';
 import { Spacer } from '@/components/ui/spacer';
@@ -24,7 +24,7 @@ const Playlist = () => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const onCloseModal = () => setIsModalVisible(false);
 
-    const [ userPlaylists, userFollowings ] = useQueries({
+    const [ userPlaylists, userFollowings, likedSongs ] = useQueries({
         queries : [
             {
                 queryFn : async() => {
@@ -47,6 +47,18 @@ const Playlist = () => {
                     return data.data;
                 },
                 queryKey : ['user-followings'],
+            },
+            {
+                queryFn: async () => {
+                            const data = await fetcher({
+                                prefix: "PROTECTED_BASE_URL",
+                                suffix: 'api/v2/song/liked/tracks',
+                                token: user?.tokens.accessToken
+                            });
+                            return data.data as LikedSongTracksResponse[];
+                        },
+                        queryKey: ["liked-songs"],
+                        meta: { persist: false },
             }
         ]
     });
@@ -55,14 +67,15 @@ const Playlist = () => {
         setIsRefreshing(true);
         await userPlaylists.refetch();
         await userFollowings.refetch();
+        await likedSongs.refetch();
         setIsRefreshing(false);
-    }, [userPlaylists.refetch, userFollowings.refetch]);
+    }, [userPlaylists.refetch, userFollowings.refetch, likedSongs.refetch]);
 
-    if (userPlaylists.isPending || userFollowings.isPending) {
+    if (userPlaylists.isPending || userFollowings.isPending || likedSongs.isPending) {
         return <PrimaryLoader />
     }
 
-    if (userPlaylists.error || userFollowings.error) {
+    if (userPlaylists.error || userFollowings.error || likedSongs.error) {
         return (
             <Error />
         );
@@ -119,7 +132,7 @@ const Playlist = () => {
                                 </View>
                                 <View className='flex-1 flex flex-col gap-y-1'>
                                     <Text className='text-white font-semibold text-lg'>Liked Songs</Text>
-                                    <Text className='text-neutral-400'>10 Tracks</Text>
+                                    <Text className='text-neutral-400'>{likedSongs.data?.length} { likedSongs.data?.length === 1 ? 'Song' : 'Songs' }</Text>
                                 </View>
                             </TouchableOpacity>
                             {

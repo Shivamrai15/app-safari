@@ -16,6 +16,7 @@ import { Error } from '@/components/ui/error';
 import { Button } from '@/components/ui/button';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { log } from '@/services/log.service';
+import { Spacer } from '@/components/ui/spacer';
 
 const PlaylistSearch = () => {
 
@@ -164,6 +165,7 @@ const PlaylistSearch = () => {
                             </>
                         }
                     </View>
+                    <Spacer />
                 </ScrollView>
             </LinearGradient>
         </SafeAreaView>

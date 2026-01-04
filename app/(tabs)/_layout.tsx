@@ -288,6 +288,20 @@ const Layout = () => {
 						href : null
 					}}
 				/>
+				<Tabs.Screen
+					name="[playlistId]" 
+					options={{
+						tabBarIcon : ()=>null,
+						href : null
+					}}
+				/>
+				<Tabs.Screen
+					name="pricing" 
+					options={{
+						tabBarIcon : ()=>null,
+						href : null
+					}}
+				/>
 			</Tabs>
 		</>
 	)

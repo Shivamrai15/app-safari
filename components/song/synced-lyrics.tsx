@@ -1,3 +1,4 @@
+import { useSettings } from "@/hooks/use-settings";
 import { cn } from "@/lib/utils";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, Text, View } from 'react-native';
@@ -12,10 +13,14 @@ interface Props {
 }
 
 export const SyncedLyrics = ({ position, onSeek, lyrics }: Props) => {
+
+    const { settings } = useSettings();
+    const lyricsContainerRef = useRef<ScrollView | null>(null);
+    const [lineHeights, setLineHeights] = useState<number[]>([]);
     const [currentLineIndex, setCurrentLineIndex] = useState<number>(-1);
     const [containerHeight, setContainerHeight] = useState<number>(0);
-    const [lineHeights, setLineHeights] = useState<number[]>([]);
-    const lyricsContainerRef = useRef<ScrollView | null>(null);
+
+    const isActive = settings ? settings.subscription.isActive : false
 
     const handleLineLayout = useCallback((index: number, height: number) => {
         setLineHeights(prev => {
@@ -93,6 +98,7 @@ export const SyncedLyrics = ({ position, onSeek, lyrics }: Props) => {
                             paddingVertical: 10,
                             justifyContent: 'center'
                         }}
+                        disabled={!isActive}
                     >
                         <Text
                             className={cn(
