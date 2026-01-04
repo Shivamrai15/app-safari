@@ -1,4 +1,4 @@
-import {Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { AllSearchResponse, Tab } from '@/types/response.types';
 import { useQuery } from '@tanstack/react-query';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -12,7 +12,7 @@ import { TopResultCard } from './top-result-card';
 
 interface Props {
     currentTab: Tab;
-    query : string;
+    query: string;
 }
 
 export const AllTab = ({ currentTab, query }: Props) => {
@@ -22,14 +22,15 @@ export const AllTab = ({ currentTab, query }: Props) => {
 
     const { data, isPending, error } = useQuery({
         queryKey: ['search-all', debouncedQuery],
-        queryFn : async()=>{
+        queryFn: async () => {
             const data = await fetcher({
-                prefix : "PUBLIC_BASE_URL",
-                suffix : `api/v2/search?q=${debouncedQuery}`,
-                token : user?.tokens.accessToken
+                prefix: "PUBLIC_BASE_URL",
+                suffix: `api/v2/search?q=${debouncedQuery}`,
+                token: user?.tokens.accessToken
             });
             return data.data as AllSearchResponse | undefined;
-        }
+        },
+        enabled: debouncedQuery.length > 0
     })
 
     if (isPending) {
@@ -38,7 +39,7 @@ export const AllTab = ({ currentTab, query }: Props) => {
         )
     }
 
-    if ( error || data === undefined || !data.topResult) {
+    if (error || data === undefined || !data.topResult) {
         return (
             <View className='mt-10 w-full'>
                 <Text className='text-white text-center'>
@@ -62,7 +63,7 @@ export const AllTab = ({ currentTab, query }: Props) => {
                                     <SongItem key={song.id} data={song} />
                                 ))
                             }
-                        </View> 
+                        </View>
                     </View>
                 )
             }

@@ -1,4 +1,4 @@
-import {Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { ArtistSearchResponse, Tab } from '@/types/response.types';
 import { useAuth } from '@/hooks/use-auth';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -9,7 +9,7 @@ import { Card } from '../artist/card';
 
 interface Props {
     currentTab: Tab;
-    query : string;
+    query: string;
 }
 
 export const ArtistTab = ({ currentTab, query }: Props) => {
@@ -19,14 +19,15 @@ export const ArtistTab = ({ currentTab, query }: Props) => {
 
     const { data, isPending, error } = useQuery({
         queryKey: ['search-artist', debouncedQuery],
-        queryFn : async()=>{
+        queryFn: async () => {
             const data = await fetcher({
-                prefix : "PUBLIC_BASE_URL",
-                suffix : `api/v2/search/artists?q=${debouncedQuery}`,
-                token : user?.tokens.accessToken
+                prefix: "PUBLIC_BASE_URL",
+                suffix: `api/v2/search/artists?q=${debouncedQuery}`,
+                token: user?.tokens.accessToken
             });
             return data.data as ArtistSearchResponse | undefined;
-        }
+        },
+        enabled: debouncedQuery.length > 0
     })
 
     if (isPending) {
@@ -35,7 +36,7 @@ export const ArtistTab = ({ currentTab, query }: Props) => {
         )
     }
 
-    if ( error || data === undefined  || data.artists.length === 0) {
+    if (error || data === undefined || data.artists.length === 0) {
         return (
             <View className='mt-10 w-full'>
                 <Text className='text-white text-center'>
