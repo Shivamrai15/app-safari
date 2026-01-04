@@ -32,7 +32,7 @@ export const ActionModal = ({
             onRequestClose={onClose}
         >
             <View className='flex-1 justify-center items-center bg-black/50 p-4'>
-                <View className='h-fit rounded-3xl bg-white p-6 shadow-lg flex gap-y-10'>
+                <View className='h-fit rounded-3xl bg-white p-6 shadow-lg flex gap-y-10 w-full'>
                     <View className='flex gap-y-2'>
                         <Text className='text-2xl font-extrabold text-zinc-800 text-center'>
                             {title}

@@ -8,6 +8,8 @@ import { useDownloads } from '@/hooks/use-downloads';
 import { useSettings } from '@/hooks/use-settings';
 import { OfflineItem } from '@/components/song/offline-item';
 import { Spacer } from '@/components/ui/spacer';
+import { useState } from 'react';
+import { DeleteModal } from '@/components/modals/delete.modal';
 
 interface CollectionCardProps {
     id: string;
@@ -83,8 +85,10 @@ const CollectionCard = ({ id, name, image, songCount, type, isDownloading, progr
 
 const Download = () => {
 
-    const { songs, playlists, albums, clearSongs } = useDownloads();
     const { settings } = useSettings();
+    const [ isPending, setIsPending ] = useState(false);
+    const [ openDeleteModal, setOpenDeleteModal ] = useState(false);
+    const { songs, playlists, albums, deleteAllDownloads } = useDownloads();
 
     if (settings ? !settings.subscription.isActive : true) {
         return (
@@ -111,7 +115,7 @@ const Download = () => {
                         <Button
                             variant='secondary'
                             className='rounded-full'
-                            onPress={clearSongs}
+                            onPress={() => setOpenDeleteModal(true)}
                         >
                             <Text className='text-white font-semibold'>
                                 Clear All
@@ -181,6 +185,18 @@ const Download = () => {
                 )}
                 <Spacer />
             </ScrollView>
+            <DeleteModal
+                isPending={isPending}
+                message='Are you sure you want to delete all downloads?'
+                title='Delete All Downloads'
+                visible={openDeleteModal}
+                onDelete={() => {
+                    setIsPending(true);
+                    deleteAllDownloads();
+                    setIsPending(false);
+                }}
+                onClose={() => setOpenDeleteModal(false)}
+            />
         </SafeAreaView>
     )
 }

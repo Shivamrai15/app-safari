@@ -16,9 +16,10 @@ export const LogoutButton = () => {
         await deleteAllDownloads();
         await AsyncStorage.removeItem("REACT_QUERY_OFFLINE_CACHE");
         queryClient.clear();
-        queryClient.removeQueries();
         setUser(null);
-        router.replace("/(auth)/sign-in");
+        setTimeout(() => {
+            router.replace("/(auth)/sign-in");
+        }, 0);
     }
 
     return (
