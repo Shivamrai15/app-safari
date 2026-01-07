@@ -38,7 +38,7 @@ export const ArtistTab = ({ currentTab, query }: Props) => {
 
     if (error || data === undefined || data.artists.length === 0) {
         return (
-            <View className='mt-10 w-full'>
+            <View className='mt-10 w-full px-4'>
                 <Text className='text-white text-center'>
                     No results found for {debouncedQuery}
                 </Text>
@@ -47,7 +47,7 @@ export const ArtistTab = ({ currentTab, query }: Props) => {
     }
 
     return (
-        <View className='mt-10 w-full'>
+        <View className='mt-10 w-full px-4'>
             <View className='w-full flex flex-row justify-between gap-y-4 flex-wrap'>
                 {
                     data.artists.map((artist) => (

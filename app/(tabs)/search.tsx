@@ -20,6 +20,7 @@ import { ArtistTab } from '@/components/search/artist-tab';
 import { SongTab } from '@/components/search/song-tab';
 import { NetworkProvider } from '@/providers/network.provider';
 import { Spacer } from '@/components/ui/spacer';
+import { LinearGradient } from 'expo-linear-gradient';
 
 
 
@@ -40,62 +41,69 @@ const Search = () => {
             <SafeAreaView className="bg-background flex-1">
                 <KeyboardAvoidingView className='flex-1' behavior={Platform.OS === "ios" ? "padding" : "height"}>
                     <ScrollView
-                        className='flex-1 px-4'
+                        className='flex-1'
                         keyboardShouldPersistTaps='handled'
                         stickyHeaderIndices={[0]}
                         showsVerticalScrollIndicator={false}
                         showsHorizontalScrollIndicator={false}
                     >
-                        <View className='flex flex-col gap-y-4 bg-background pt-4'>
-                            <View className='flex flex-row items-center bg-neutral-800 rounded-full px-4 py-3'>
-                                <Image
-                                    source={SearchIcon}
-                                    style={{ width: 26, height: 26 }}
-                                />
-                                <TextInput
-                                    placeholder="Search songs, albums and artists"
-                                    placeholderTextColor="#9CA3AF"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                    value={query}
-                                    onChangeText={(text) => setQuery(text)}
-                                    keyboardType="default"
-                                    style={{
-                                        backgroundColor: 'transparent',
-                                        borderRadius: 6,
-                                        borderWidth: 0,
-                                        paddingHorizontal: 12,
-                                        paddingVertical: 8,
-                                        height: 40,
-                                        color: '#f4f4f5',
-                                        fontWeight: '500',
-                                        flex: 1
-                                    }}
-                                />
+                        <View className='flex flex-col'>
+                            <View className='py-4 bg-background px-4'>
+                                <View className='flex flex-row items-center bg-neutral-800 rounded-full px-4 py-3'>
+                                    <Image
+                                        source={SearchIcon}
+                                        style={{ width: 26, height: 26 }}
+                                    />
+                                    <TextInput
+                                        placeholder="Search songs, albums and artists"
+                                        placeholderTextColor="#9CA3AF"
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        value={query}
+                                        onChangeText={(text) => setQuery(text)}
+                                        keyboardType="default"
+                                        style={{
+                                            backgroundColor: 'transparent',
+                                            borderRadius: 6,
+                                            borderWidth: 0,
+                                            paddingHorizontal: 12,
+                                            paddingVertical: 8,
+                                            height: 40,
+                                            color: '#f4f4f5',
+                                            fontWeight: '500',
+                                            flex: 1
+                                        }}
+                                    />
+                                </View>
                             </View>
-                            <View className='w-full py-6'>
-                                <FlatList
-                                    data={Object.entries(tabs)}
-                                    keyExtractor={([key]) => key}
-                                    renderItem={({ item: [key, label] }) => (
-                                        <Button
-                                            variant={currentTab === key ? "primary" : "secondary"}
-                                            onPress={() => setCurrentTab(key as Tab)}
-                                            className='rounded-full px-4 h-10'
-                                        >
-                                            <Text className={cn(
-                                                "font-medium",
-                                                currentTab === key ? "text-zinc-900" : "text-zinc-200"
-                                            )}>
-                                                {label}
-                                            </Text>
-                                        </Button>
-                                    )}
-                                    horizontal
-                                    ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
-                                    showsHorizontalScrollIndicator={false}
-                                />
-                            </View>
+                            <LinearGradient
+                                colors={["#111111", "transparent"]}
+                                locations={[0.5, 1]}
+                            >
+                                <View className='w-full py-6 px-4'>
+                                    <FlatList
+                                        data={Object.entries(tabs)}
+                                        keyExtractor={([key]) => key}
+                                        renderItem={({ item: [key, label] }) => (
+                                            <Button
+                                                variant={currentTab === key ? "primary" : "secondary"}
+                                                onPress={() => setCurrentTab(key as Tab)}
+                                                className='rounded-full px-4 h-10'
+                                            >
+                                                <Text className={cn(
+                                                    "font-medium",
+                                                    currentTab === key ? "text-zinc-900" : "text-zinc-200"
+                                                )}>
+                                                    {label}
+                                                </Text>
+                                            </Button>
+                                        )}
+                                        horizontal
+                                        ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+                                        showsHorizontalScrollIndicator={false}
+                                    />
+                                </View>
+                            </LinearGradient>
                         </View>
                         {
                             currentTab === "DEFAULT" && query && <AllTab currentTab={currentTab} query={query} />

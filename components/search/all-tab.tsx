@@ -41,7 +41,7 @@ export const AllTab = ({ currentTab, query }: Props) => {
 
     if (error || data === undefined || !data.topResult) {
         return (
-            <View className='mt-10 w-full'>
+            <View className='mt-10 w-full px-4'>
                 <Text className='text-white text-center'>
                     No results found for {debouncedQuery}
                 </Text>
@@ -51,7 +51,7 @@ export const AllTab = ({ currentTab, query }: Props) => {
 
 
     return (
-        <View className='mt-10 w-full flex flex-col'>
+        <View className='mt-10 w-full flex flex-col px-4'>
             <TopResultCard data={data.topResult} />
             {
                 data.songs.length > 0 && (

@@ -46,7 +46,6 @@ export const PlayButton = ({ className, playlistId }: Props) => {
                 suffix: `api/v2/playlist/${playlistId}/all-songs`,
                 token: user?.tokens.accessToken
             });
-            console.log(data.data);
             return data.data as SongResponse[];
         },
         onSuccess: (data) => {

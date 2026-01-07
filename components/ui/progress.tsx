@@ -1,55 +1,59 @@
-import { View } from 'react-native';
+import { memo, useMemo } from 'react';
+import { View, type ViewStyle } from 'react-native';
 import { cn } from '@/lib/utils';
 
+const SIZE_CLASSES = {
+    sm: 'h-1',
+    md: 'h-2',
+    lg: 'h-3'
+} as const;
+
+const VARIANT_CLASSES = {
+    default: 'bg-blue-500',
+    success: 'bg-green-500',
+    warning: 'bg-yellow-500',
+    danger: 'bg-red-500'
+} as const;
+
 interface ProgressProps {
-    value: number; // 0-100
+    value: number;
     className?: string;
-    size?: 'sm' | 'md' | 'lg';
-    variant?: 'default' | 'success' | 'warning' | 'danger';
-    showBackground?: boolean;
+    size?: keyof typeof SIZE_CLASSES;
+    variant?: keyof typeof VARIANT_CLASSES;
 }
 
-export const Progress = ({ 
-    value = 0, 
+export const Progress = memo(({
+    value = 0,
     className,
     size = 'md',
-    variant = 'default',
-    showBackground = true 
+    variant = 'default'
 }: ProgressProps) => {
+
+    const clampedValue = useMemo(
+        () => Math.min(Math.max(value, 0), 100),
+        [value]
+    );
     
-    // Clamp value between 0 and 100
-    const clampedValue = Math.min(Math.max(value, 0), 100);
-    
-    // Size variants
-    const sizeClasses = {
-        sm: 'h-1',
-        md: 'h-2',
-        lg: 'h-3'
-    };
-    
-    // Color variants for progress bar
-    const variantClasses = {
-        default: 'bg-blue-500',
-        success: 'bg-green-500',
-        warning: 'bg-yellow-500',
-        danger: 'bg-red-500'
-    };
-    
+    const progressStyle = useMemo(
+        () => ({ width: `${clampedValue}%` } as ViewStyle),
+        [clampedValue]
+    );
+
     return (
-        <View 
+        <View
             className={cn(
                 'w-full rounded-full overflow-hidden bg-neutral-800',
-                sizeClasses[size],
+                SIZE_CLASSES[size],
                 className
             )}
         >
-            <View 
+            <View
                 className={cn(
                     'h-full rounded-full transition-all duration-300 ease-out',
-                    variantClasses[variant]
+                    VARIANT_CLASSES[variant]
                 )}
-                style={{ width: `${clampedValue}%` }}
+                style={progressStyle}
             />
         </View>
     );
-};
+});

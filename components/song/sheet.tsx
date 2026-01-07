@@ -37,6 +37,7 @@ import PagerView from 'react-native-pager-view';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Lyrics } from './lyrics';
 import { RelatedSongs } from './related';
+import { MarqueeText } from '@/components/ui/marquee-text';
 import { UpNext } from './up-next';
 import { Ad } from '@/types/auth.types';
 
@@ -147,9 +148,10 @@ export const Sheet = ({
                                 </View>
                                 <View className='flex flex-col gap-y-4 px-4 py-6'>
                                     <View className='flex flex-row items-center gap-x-4 px-4'>
-                                        <Text className='text-white text-2xl font-bold flex-1' numberOfLines={1} ellipsizeMode='tail'>
-                                            {isAdvertisement ? advertisement?.name : data.name}
-                                        </Text>
+                                        <MarqueeText
+                                            text={isAdvertisement ? (advertisement?.name ?? '') : data.name}
+                                            className='text-white text-2xl font-bold'
+                                        />
                                         <View className='flex flex-row items-center gap-x-4 justify-center'>
                                             {
                                                 !isOffline && !isAdvertisement && <LikeButton songId={data.id} label={false} />

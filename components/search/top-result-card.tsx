@@ -42,7 +42,10 @@ export const TopResultCard = ({ data }: Props) => {
                                     </View>
                                 </View>
                                 <View className="flex flex-row gap-x-6 items-center justify-start">
-                                    <PlayButton id={data.id}/>
+                                    <PlayButton
+                                        id={data.id}
+                                        className="size-12"
+                                    />
                                     <Button 
                                         className="rounded-full"
                                         onPress={()=>router.push({
@@ -80,7 +83,10 @@ export const TopResultCard = ({ data }: Props) => {
                                     </View>
                                 </View>
                                 <View className="flex flex-row gap-x-6 items-center justify-start">
-                                    <PlayButton songs={[data]}/>
+                                    <PlayButton
+                                        songs={[data]}
+                                        className="size-12"
+                                    />
                                     <Button 
                                         className="rounded-full"
                                         onPress={()=>router.push({

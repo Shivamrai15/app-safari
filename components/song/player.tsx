@@ -8,6 +8,7 @@ import { Image } from 'expo-image';
 import { useQueue } from '@/hooks/use-queue';
 import { useEffect, useRef, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
+import { MarqueeText } from '@/components/ui/marquee-text';
 import { PauseIcon, PlayIcon } from '@/constants/icons';
 import { useAudioPlayer, useAudioPlayerStatus, setAudioModeAsync } from 'expo-audio';
 import { Sheet } from './sheet';
@@ -136,12 +137,12 @@ export const Player = ({ bottom, isOffline }: Props) => {
 				onSongStart(current.id);
 
 				// Fetch AI recommendations if queue is low
-				if (!isOffline && queue.length < 3 && current.id) {
-					fetchRecommendations(current.id, {
-						isAiRecommendationEnabled: isAiRecommendationEnabled,
-						currentIsPlaying: true
-					});
-				}
+				// if (!isOffline && queue.length < 3 && current.id) {
+				// 	fetchRecommendations(current.id, {
+				// 		isAiRecommendationEnabled: isAiRecommendationEnabled,
+				// 		currentIsPlaying: true
+				// 	});
+				// }
 
 				if (trackingTimeoutRef.current) {
 					clearTimeout(trackingTimeoutRef.current);
@@ -175,7 +176,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 				currentIsPlaying: true
 			});
 		}
-	}, [isAiRecommendationEnabled]);
+	}, [isAiRecommendationEnabled, queue.length]);
 
 	useEffect(() => {
 		if (status.isLoaded && !hasAutoPlayed.current) {
@@ -271,7 +272,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 						variant='danger'
 						size='sm'
 					/>
-					<View className='flex-1 flex-row justify-between items-center p-2 px-3'>
+					<View className='flex-1 flex-row justify-between gap-x-4 items-center p-1.5 pr-6'>
 						<View className='flex-1 flex flex-row items-center gap-x-4'>
 							<View className='h-full aspect-square my-2 rounded-lg overflow-hidden'>
 								<Image
@@ -284,9 +285,10 @@ export const Player = ({ bottom, isOffline }: Props) => {
 								/>
 							</View>
 							<View className='flex-1 flex flex-col'>
-								<Text className='text-white font-semibold' numberOfLines={1} ellipsizeMode='tail'>
-									{isPlayingAd && currentAd ? currentAd.name : current.name}
-								</Text>
+								<MarqueeText
+									text={isPlayingAd && currentAd ? currentAd.name : current.name}
+									className='text-white font-semibold'
+								/>
 								<Text className='text-neutral-300 text-sm' numberOfLines={1} ellipsizeMode='tail'>
 									{isPlayingAd ? 'Advertisement' : current.album.name}
 								</Text>

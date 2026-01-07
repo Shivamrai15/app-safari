@@ -4,11 +4,15 @@ import { router } from "expo-router";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { PauseDarkIcon, PlayDarkIcon } from "@/constants/icons";
-import { Album, Artist, Song } from "@/types/response.types";
+import { Album, AlbumResponse, Artist, Song } from "@/types/response.types";
 import { useAuth } from "@/hooks/use-auth";
 import { useQueue } from "@/hooks/use-queue";
 import { useAlbumStack } from "@/hooks/use-stack";
 import { usePlayer } from "@/hooks/use-player";
+import { useMutation } from "@tanstack/react-query";
+import { fetcher } from "@/lib/fetcher";
+import axios from "axios";
+import { log } from "@/services/log.service";
 
 
 interface Props {
@@ -22,7 +26,7 @@ interface Props {
 
 export const PlayButton = ({ songs, id, className }: Props) => {
 
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, user } = useAuth();
     const { priorityEnqueue, current, queue, stack } = useQueue();
     const { activeId, play, isPlaying: checkIsPlaying } = useAlbumStack();
     const { isPlaying } = usePlayer();
@@ -32,6 +36,23 @@ export const PlayButton = ({ songs, id, className }: Props) => {
         return checkIsPlaying(id);
     }, [id, activeId, current, queue, stack]);
 
+    const handlePlayMutation = useMutation({
+        mutationFn: async () => {
+                        const data = await fetcher({
+                            prefix: "PUBLIC_BASE_URL",
+                            suffix: `api/v2/album/${id}`,
+                            token: user?.tokens.accessToken
+                        });
+                        return data.data as AlbumResponse;
+        },
+        onSuccess: (data) => {
+            if (data && data.songs.length > 0 && id) {
+                play(id, data.songs);
+                priorityEnqueue(data.songs);
+            }
+        },
+    });
+
     const handlePlay = async () => {
         if (!isLoggedIn) {
             router.push("/(auth)/welcome");
@@ -40,6 +61,8 @@ export const PlayButton = ({ songs, id, className }: Props) => {
             if (songs && songs.length > 0 && id) {
                 play(id, songs);
                 priorityEnqueue(songs);
+            } else {
+                await handlePlayMutation.mutateAsync();
             }
         }
     }

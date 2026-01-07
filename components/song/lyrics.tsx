@@ -45,7 +45,7 @@ export const Lyrics = ({ songId, position, onSeek }: Props) => {
     if (lyrics.isError || !lyrics.data) {
         return (
             <View className='flex-1 justify-center items-center text-left'>
-                <Text className='text-white text-left px-4 text-3xl font-bold'>
+                <Text className='text-white text-left px-8 leading-10 text-5xl font-bold'>
                     {
                         axios.isAxiosError(lyrics.error) ?
                         lyrics.error.response?.data?.message : lyrics.error.message
