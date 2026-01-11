@@ -32,6 +32,8 @@ export async function fetcher({ prefix, suffix, token }: Args) {
             if (error.response?.status === 401) {
                 useAuth.getState().setUser(null);
                 router.replace("/(auth)/sign-in");
+            } else if ( suffix.includes("lyrics") && error.response?.status === 404 ) {
+                // do not log the error if lyrics are not found
             } else {
                 log({
                     message: error.response?.data?.message || error.message,

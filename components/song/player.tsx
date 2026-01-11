@@ -3,6 +3,7 @@ import {
 	Text,
 	Pressable,
 	TouchableOpacity,
+	AppState,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useQueue } from '@/hooks/use-queue';
@@ -20,6 +21,7 @@ import { useAiRecommendationStore } from '@/hooks/use-ai-recommendation';
 import { ADS } from '@/constants/ads';
 import { Ad } from '@/types/auth.types';
 import usePlayerSettings from '@/hooks/use-player-settings';
+import { useSleepTimer } from '@/hooks/use-sleep-timer';
 
 
 interface Props {
@@ -56,6 +58,16 @@ export const Player = ({ bottom, isOffline }: Props) => {
 	const currentSongUrl = useRef<string | null>(null);
 	const trackingTimeoutRef = useRef<number | null>(null);
 	const lockScreenInitialized = useRef(false);
+	const sleepTimerIntervalRef = useRef<number | null>(null);
+
+	const {
+		isActive: isSleepTimerActive,
+		endOfTrack: sleepTimerEndOfTrack,
+		remainingTime: sleepTimerRemainingTime,
+		updateRemainingTime,
+		onTimerComplete,
+		hydrateFromStorage: hydrateSleepTimer,
+	} = useSleepTimer();
 
 	useEffect(() => {
 		const configureAudio = async () => {
@@ -72,7 +84,55 @@ export const Player = ({ bottom, isOffline }: Props) => {
 			}
 		};
 		configureAudio();
+		hydrateSleepTimer();
 	}, []);
+
+	useEffect(() => {
+		if (!isSleepTimerActive || sleepTimerEndOfTrack) {
+			if (sleepTimerIntervalRef.current) {
+				clearInterval(sleepTimerIntervalRef.current);
+				sleepTimerIntervalRef.current = null;
+			}
+			return;
+		}
+
+		sleepTimerIntervalRef.current = setInterval(() => {
+			updateRemainingTime();
+			const remaining = useSleepTimer.getState().remainingTime;
+			if (remaining <= 0 && player.currentTime > 0) {
+				player.pause();
+				setIsPlaying(false);
+				onTimerComplete();
+			}
+		}, 1000);
+
+		return () => {
+			if (sleepTimerIntervalRef.current) {
+				clearInterval(sleepTimerIntervalRef.current);
+				sleepTimerIntervalRef.current = null;
+			}
+		};
+	}, [isSleepTimerActive, sleepTimerEndOfTrack, updateRemainingTime, player, setIsPlaying, onTimerComplete]);
+
+	useEffect(() => {
+		if (sleepTimerRemainingTime === 0 && isSleepTimerActive && !sleepTimerEndOfTrack) {
+			player.pause();
+			setIsPlaying(false);
+			onTimerComplete();
+		}
+	}, [sleepTimerRemainingTime, isSleepTimerActive, sleepTimerEndOfTrack]);
+
+	useEffect(() => {
+		const subscription = AppState.addEventListener('change', (nextAppState) => {
+			if (nextAppState === 'active' && isSleepTimerActive && !sleepTimerEndOfTrack) {
+				updateRemainingTime();
+			}
+		});
+
+		return () => {
+			subscription.remove();
+		};
+	}, [isSleepTimerActive, sleepTimerEndOfTrack, updateRemainingTime]);
 
 	useEffect(() => {
 		if (current && player && !lockScreenInitialized.current) {
@@ -81,7 +141,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 					player.setActiveForLockScreen(true, {
 						title: current.name,
 						albumTitle: current.album.name,
-						artworkUrl: current.image
+						artworkUrl: current.image,
 					});
 					lockScreenInitialized.current = true;
 				}
@@ -98,7 +158,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 					player.updateLockScreenMetadata({
 						title: current.name,
 						albumTitle: current.album.name,
-						artworkUrl: current.image
+						artworkUrl: current.image,
 					});
 				}
 			} catch (error) {
@@ -236,6 +296,10 @@ export const Player = ({ bottom, isOffline }: Props) => {
 						}, 5000);
 					}
 				}
+			} else if (isSleepTimerActive && sleepTimerEndOfTrack) {
+				player.pause();
+				setIsPlaying(false);
+				onTimerComplete();
 			} else if (!isLooped) {
 				deQueue();
 				if (queue.length > 0) {
@@ -243,7 +307,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 				}
 			}
 		}
-	}, [player.currentStatus.didJustFinish, isLooped, queue.length, isPlayingAd]);
+	}, [player.currentStatus.didJustFinish, isLooped, queue.length, isPlayingAd, isSleepTimerActive, sleepTimerEndOfTrack]);
 
 	if (!current) return null;
 

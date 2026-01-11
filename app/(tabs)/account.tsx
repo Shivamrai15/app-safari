@@ -1,10 +1,9 @@
 import { Image } from 'expo-image';
 import { Href, router } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { DownloadIcon, PlaylistRecoverIcon, ReceiptIcon, UserIcon } from '@/constants/icons';
+import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { DownloadIcon, PlaylistRecoverIcon, ReceiptIcon, SleepTimerIcon, UserIcon } from '@/constants/icons';
 import { NetworkProvider } from '@/providers/network.provider';
 import { DeleteHistoryButton } from '@/components/account/delete-history-button';
 import { useSettings } from '@/hooks/use-settings';
@@ -95,6 +94,14 @@ const Account = () => {
             description: "Billing and receipts",
             path: "/(tabs)/account/transaction-history" as Href,
             icon: ReceiptIcon,
+            height: 18,
+            width: 18
+        },
+        {
+            name: "Sleep timer",
+            description: "Set a timer to stop playback",
+            path: "/(tabs)/timer" as Href,
+            icon: SleepTimerIcon,
             height: 18,
             width: 18
         },

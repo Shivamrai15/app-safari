@@ -163,7 +163,7 @@ const Playlist = () => {
                     </View>
                     <View className='flex flex-col gap-y-6 pt-10'>
                         <View className='flex flex-col gap-y-2'>
-                            <Text className="text-white text-4xl font-extrabold">Following</Text>
+                            <Text className="text-white text-3xl font-extrabold">Following</Text>
                             <Text className="text-zinc-400 text-sm">Artists you follow</Text>
                         </View>
                         <View className='w-full flex flex-row justify-between gap-y-4 flex-wrap'>

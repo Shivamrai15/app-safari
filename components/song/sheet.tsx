@@ -8,7 +8,8 @@ import {
     PlayCircleIcon,
     RepeatIcon,
     RepeatOneIcon,
-    ShuffleIcon
+    ShuffleIcon,
+    SleepTimerIcon
 } from '@/constants/icons';
 import usePlayerSettings from '@/hooks/use-player-settings';
 import { useQueue } from '@/hooks/use-queue';
@@ -19,6 +20,7 @@ import { BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Slider } from '@miblanchard/react-native-slider';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
 import {
     useEffect,
     useMemo,
@@ -40,6 +42,7 @@ import { RelatedSongs } from './related';
 import { MarqueeText } from '@/components/ui/marquee-text';
 import { UpNext } from './up-next';
 import { Ad } from '@/types/auth.types';
+import { useSleepTimer, formatRemainingTime } from '@/hooks/use-sleep-timer';
 
 interface Props {
     data: Song & { album: Album };
@@ -79,6 +82,7 @@ export const Sheet = ({
     const [featuresOpened, setFeaturesOpened] = useState(false);
     const { pop, deQueue, shuffle } = useQueue();
     const { isLooped, isAiShuffled, setAiShuffled, setLooped } = usePlayerSettings();
+    const { isActive: isSleepTimerActive, endOfTrack: sleepTimerEndOfTrack, remainingTime: sleepTimerRemainingTime } = useSleepTimer();
 
     useEffect(() => {
         if (isOpen) {
@@ -134,6 +138,25 @@ export const Sheet = ({
                                     onPress={onClose}
                                 >
                                     <Entypo name="chevron-down" size={24} color="white" />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    onPress={() => {
+                                        onClose();
+                                        setTimeout(() => router.push('/(tabs)/timer'), 300);
+                                    }}
+                                    className={`flex-row items-center gap-x-2 px-3 py-1.5 rounded-full ${isSleepTimerActive ? 'bg-red-500/20' : 'bg-neutral-800/50'}`}
+                                >
+                                    <Image
+                                        source={SleepTimerIcon}
+                                        style={{ width: 16, height: 16 }}
+                                        tintColor={isSleepTimerActive ? '#ef4444' : '#a1a1aa'}
+                                    />
+                                    {isSleepTimerActive && (
+                                        <Text className='text-red-400 text-xs font-medium'>
+                                            {sleepTimerEndOfTrack ? 'End of Track' : formatRemainingTime(sleepTimerRemainingTime)}
+                                        </Text>
+                                    )}
                                 </TouchableOpacity>
                             </View>
                             <View className='flex-1 flex flex-col items-center gap-y-6'>

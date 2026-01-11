@@ -32,6 +32,7 @@ import ThumbIcon from "@/assets/icons/thumb.svg";
 import ThumbActiveIcon from "@/assets/icons/thumb-active.svg";
 import DownloadIcon from "@/assets/icons/download.png";
 import TrashIcon from "@/assets/icons/trash.png";
+import SleepTimerIcon from "@/assets/icons/timer.png";
 
 export {
     HomeIcon,
@@ -67,5 +68,6 @@ export {
     ThumbIcon,
     ThumbActiveIcon,
     DownloadIcon,
-    TrashIcon
+    TrashIcon,
+    SleepTimerIcon
 };

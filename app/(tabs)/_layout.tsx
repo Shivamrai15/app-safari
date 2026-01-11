@@ -302,6 +302,13 @@ const Layout = () => {
 						href : null
 					}}
 				/>
+				<Tabs.Screen
+					name="timer" 
+					options={{
+						tabBarIcon : ()=>null,
+						href : null
+					}}
+				/>
 			</Tabs>
 		</>
 	)
