@@ -1,5 +1,6 @@
 import { Image } from 'expo-image';
-import { View, Text, ScrollView, Switch, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, RefreshControl } from 'react-native';
+import { Switch } from '@/components/ui/switch';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/use-auth';
 import { NetworkProvider } from '@/providers/network.provider';
@@ -24,9 +25,9 @@ const Profile = () => {
 
 
     return (
-        <NetworkProvider>    
+        <NetworkProvider>
             <SafeAreaView className='flex-1 bg-background'>
-                <ScrollView 
+                <ScrollView
                     className='flex-1 p-6'
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
@@ -42,8 +43,8 @@ const Profile = () => {
                     <View className='flex flex-row items-center gap-x-6'>
                         <View className='size-28 rounded-full overflow-hidden'>
                             <Image
-                                source={ user?.user?.image ? { uri: user?.user.image } : require('@/assets/images/user.png')}
-                                style={{ height:"100%", width:"100%"}}   
+                                source={user?.user?.image ? { uri: user?.user.image } : require('@/assets/images/user.png')}
+                                style={{ height: "100%", width: "100%" }}
                             />
                         </View>
                         <View className='flex flex-col gap-y-2'>
@@ -61,7 +62,7 @@ const Profile = () => {
                             Personalized Settings
                         </Text>
                         <View className='flex flex-col gap-y-6'>
-                            <View className='flex flex-row items-center gap-x-4'> 
+                            <View className='flex flex-row items-center gap-x-4'>
                                 <View className='flex-1 flex flex-col gap-y-1'>
                                     <Text className='text-white font-semibold'>Private Session</Text>
                                     <Text className='text-zinc-300 font-medium text-sm'>Turn on Private Session to listen without sharing your activity.</Text>
@@ -70,12 +71,9 @@ const Profile = () => {
                                     value={settings?.subscription.isActive ? settings.privateSession : false}
                                     onValueChange={(value) => updateSettings({ privateSession: value })}
                                     disabled={!settings?.subscription.isActive}
-                                    thumbColor="white"
-                                    trackColor={{ false: '#3f3f46', true: '#a1a1aa' }}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
                                 />
                             </View>
-                            <View className='flex flex-row items-center gap-x-4'> 
+                            <View className='flex flex-row items-center gap-x-4'>
                                 <View className='flex-1 flex flex-col gap-y-1'>
                                     <Text className='text-white font-semibold'>Recommend Songs</Text>
                                     <Text className='text-zinc-300 font-medium text-sm'>Allow Safari to recommend songs based on your activity.</Text>
@@ -84,9 +82,6 @@ const Profile = () => {
                                     value={settings?.subscription.isActive ? settings.showRecommendations : true}
                                     onValueChange={(value) => updateSettings({ showRecommendations: value })}
                                     disabled={!settings?.subscription.isActive}
-                                    thumbColor="white"
-                                    trackColor={{ false: '#3f3f46', true: '#a1a1aa' }}
-                                    style={{ transform: [{ scaleX: 1.2 }, { scaleY: 1.2 }] }}
                                 />
                             </View>
                         </View>
