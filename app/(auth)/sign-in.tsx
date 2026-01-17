@@ -120,7 +120,7 @@ const SignIn = () => {
                                         Continue without Password
                                     </Text>
                                 </Button>
-                                {/* <GoogleOauth /> */}
+                                <GoogleOauth />
                             </View>
                         </View>
                     </View>

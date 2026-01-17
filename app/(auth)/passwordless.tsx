@@ -176,7 +176,7 @@ const PasswordLess = () => {
                                 <Text className='text-zinc-500 text-sm font-medium'>OR</Text>
                                 <View className='flex-1 h-px bg-zinc-800' />
                             </View>
-                            {/* <GoogleOauth /> */}
+                            <GoogleOauth />
                         </View>
                     </View>
                 </View>
