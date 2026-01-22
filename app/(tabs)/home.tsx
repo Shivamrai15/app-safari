@@ -139,7 +139,7 @@ const Home = () => {
                     <View className="pt-10 flex flex-col gap-y-4">
                         <TouchableOpacity
                             onPress={() => router.push("/(tabs)/liked-songs")}
-                            className="w-full flex flex-row items-center gap-x-4 bg-neutral-800 rounded-md overflow-hidden"
+                            className="w-full flex flex-row items-center gap-x-4 bg-secondary rounded-md overflow-hidden"
                             activeOpacity={0.7}
                         >
                             <Image
@@ -153,7 +153,7 @@ const Home = () => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => router.push("/(tabs)/history")}
-                            className="w-full flex flex-row items-center gap-x-4 bg-neutral-800 rounded-md overflow-hidden"
+                            className="w-full flex flex-row items-center gap-x-4 bg-secondary rounded-md overflow-hidden"
                             activeOpacity={0.7}
                         >
                             <Image

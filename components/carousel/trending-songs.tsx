@@ -15,7 +15,7 @@ export const TrendingSongs = ({ data }: Props) => {
                 <Text className="text-white font-bold text-2xl block">
                     Trending Songs
                 </Text>
-                <Link href="/">
+                <Link href="/(tabs)/home">
                     <Text className="text-zinc-300 font-bold">
                         More
                     </Text>

@@ -102,13 +102,13 @@ const Playlist = () => {
                             <Text className="text-white text-3xl font-bold tracking-tight">Playlists</Text>
                             <Text className="text-zinc-400 text-sm">Your music collections</Text>
                         </View>
-                        <View className='w-full flex-col justify-between gap-y-4 flex-wrap'>
+                        <View className='w-full flex-col justify-between gap-y-3 flex-wrap'>
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                className='w-full flex flex-row items-center bg-neutral-900 rounded-3xl p-2 gap-x-4'
+                                className='w-full flex flex-row items-center bg-secondary rounded-xl p-2 gap-x-4'
                                 onPress={()=>setIsModalVisible(true)}
                             >
-                                 <View className='size-14 bg-neutral-800 rounded-2xl overflow-hidden flex items-center justify-center relative'>
+                                 <View className='size-14 bg-neutral-800 rounded-xl overflow-hidden flex items-center justify-center relative'>
                                     <Image
                                         source={require("@/assets/icons/note.png")}
                                         style={{ width: 24, height: 24 }}
@@ -120,11 +120,11 @@ const Playlist = () => {
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                className='w-full flex flex-row items-center bg-neutral-900 rounded-3xl p-2 gap-x-4'
+                                className='w-full flex flex-row items-center bg-secondary rounded-xl p-2 gap-x-4'
                                 activeOpacity={0.7}
                                 onPress={()=>router.push("/(tabs)/liked-songs")}
                             >
-                                <View className='size-14 rounded-2xl overflow-hidden relative'>
+                                <View className='size-14 rounded-xl overflow-hidden relative'>
                                     <Image
                                         source={require("@/assets/images/liked-thumb.png")}
                                         style={{ width: '100%', height: '100%' }}
@@ -138,7 +138,7 @@ const Playlist = () => {
                             {
                                 userPlaylists.data.map((playlist: PlayList & { _count: {songs: number }})=> (
                                     <TouchableOpacity
-                                        className='w-full flex flex-row items-center bg-neutral-900 rounded-3xl p-2 gap-x-4'
+                                        className='w-full flex flex-row items-center bg-secondary rounded-xl p-2 gap-x-4'
                                         activeOpacity={0.7}
                                         key={playlist.id}
                                         onPress={()=>router.push({
@@ -146,7 +146,7 @@ const Playlist = () => {
                                             params : { playlistId : playlist.id }
                                         })}
                                     >
-                                        <View className='size-14 rounded-2xl overflow-hidden relative'>
+                                        <View className='size-14 rounded-xl overflow-hidden relative'>
                                             <Image
                                                 source={playlist?.image ? {uri: playlist.image} : require("@/assets/images/playlist.png")}
                                                 style={{ width: '100%', height: '100%' }}

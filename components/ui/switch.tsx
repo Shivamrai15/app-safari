@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { Pressable, StyleSheet, View } from "react-native";
 import Animated, {
-    interpolateColor,
     useAnimatedStyle,
     useSharedValue,
     withSpring,
@@ -20,17 +19,17 @@ interface SwitchProps {
 }
 
 const SIZES = {
-    sm: { width: 40, height: 24, thumbSize: 18, padding: 3 },
-    md: { width: 52, height: 30, thumbSize: 24, padding: 3 },
-    lg: { width: 64, height: 36, thumbSize: 30, padding: 3 },
+    sm: { width: 40, height: 24, thumbSize: 14, padding: 3 },
+    md: { width: 52, height: 30, thumbSize: 20, padding: 3 },
+    lg: { width: 64, height: 36, thumbSize: 26, padding: 3 },
 };
 
-// Tailwind neutral colors for dark theme
+// Tailwind neutral colors for safe dark theme defaults
 const COLORS = {
-    active: "#a3a3a3",      // neutral-400
-    inactive: "#262626",    // neutral-800
-    thumb: "#fafafa",       // neutral-50
-    thumbActive: "#f5f5f5", // neutral-100
+    active: "#FFFFFF",      // White (For pulse/border)
+    inactive: "#27272a",    // Zinc-800
+    thumb: "#a1a1aa",       // Zinc-400 (Inactive dimmed)
+    thumbActive: "#FFFFFF", // White thumb against dark track
 };
 
 export const Switch = ({
@@ -43,29 +42,28 @@ export const Switch = ({
     thumbColor = COLORS.thumb,
     className,
 }: SwitchProps) => {
+    const BORDER_WIDTH = 2;
+
     const { width, height, thumbSize, padding } = SIZES[size];
-    const translateX = useSharedValue(value ? width - thumbSize - padding * 2 : 0);
-    const colorProgress = useSharedValue(value ? 1 : 0);
+    // Account for border width in translation range to maintain symmetric padding
+    const translateRange = width - thumbSize - padding * 2 - BORDER_WIDTH * 2;
+    const translateX = useSharedValue(value ? translateRange : 0);
+
+    // Dynamic thumb color based on state if not overridden
+    const actualThumbColor = value ? COLORS.thumbActive : thumbColor;
 
     useEffect(() => {
-        translateX.value = withSpring(value ? width - thumbSize - padding * 2 : 0, {
+        translateX.value = withSpring(value ? translateRange : 0, {
             damping: 20,
             stiffness: 300,
             mass: 0.8,
-        });
-        colorProgress.value = withSpring(value ? 1 : 0, {
-            damping: 20,
-            stiffness: 300,
         });
     }, [value, width, thumbSize, padding]);
 
     const trackAnimatedStyle = useAnimatedStyle(() => {
         return {
-            backgroundColor: interpolateColor(
-                colorProgress.value,
-                [0, 1],
-                [inactiveColor, activeColor]
-            ),
+            backgroundColor: inactiveColor, // Keep track background constant (Dark)
+            borderColor: "#3f3f46", // Static Zinc-700 border
         };
     });
 
@@ -85,7 +83,7 @@ export const Switch = ({
         <Pressable
             onPress={handlePress}
             disabled={disabled}
-            className={cn(disabled && "opacity-50", className)}
+            className={cn(disabled && "opacity-50", className, "relative items-center justify-center")}
         >
             <Animated.View
                 style={[
@@ -99,14 +97,6 @@ export const Switch = ({
                     },
                 ]}
             >
-                <View
-                    style={[
-                        styles.innerBorder,
-                        {
-                            borderRadius: height / 2,
-                        },
-                    ]}
-                />
                 <Animated.View
                     style={[
                         styles.thumb,
@@ -115,21 +105,10 @@ export const Switch = ({
                             width: thumbSize,
                             height: thumbSize,
                             borderRadius: thumbSize / 2,
-                            backgroundColor: thumbColor,
+                            backgroundColor: actualThumbColor,
                         },
                     ]}
-                >
-                    <View
-                        style={[
-                            styles.thumbHighlight,
-                            {
-                                width: thumbSize * 0.35,
-                                height: thumbSize * 0.35,
-                                borderRadius: thumbSize * 0.175,
-                            },
-                        ]}
-                    />
-                </Animated.View>
+                />
             </Animated.View>
         </Pressable>
     );
@@ -138,27 +117,16 @@ export const Switch = ({
 const styles = StyleSheet.create({
     track: {
         justifyContent: "center",
-        borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.08)",
-    },
-    innerBorder: {
-        ...StyleSheet.absoluteFillObject,
-        borderWidth: 1,
-        borderColor: "rgba(0, 0, 0, 0.2)",
+        borderWidth: 2, // Increased border width
+        borderColor: "transparent",
     },
     thumb: {
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 3,
-        elevation: 5,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.5,
+        elevation: 2,
         alignItems: "center",
         justifyContent: "center",
-    },
-    thumbHighlight: {
-        backgroundColor: "rgba(255, 255, 255, 0.4)",
-        position: "absolute",
-        top: "12%",
-        left: "12%",
     },
 });

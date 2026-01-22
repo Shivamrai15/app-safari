@@ -17,7 +17,7 @@ export const FlatCard = ({ song }: Props) => {
     return (
         <>
             <TouchableOpacity
-                className="w-full p-2 flex flex-row items-center gap-x-4 bg-neutral-800 rounded-md overflow-hidden"
+                className="w-full p-2 flex flex-row items-center gap-x-4 bg-secondary rounded-md overflow-hidden"
                 activeOpacity={0.7}
                 onPress={()=>priorityEnqueue([song])}
                 onLongPress={()=>setOpenOptions(true)}

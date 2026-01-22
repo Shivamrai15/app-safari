@@ -26,7 +26,7 @@ export const Card = ({ album, className }: Props) => {
         >
             <View className="h-1 mx-4 rounded-t-lg" style={{backgroundColor : `${album.color}5e`}} />
             <View className="h-1 mx-2 rounded-t-lg" style={{backgroundColor : `${album.color}`}} />
-            <View className="w-full rounded-lg bg-neutral-900 overflow-hidden">
+            <View className="w-full rounded-lg bg-secondary overflow-hidden">
                 <Image
                     source={{
                         uri : album.image
@@ -36,7 +36,7 @@ export const Card = ({ album, className }: Props) => {
                         height: 156,
                     }}
                 />
-                <View className="p-4 bg-neutral-800">
+                <View className="p-4 bg-secondary">
                     <Text className="text-white font-semibold line-clamp-1">
                         {album.name}
                     </Text>

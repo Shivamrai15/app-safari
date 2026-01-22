@@ -21,7 +21,7 @@ const MenuItem = ({
 }) => (
     <TouchableOpacity
         onPress={() => router.push(item.path)}
-        className={`flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors ${!isLast ? 'border-b border-neutral-700' : ''
+        className={`flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors ${!isLast ? 'border-b border-neutral-800' : ''
             }`}
         activeOpacity={0.7}
     >
@@ -150,10 +150,10 @@ const Account = () => {
                         )
                     }
                     <View className="px-5 gap-y-6">
-                        <View className="bg-neutral-800 rounded-2xl overflow-hidden">
+                        <View className="bg-secondary rounded-2xl overflow-hidden">
                             <MenuItem item={profileRoute} isLast={true} />
                         </View>
-                        <View className="bg-neutral-800 rounded-2xl overflow-hidden">
+                        <View className="bg-secondary rounded-2xl overflow-hidden">
                             {generalRoutes.map((route, index) => (
                                 <MenuItem
                                     key={route.name}
@@ -162,7 +162,7 @@ const Account = () => {
                                 />
                             ))}
                         </View>
-                        <View className="bg-neutral-800 rounded-2xl overflow-hidden">
+                        <View className="bg-secondary rounded-2xl overflow-hidden">
                             <DeleteHistoryButton />
                         </View>
                         <View className="items-center py-4">
