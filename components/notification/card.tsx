@@ -29,7 +29,7 @@ export const NotificationCard = ({ notification }: Props) => {
                 {
                     notification.image ? (
                         <Image
-                            source={notification.image}
+                            source={{ uri: notification.image }}
                             style={{
                                 width: "100%",
                                 height: "100%",

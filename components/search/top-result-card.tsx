@@ -7,6 +7,7 @@ import { Fragment } from "react";
 import { PlayButton } from "../album/play-button";
 import { PlayButton as ArtistPlayButton } from "../artist/play-button";
 import { Button } from "@/components/ui/button";
+import { SongPlayButton } from "../song/play-button";
 
 interface Props {
     data : SongResponse | Album | Artist;
@@ -83,8 +84,8 @@ export const TopResultCard = ({ data }: Props) => {
                                     </View>
                                 </View>
                                 <View className="flex flex-row gap-x-6 items-center justify-start">
-                                    <PlayButton
-                                        songs={[data]}
+                                    <SongPlayButton
+                                        song={data}
                                         className="size-12"
                                     />
                                     <Button 

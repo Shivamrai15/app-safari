@@ -112,7 +112,7 @@ const Notification = () => {
                     <View className="px-6 pt-6 pb-4">
                         <Text className='text-2xl font-bold text-white'>Notifications</Text>
                     </View>
-                    <View className="w-full flex flex-col gap-y-6 px-6">
+                    <View className="w-full flex flex-col gap-y-3 px-6">
                         {
                             data?.pages.map((group, i) => (
                                 <Fragment key={i} >
