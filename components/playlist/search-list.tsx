@@ -1,4 +1,4 @@
-import {Pressable, Text, TouchableOpacity, View } from 'react-native';
+import { Pressable, Text, TouchableOpacity, View } from 'react-native';
 import { SongSearchResponse } from '@/types/response.types';
 import { useAuth } from '@/hooks/use-auth';
 import { useDebounce } from '@/hooks/use-debounce';
@@ -10,27 +10,28 @@ import { PlusIcon } from '@/constants/icons';
 import { cn } from '@/lib/utils';
 
 interface Props {
-    query : string;
-    toggleSelect : (id: string) => void;
-    selectedSongId : string[];
-    existingSongIds : string[];
+    query: string;
+    toggleSelect: (id: string) => void;
+    selectedSongId: string[];
+    existingSongIds: string[];
 }
 
-export const SearchList = ({  query, toggleSelect, selectedSongId, existingSongIds }: Props) => {
+export const SearchList = ({ query, toggleSelect, selectedSongId, existingSongIds }: Props) => {
 
     const { user } = useAuth();
     const debouncedQuery = useDebounce(query, 300);
 
     const { data, isPending, error } = useQuery({
         queryKey: ['search-song', debouncedQuery],
-        queryFn : async()=>{
+        queryFn: async () => {
             const data = await fetcher({
-                prefix : "PUBLIC_BASE_URL",
-                suffix : `api/v2/search/songs?q=${debouncedQuery}`,
-                token : user?.tokens.accessToken
+                prefix: "PUBLIC_BASE_URL",
+                suffix: `api/v2/search/songs?q=${debouncedQuery}`,
+                token: user?.tokens.accessToken
             });
             return data.data as SongSearchResponse | undefined;
-        }
+        },
+        enabled: !!debouncedQuery
     });
 
     if (isPending) {
@@ -39,7 +40,7 @@ export const SearchList = ({  query, toggleSelect, selectedSongId, existingSongI
         )
     }
 
-    if ( error || data === undefined  || data.songs.length === 0) {
+    if (error || data === undefined || data.songs.length === 0) {
         return (
             <View className='mt-10 w-full'>
                 <Text className='text-white text-center'>
@@ -53,7 +54,7 @@ export const SearchList = ({  query, toggleSelect, selectedSongId, existingSongI
         <View className='mt-10 w-full'>
             <View className='flex flex-col gap-y-2'>
                 {
-                    data.songs.map((song)=>(
+                    data.songs.map((song) => (
                         <TouchableOpacity
                             key={song.id}
                             onPress={() => toggleSelect(song.id)}

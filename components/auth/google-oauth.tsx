@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Alert, Linking, Text } from "react-native";
+import { Alert, Linking, Text, Modal, View } from "react-native";
+import LottieView from 'lottie-react-native';
 import * as WebBrowser from "expo-web-browser";
 import { Button } from "@/components/ui/button";
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -8,6 +9,7 @@ import { log } from "@/services/log.service";
 import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/hooks/use-settings";
 import { router } from "expo-router";
+import { SyncingModal } from "../modals/syncing.modal";
 
 
 const AUTH_SCHEME = 'safarimusic://sign-in';
@@ -66,11 +68,11 @@ const GoogleOauth = () => {
             const createdAt = urlObj.searchParams.get('createdAt');
 
             setUser({
-                tokens : {
+                tokens: {
                     accessToken,
                     refreshToken,
                 },
-                user : {
+                user: {
                     id: id || '',
                     email: email || '',
                     name: name || '',
@@ -81,7 +83,7 @@ const GoogleOauth = () => {
             })
 
             return accessToken;
-            
+
         } catch {
             return null;
         }
@@ -111,12 +113,12 @@ const GoogleOauth = () => {
 
             await fetchSettings(accessToken);
             router.replace("/(tabs)/home");
-            
+
         } catch {
             Alert.alert('Error', 'Failed to process authentication response.');
             log({
-                message : 'Google OAuth Deep Link Error',
-                severity : "critical",
+                message: 'Google OAuth Deep Link Error',
+                severity: "critical",
             })
         } finally {
             setLoading(false);
@@ -140,24 +142,27 @@ const GoogleOauth = () => {
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Failed to authenticate with Google';
             log({
-                message : 'Google OAuth Error',
-                severity : "critical",
+                message: 'Google OAuth Error',
+                severity: "critical",
             })
             Alert.alert('Error', errorMessage);
         }
     };
 
-    
+
 
     return (
-        <Button
-            variant="secondary"
-            onPress={handleGoogleSignIn}
-            disabled={loading}
-        >
-            <AntDesign name="google" size={16} color="white" />
-            <Text className="text-white font-semibold">Continue with Google</Text>
-        </Button>
+        <>
+            <SyncingModal isVisible={loading} />
+            <Button
+                variant="secondary"
+                onPress={handleGoogleSignIn}
+                disabled={loading}
+            >
+                <AntDesign name="google" size={16} color="white" />
+                <Text className="text-white font-semibold">Continue with Google</Text>
+            </Button>
+        </>
     )
 }
 

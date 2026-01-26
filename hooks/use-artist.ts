@@ -1,10 +1,11 @@
 import axios from "axios";
 import { create } from "zustand";
-import { use, useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { fetcher } from "@/lib/fetcher";
 import { useMutation } from "@tanstack/react-query";
 import { Album, Artist, Song } from "@/types/response.types";
 import { useQueue } from "./use-queue";
+import { useArtistStack } from "./use-stack";
 import { log } from "@/services/log.service";
 
 interface useFollowingProps {
@@ -186,8 +187,8 @@ export const useArtistStorage = create<ArtistStackProps>((set, get) => ({
 
 
 export const useArtistSongs = (artistId: string, token?: string) => {
-    const { list, listId, setList, clearList, setListId } = useArtistStorage();
-    const { current, clear, priorityEnqueue } = useQueue();
+    const { activeId, songs, play, isPlaying, reset } = useArtistStack();
+    const { clear, priorityEnqueue } = useQueue();
 
     const mutation = useMutation({
         mutationFn: async () => {
@@ -214,10 +215,9 @@ export const useArtistSongs = (artistId: string, token?: string) => {
         onSuccess: (data) => {
             if (Array.isArray(data) && data.length > 0) {
                 clear();
-                clearList();
+                reset();
                 priorityEnqueue(data);
-                setList(data);
-                setListId(artistId);
+                play(artistId, data);
             }
         },
         onError: (error) => {
@@ -237,24 +237,12 @@ export const useArtistSongs = (artistId: string, token?: string) => {
         }
     });
 
-    const isCurrentArtist = useMemo(() => {
-
-        if (listId !== artistId) {
-            return false;
-        }
-
-        if (list.length === 0 || !current) {
-            return false;
-        }
-
-        return list.some(song => song.id === current.id);
-    }, [listId, artistId, list.length, current?.id]);
-
-    const hasSongs = list.length > 0 && listId === artistId;
+    const isCurrentArtist = isPlaying(artistId);
+    const hasSongs = songs.length > 0 && activeId === artistId;
 
     const playArtistSongs = async (shuffle: boolean = false) => {
         try {
-            if (listId !== artistId || list.length === 0) {
+            if (activeId !== artistId || songs.length === 0) {
                 await mutation.mutateAsync();
             }
         } catch (error) {
@@ -264,7 +252,7 @@ export const useArtistSongs = (artistId: string, token?: string) => {
     };
 
     return {
-        songs: list,
+        songs,
         hasSongs,
 
         isCurrentArtist,

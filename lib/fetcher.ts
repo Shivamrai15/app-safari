@@ -10,6 +10,9 @@ interface Args {
     token?: string;
 }
 
+// Guard to prevent multiple redirects when multiple 401 errors occur simultaneously
+let isRedirecting = false;
+
 export async function fetcher({ prefix, suffix, token }: Args) {
 
     let base = "";
@@ -30,10 +33,15 @@ export async function fetcher({ prefix, suffix, token }: Args) {
     } catch (error) {
         if (axios.isAxiosError(error)) {
             if (error.response?.status === 401) {
-                useAuth.getState().setUser(null);
-                router.replace("/(auth)/sign-in");
-            } else if ( suffix.includes("lyrics") && error.response?.status === 404 ) {
-                // do not log the error if lyrics are not found
+                if (!isRedirecting) {
+                    isRedirecting = true;
+                    useAuth.getState().setUser(null);
+                    router.replace("/(auth)/sign-in");
+                    setTimeout(() => {
+                        isRedirecting = false;
+                    }, 1000);
+                }
+            } else if (suffix.includes("lyrics") && error.response?.status === 404) {
             } else {
                 log({
                     message: error.response?.data?.message || error.message,
