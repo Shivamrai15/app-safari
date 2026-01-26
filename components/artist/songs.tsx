@@ -45,7 +45,7 @@ export const Songs = ({ artistId, isAtEnd }: Props) => {
     }
 
     return (
-        <View className='mt-4 w-full flex flex-col gap-y-4'>
+        <View className='mt-10 w-full flex flex-col gap-y-4'>
             {
                 data?.pages.map((group, i)=>(
                         <Fragment key={i} >
@@ -59,7 +59,7 @@ export const Songs = ({ artistId, isAtEnd }: Props) => {
 
             }
             {
-                isFetchingNextPage && (<View className='w-full h-6'>
+                isFetchingNextPage && (<View className='w-full flex-none'>
                     <SecondaryLoader />
                 </View>)
             }

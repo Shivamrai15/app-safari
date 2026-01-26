@@ -63,7 +63,7 @@ const ArtistSongs = () => {
                 className="flex-1 bg-background"
             >
                 <ScrollView
-                    className="w-full flex-1 px-4 py-10"
+                    className="w-full flex-1 px-4 my-10"
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
                     showsVerticalScrollIndicator={false}

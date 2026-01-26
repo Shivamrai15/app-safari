@@ -180,3 +180,25 @@ export type PlaylistSongResponse = {
     updatedAt: Date;
     song: SongResponse;
 }
+
+export enum NotificationType {
+    INFO = "INFO",
+    WARNING = "WARNING",
+    ALERT = "ALERT",
+}
+
+export type Notification = {
+    id: string;
+    userId: string;
+    type: NotificationType;
+    title: string;
+    message: string;
+    image: string | null;
+    webIcon: string | null;
+    appIcon: string | null;
+    webActionUrl: string | null;
+    appActionUrl: string | null;
+    read: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}

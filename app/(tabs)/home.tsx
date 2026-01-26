@@ -17,6 +17,7 @@ import { Spacer } from "@/components/ui/spacer";
 import { LogoutButton } from "@/components/auth/logout-button";
 import { useCallback, useState } from "react";
 import { RefreshControl } from "react-native-gesture-handler";
+import { NotificationBadge } from "@/components/notification/badge";
 
 const Home = () => {
 
@@ -121,7 +122,8 @@ const Home = () => {
                         />
                     }
                 >
-                    <View className="flex flex-row items-center justify-end gap-x-6">
+                    <View className="flex flex-row items-center justify-end gap-x-4">
+                        <NotificationBadge/>
                         <LogoutButton/>
                     </View>
                     <View className="flex flex-row items-center gap-x-6 mt-16">
