@@ -10,7 +10,7 @@ import { PortalProvider } from "@gorhom/portal";
 import { queryClient } from "@/lib/query-client";
 import { useAuth } from "@/hooks/use-auth";
 import { useAiRecommendationStore } from "@/hooks/use-ai-recommendation";
-import { AUTH_BASE_URL } from "@/constants/api.config";
+import { ACTIVITY_BASE_URL, AUTH_BASE_URL } from "@/constants/api.config";
 import { useSettings } from "@/hooks/use-settings";
 import { useQueue } from "@/hooks/use-queue";
 import usePlayerSettings from "@/hooks/use-player-settings";
@@ -21,10 +21,13 @@ SplashScreen.preventAutoHideAsync();
 
 async function refreshTokens(refreshToken: string) {
     try {
-        const response = await axios.post(`${AUTH_BASE_URL}/api/v2/auth/refresh`, {
+        const response = await axios.post(`${ACTIVITY_BASE_URL}/api/v3/token/rotate`, {
             refreshToken
         });
-        return response.data.data.accessToken as string;
+        return response.data as {
+            accessToken: string;
+            refreshToken: string;
+        };
     } catch (error) {
         console.error("Token refresh failed:", error);
         return null;

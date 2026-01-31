@@ -118,189 +118,183 @@ export const Sheet = ({
                 bottomInset={insets.bottom}
             >
                 <BottomSheetView
-                    style={{ flex: 1, borderRadius: 0 }}
+                    style={{ flex: 1, height: '100%', width: '100%' }}
                 >
                     <LinearGradient
                         colors={[`${isAdvertisement && advertisement ? advertisement.color : data.album.color}5e`, "#111111"]}
-                        style={{
-                            flex: 1,
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "space-between",
-                            gap: 24,
-                            borderRadius: 0
-                        }}
+                        style={{ flex: 1, justifyContent: 'space-between', height: '100%', width: '100%' }}
                     >
-                        <View className='flex flex-col gap-y-4 flex-1'>
-                            <View className='p-6 pb-3 flex-row items-center justify-between'>
-                                <TouchableOpacity
-                                    activeOpacity={0.7}
-                                    onPress={onClose}
-                                >
-                                    <Entypo name="chevron-down" size={24} color="white" />
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    activeOpacity={0.7}
-                                    onPress={() => {
-                                        onClose();
-                                        setTimeout(() => router.push('/(tabs)/timer'), 300);
-                                    }}
-                                    className={`flex-row items-center gap-x-2 px-3 py-1.5 rounded-full ${isSleepTimerActive ? 'bg-red-500/20' : 'bg-neutral-800/50'}`}
-                                >
-                                    <Image
-                                        source={SleepTimerIcon}
-                                        style={{ width: 16, height: 16 }}
-                                        tintColor={isSleepTimerActive ? '#ef4444' : '#a1a1aa'}
-                                    />
-                                    {isSleepTimerActive && (
-                                        <Text className='text-red-400 text-xs font-medium'>
-                                            {sleepTimerEndOfTrack ? 'End of Track' : formatRemainingTime(sleepTimerRemainingTime)}
-                                        </Text>
-                                    )}
-                                </TouchableOpacity>
+                        {/* Top Header - Fixed Height */}
+                        <View className='px-6 pt-6 pb-3 flex-row items-center justify-between'>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={onClose}
+                            >
+                                <Entypo name="chevron-down" size={24} color="white" />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                activeOpacity={0.7}
+                                onPress={() => {
+                                    onClose();
+                                    setTimeout(() => router.push('/(tabs)/timer'), 300);
+                                }}
+                                className={`flex-row items-center gap-x-2 p-3 rounded-full ${isSleepTimerActive ? 'bg-red-500/20' : 'bg-neutral-800/50'}`}
+                            >
+                                <Image
+                                    source={SleepTimerIcon}
+                                    style={{ width: 16, height: 16 }}
+                                    tintColor={isSleepTimerActive ? '#ef4444' : '#a1a1aa'}
+                                />
+                                {isSleepTimerActive && (
+                                    <Text className='text-red-400 text-xs font-medium'>
+                                        {sleepTimerEndOfTrack ? 'End of Track' : formatRemainingTime(sleepTimerRemainingTime)}
+                                    </Text>
+                                )}
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={{ flex: 1, paddingHorizontal: 24, justifyContent: 'center' }}>
+                            <View style={{ width: '100%', maxWidth: 400, aspectRatio: 1, borderRadius: 16, overflow: 'hidden', backgroundColor: '#262626', alignSelf: 'center' }}>
+                                <Image
+                                    source={{ uri: isAdvertisement && advertisement ? advertisement.image : data.image }}
+                                    style={{ width: "100%", height: "100%" }}
+                                    contentFit='cover'
+                                />
                             </View>
-                            <View className='flex-1 flex flex-col items-center gap-y-6'>
-                                <View className='px-6'>
-                                    <View className='w-full aspect-square rounded-2xl overflow-hidden bg-neutral-800'>
-                                        <Image
-                                            source={{ uri: isAdvertisement && advertisement ? advertisement.image : data.image }}
-                                            style={{ width: "100%", height: "100%" }}
-                                            contentFit='cover'
-                                        />
+
+                            <View className='flex flex-col gap-y-1 pt-10'>
+                                <View className='flex flex-row items-center gap-x-4'>
+                                    <MarqueeText
+                                        text={isAdvertisement ? (advertisement?.name ?? '') : data.name}
+                                        className='text-white text-2xl font-bold'
+                                    />
+                                    <View className='flex flex-row items-center gap-x-4 justify-center'>
+                                        {
+                                            !isOffline && !isAdvertisement && <LikeButton songId={data.id} label={false} />
+                                        }
+                                        {
+                                            !isAdvertisement && (
+                                                <TouchableOpacity
+                                                    className='h-7 aspect-square'
+                                                    activeOpacity={0.7}
+                                                    onPress={shuffle}
+                                                >
+                                                    <Image
+                                                        source={ShuffleIcon}
+                                                        style={{ width: "100%", height: "100%" }}
+                                                        contentFit='contain'
+                                                    />
+                                                </TouchableOpacity>
+                                            )
+                                        }
                                     </View>
                                 </View>
-                                <View className='flex flex-col gap-y-4 px-4 py-6'>
-                                    <View className='flex flex-row items-center gap-x-4 px-4'>
-                                        <MarqueeText
-                                            text={isAdvertisement ? (advertisement?.name ?? '') : data.name}
-                                            className='text-white text-2xl font-bold'
-                                        />
-                                        <View className='flex flex-row items-center gap-x-4 justify-center'>
-                                            {
-                                                !isOffline && !isAdvertisement && <LikeButton songId={data.id} label={false} />
-                                            }
-                                            {
-                                                !isAdvertisement && (
-                                                    <TouchableOpacity
-                                                        className='h-7 aspect-square'
-                                                        activeOpacity={0.7}
-                                                        onPress={shuffle}
-                                                    >
-                                                        <Image
-                                                            source={ShuffleIcon}
-                                                            style={{ width: "100%", height: "100%" }}
-                                                            contentFit='contain'
-                                                        />
-                                                    </TouchableOpacity>
-                                                )
-                                            }
-                                        </View>
+                                <View className='flex flex-col gap-y-1'>
+                                    <Slider
+                                        step={1}
+                                        minimumValue={0}
+                                        value={position}
+                                        onValueChange={(value) => onSeek(value[0])}
+                                        maximumValue={isAdvertisement && advertisement ? advertisement.duration : data.duration}
+                                        minimumTrackTintColor="#ef4444"
+                                        maximumTrackTintColor="#D3D3D3"
+                                        thumbTintColor="transparent"
+                                        disabled={!isSubscribed || isAdvertisement}
+                                    />
+                                    <View className='flex flex-row items-center justify-between'>
+                                        <Text className='text-zinc-300 text-sm'>
+                                            {albumDuration(Math.floor(position))}
+                                        </Text>
+                                        <Text className='text-zinc-300 text-sm'>
+                                            {albumDuration(isAdvertisement ? (advertisement?.duration ?? 0) : data.duration)}
+                                        </Text>
                                     </View>
-                                    <View className='flex flex-col gap-y-2 px-4'>
-                                        <Slider
-                                            step={1}
-                                            minimumValue={0}
-                                            value={position}
-                                            onValueChange={(value) => onSeek(value[0])}
-                                            maximumValue={isAdvertisement && advertisement ? advertisement.duration : data.duration}
-                                            minimumTrackTintColor="#ef4444"
-                                            maximumTrackTintColor="#D3D3D3"
-                                            thumbTintColor="transparent"
+                                </View>
+                                <View className='flex flex-row items-center w-full'>
+                                    <View className='w-1/5 h-16 flex items-start justify-center'>
+                                        {
+                                            !isAdvertisement && (
+                                                <TouchableOpacity
+                                                    className='h-7 aspect-square'
+                                                    activeOpacity={0.7}
+                                                    disabled={!isSubscribed || isAdvertisement}
+                                                    onPress={() => setAiShuffled(!isAiShuffled)}
+                                                >
+                                                    <Image
+                                                        source={isAiShuffled ? AiShuffleActiveIcon : AiShuffleIcon}
+                                                        style={{ width: "100%", height: "100%" }}
+                                                        contentFit='contain'
+                                                    />
+                                                </TouchableOpacity>
+                                            )
+                                        }
+                                    </View>
+                                    <View className='w-1/5 h-16 flex items-start justify-center'>
+                                        <TouchableOpacity
+                                            className='h-10 aspect-square'
+                                            onPress={pop}
+                                            activeOpacity={0.7}
                                             disabled={!isSubscribed || isAdvertisement}
-                                        />
-                                        <View className='flex flex-row items-center justify-between'>
-                                            <Text className='text-zinc-300 text-sm'>
-                                                {albumDuration(Math.floor(position))}
-                                            </Text>
-                                            <Text className='text-zinc-300 text-sm'>
-                                                {albumDuration(isAdvertisement ? (advertisement?.duration ?? 0) : data.duration)}
-                                            </Text>
-                                        </View>
+                                        >
+                                            <Image
+                                                source={BackwardStepIcon}
+                                                style={{ width: "100%", height: "100%" }}
+                                                contentFit='contain'
+                                            />
+                                        </TouchableOpacity>
                                     </View>
-                                    <View className='flex flex-row items-center w-full px-4'>
-                                        <View className='w-1/5 h-16 flex items-start justify-center'>
-                                            {
-                                                !isAdvertisement && (
-                                                    <TouchableOpacity
-                                                        className='h-7 aspect-square'
-                                                        activeOpacity={0.7}
-                                                        disabled={!isSubscribed || isAdvertisement}
-                                                        onPress={() => setAiShuffled(!isAiShuffled)}
-                                                    >
-                                                        <Image
-                                                            source={isAiShuffled ? AiShuffleActiveIcon : AiShuffleIcon}
-                                                            style={{ width: "100%", height: "100%" }}
-                                                            contentFit='contain'
-                                                        />
-                                                    </TouchableOpacity>
-                                                )
-                                            }
-                                        </View>
-                                        <View className='w-1/5 h-16 flex items-start justify-center'>
-                                            <TouchableOpacity
-                                                className='h-10 aspect-square'
-                                                onPress={pop}
-                                                activeOpacity={0.7}
-                                                disabled={!isSubscribed || isAdvertisement}
-                                            >
-                                                <Image
-                                                    source={BackwardStepIcon}
-                                                    style={{ width: "100%", height: "100%" }}
-                                                    contentFit='contain'
-                                                />
-                                            </TouchableOpacity>
-                                        </View>
-                                        <View className='w-1/5 h-16 flex items-center justify-center'>
-                                            <TouchableOpacity
-                                                className='h-full aspect-square'
-                                                activeOpacity={0.7}
-                                                onPress={handlePlayPause}
-                                            >
-                                                <Image
-                                                    source={!isPlaying ? PlayCircleIcon : PauseCircleIcon}
-                                                    style={{ width: "100%", height: "100%" }}
-                                                    contentFit='contain'
-                                                />
-                                            </TouchableOpacity>
-                                        </View>
-                                        <View className='w-1/5 h-16 flex items-end justify-center'>
-                                            <TouchableOpacity
-                                                className='h-10 aspect-square'
-                                                activeOpacity={0.7}
-                                                onPress={deQueue}
-                                                disabled={isAdvertisement}
-                                            >
-                                                <Image
-                                                    source={ForwardStepIcon}
-                                                    style={{ width: "100%", height: "100%" }}
-                                                    contentFit='contain'
-                                                />
-                                            </TouchableOpacity>
-                                        </View>
-                                        <View className='w-1/5 h-16 flex items-end justify-center'>
-                                            {
-                                                !isAdvertisement && (
-                                                    <TouchableOpacity
-                                                        className='h-7 aspect-square'
-                                                        activeOpacity={0.7}
-                                                        onPress={() => setLooped(!isLooped)}
-                                                    >
-                                                        <Image
-                                                            source={isLooped ? RepeatOneIcon : RepeatIcon}
-                                                            style={{ width: "100%", height: "100%" }}
-                                                            contentFit='contain'
-                                                        />
-                                                    </TouchableOpacity>
-                                                )
-                                            }
-                                        </View>
+                                    <View className='w-1/5 h-16 flex items-center justify-center'>
+                                        <TouchableOpacity
+                                            className='h-full aspect-square'
+                                            activeOpacity={0.7}
+                                            onPress={handlePlayPause}
+                                        >
+                                            <Image
+                                                source={!isPlaying ? PlayCircleIcon : PauseCircleIcon}
+                                                style={{ width: "100%", height: "100%" }}
+                                                contentFit='contain'
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View className='w-1/5 h-16 flex items-end justify-center'>
+                                        <TouchableOpacity
+                                            className='h-10 aspect-square'
+                                            activeOpacity={0.7}
+                                            onPress={deQueue}
+                                            disabled={isAdvertisement}
+                                        >
+                                            <Image
+                                                source={ForwardStepIcon}
+                                                style={{ width: "100%", height: "100%" }}
+                                                contentFit='contain'
+                                            />
+                                        </TouchableOpacity>
+                                    </View>
+                                    <View className='w-1/5 h-16 flex items-end justify-center'>
+                                        {
+                                            !isAdvertisement && (
+                                                <TouchableOpacity
+                                                    className='h-7 aspect-square'
+                                                    activeOpacity={0.7}
+                                                    onPress={() => setLooped(!isLooped)}
+                                                >
+                                                    <Image
+                                                        source={isLooped ? RepeatOneIcon : RepeatIcon}
+                                                        style={{ width: "100%", height: "100%" }}
+                                                        contentFit='contain'
+                                                    />
+                                                </TouchableOpacity>
+                                            )
+                                        }
                                     </View>
                                 </View>
                             </View>
                         </View>
+
+                        {/* Bottom Buttons - Fixed Height */}
                         {
                             !isAdvertisement && (
-                                <View className='p-6 flex flex-row items-center'>
+                                <View className='p-6 pb-10 flex flex-row items-center'>
                                     <View className='w-1/3 flex items-center justify-center'>
                                         <TouchableOpacity
                                             activeOpacity={0.7}
@@ -342,7 +336,7 @@ export const Sheet = ({
                                     </View>
                                 </View>
                             )
-                        }
+                        }   
                     </LinearGradient>
                 </BottomSheetView>
             </BottomSheetModal>

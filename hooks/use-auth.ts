@@ -8,21 +8,25 @@ interface Props {
     user: User | null;
     isLoggedIn: boolean;
     setUser: (user: User | null) => void;
-    updateTokens: (accessToken: string) => void;
+    updateTokens: ({ accessToken, refreshToken }: { accessToken: string; refreshToken: string }) => void;
 }
 
 export const useAuth = create(persist<Props>((set) => ({
     user: null,
     isLoggedIn: false,
     setUser: (user) => set({ user, isLoggedIn: !!user }),
-    updateTokens: (accessToken) => set((state) => {
+    updateTokens: ({
+        accessToken,
+        refreshToken
+    }) => set((state) => {
         if (state.user) {
             return {
                 user: {
                     ...state.user,
                     tokens: {
                         ...state.user.tokens,
-                        accessToken
+                        accessToken,
+                        refreshToken
                     }
                 }
             };
