@@ -3,6 +3,12 @@ import { Image } from "expo-image";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQueries } from "@tanstack/react-query";
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withTiming,
+    interpolateColor
+} from "react-native-reanimated";
 
 import { useAuth } from "@/hooks/use-auth";
 import { fetcher } from "@/lib/fetcher";
@@ -15,71 +21,97 @@ import { ArtistCarousel } from "@/components/carousel/artist";
 import { NetworkProvider } from "@/providers/network.provider";
 import { Spacer } from "@/components/ui/spacer";
 import { LogoutButton } from "@/components/auth/logout-button";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { RefreshControl } from "react-native-gesture-handler";
 import { NotificationBadge } from "@/components/notification/badge";
+import { LinearGradient } from "expo-linear-gradient";
+import { useQueue } from "@/hooks/use-queue";
 
 const Home = () => {
 
     const { user } = useAuth();
+    const { current } = useQueue();
     const [refreshing, setRefreshing] = useState(false);
 
-    const [ trendingSongs, recommendedAlbums, newAlbums, listenAgainSongs, favoriteArtists ] = useQueries({
-        queries:[
+    const colorProgress = useSharedValue(0);
+    const previousColor = useSharedValue("#111111");
+    const targetColor = useSharedValue("#111111");
+
+    useEffect(() => {
+        const newColor = current?.album?.color ? `${current.album.color}5e` : "#1111115e";
+        previousColor.value = targetColor.value;
+        targetColor.value = newColor;
+        colorProgress.value = 0;
+        colorProgress.value = withTiming(1, { duration: 500 });
+    }, [current?.album?.color]);
+
+    const animatedStyle = useAnimatedStyle(() => {
+        const backgroundColor = interpolateColor(
+            colorProgress.value,
+            [0, 1],
+            [previousColor.value, targetColor.value]
+        );
+        return {
+            backgroundColor,
+        };
+    });
+
+    const [trendingSongs, recommendedAlbums, newAlbums, listenAgainSongs, favoriteArtists] = useQueries({
+        queries: [
             {
-                queryFn : async()=>{
+                queryFn: async () => {
                     const data = await fetcher({
-                        prefix : "PUBLIC_BASE_URL",
-                        suffix : "api/v2/song/trending",
-                        token : user?.tokens.accessToken
+                        prefix: "PUBLIC_BASE_URL",
+                        suffix: "api/v2/song/trending",
+                        token: user?.tokens.accessToken
                     });
                     return data.items;
                 },
-                queryKey : ["trending-songs"]
+                queryKey: ["trending-songs"]
             },
             {
-                queryFn : async()=>{
+                queryFn: async () => {
                     const data = await fetcher({
-                        prefix : "PUBLIC_BASE_URL",
-                        suffix : "api/v2/album/recommended",
-                        token : user?.tokens.accessToken
+                        prefix: "PUBLIC_BASE_URL",
+                        suffix: "api/v2/album/recommended",
+                        token: user?.tokens.accessToken
                     });
                     return data.data;
                 },
-                queryKey : ["recommended-albums"]
+                queryKey: ["recommended-albums"]
             },
             {
-                queryFn : async()=>{
+                queryFn: async () => {
                     const data = await fetcher({
-                        prefix : "PUBLIC_BASE_URL",
-                        suffix : "api/v2/album/new",
-                        token : user?.tokens.accessToken
+                        prefix: "PUBLIC_BASE_URL",
+                        suffix: "api/v2/album/new",
+                        token: user?.tokens.accessToken
                     });
                     return data.data;
                 },
-                queryKey : ["new-albums"]
+                queryKey: ["new-albums"]
             },
             {
-                queryFn : async()=>{
+                queryFn: async () => {
                     const data = await fetcher({
-                        prefix : "PROTECTED_BASE_URL",
-                        suffix : "api/v2/song/listen-again",
-                        token : user?.tokens.accessToken
+                        prefix: "PROTECTED_BASE_URL",
+                        suffix: "api/v2/song/listen-again",
+                        token: user?.tokens.accessToken
                     });
                     return data.data;
                 },
-                queryKey : ["listen-again"]
+                queryKey: ["listen-again"]
             },
             {
-                queryFn : async()=>{
+                queryFn: async () => {
                     const data = await fetcher({
-                        prefix : "PROTECTED_BASE_URL",
-                        suffix : "api/v2/artist/favorites",
-                        token : user?.tokens.accessToken
+                        prefix: "PROTECTED_BASE_URL",
+                        suffix: "api/v2/artist/favorites",
+                        token: user?.tokens.accessToken
                     });
                     return data.data;
                 },
-                queryKey : ["favorite-artists"]
+                queryKey: ["favorite-artists"]
             }
         ]
     });
@@ -110,7 +142,7 @@ const Home = () => {
         <NetworkProvider>
             <SafeAreaView className="flex-1 bg-background">
                 <ScrollView
-                    className="p-4 pt-6 pb-28"
+                    className="pb-28"
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     refreshControl={
@@ -122,23 +154,46 @@ const Home = () => {
                         />
                     }
                 >
-                    <View className="flex flex-row items-center justify-end gap-x-4">
-                        <NotificationBadge/>
-                        <LogoutButton/>
-                    </View>
-                    <View className="flex flex-row items-center gap-x-6 mt-16">
-                        <View className="size-24 rounded-full overflow-hidden relative">
-                            <Image
-                                source={ user?.user?.image ? { uri: user?.user.image } : require('@/assets/images/user.png') }
-                                style={{ height: "100%", width: "100%" }}
-                            />
+                    <Animated.View
+                        style={[
+                            {
+                                paddingVertical: 16,
+                                paddingHorizontal: 16,
+                            },
+                            animatedStyle
+                        ]}
+                    >
+                        <LinearGradient
+                            colors={["transparent", "#111111"]}
+                            locations={[0, 1]}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 0, y: 1 }}
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                            }}
+                        />
+                        <View className="flex flex-row items-center justify-end gap-x-4">
+                            <NotificationBadge />
+                            <LogoutButton />
                         </View>
-                        <View className="flex flex-col gap-y-0.5">
-                            <Text className="text-xl font-bold text-zinc-400">{user?.user.name}</Text>
-                            <Text className="text-3xl text-white font-extrabold">Listen Again</Text>
+                        <View className="flex flex-row items-center gap-x-6 mt-16">
+                            <View className="size-24 rounded-full overflow-hidden relative">
+                                <Image
+                                    source={user?.user?.image ? { uri: user?.user.image } : require('@/assets/images/user.png')}
+                                    style={{ height: "100%", width: "100%" }}
+                                />
+                            </View>
+                            <View className="flex flex-col gap-y-0.5">
+                                <Text className="text-xl font-bold text-zinc-400">{user?.user.name}</Text>
+                                <Text className="text-3xl text-white font-extrabold">Listen Again</Text>
+                            </View>
                         </View>
-                    </View>
-                    <View className="pt-10 flex flex-col gap-y-4">
+                    </Animated.View>
+                    <View className="pt-10 flex flex-col gap-y-4 px-4">
                         <TouchableOpacity
                             onPress={() => router.push("/(tabs)/liked-songs")}
                             className="w-full flex flex-row items-center gap-x-4 bg-secondary rounded-md overflow-hidden"
@@ -168,24 +223,26 @@ const Home = () => {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <ListenAgainCarousel
-                        data={listenAgainSongs.data}
-                    />
-                    <TrendingSongs
-                        data={trendingSongs.data}
-                    />
-                    <AlbumCarousel
-                        data={newAlbums.data}
-                        slug="New Releases"
-                    />
-                    <AlbumCarousel
-                        data={recommendedAlbums.data}
-                        slug="Recommended Albums"
-                    />
-                    <ArtistCarousel
-                        data={favoriteArtists.data}
-                        slug="Your favorite artists"
-                    />
+                    <View className="px-4">
+                        <ListenAgainCarousel
+                            data={listenAgainSongs.data}
+                        />
+                        <TrendingSongs
+                            data={trendingSongs.data}
+                        />
+                        <AlbumCarousel
+                            data={newAlbums.data}
+                            slug="New Releases"
+                        />
+                        <AlbumCarousel
+                            data={recommendedAlbums.data}
+                            slug="Recommended Albums"
+                        />
+                        <ArtistCarousel
+                            data={favoriteArtists.data}
+                            slug="Your favorite artists"
+                        />
+                    </View>
                     <Spacer />
                 </ScrollView>
             </SafeAreaView>

@@ -166,7 +166,7 @@ const Account = () => {
                             <DeleteHistoryButton />
                         </View>
                         <View className="items-center py-4">
-                            <Text className="text-zinc-600 text-xs">Version 1.0.0</Text>
+                            <Text className="text-zinc-600 text-xs">Version 2.0.0</Text>
                         </View>
                     </View>
                     <Spacer />

@@ -1,3 +1,4 @@
+import { useRecentSearches } from '@/hooks/use-recent-searches';
 import { cn } from '@/lib/utils';
 import { Artist } from '@/types/response.types'
 import { Image } from 'expo-image';
@@ -8,19 +9,33 @@ import { View, Text, TouchableOpacity } from 'react-native'
 interface Props {
     data : Artist;
     className? : string;
+    addToSearchHistory?: boolean;
 }
 
-export const Card = ({ data, className }: Props) => {
+export const Card = ({ data, className, addToSearchHistory = false }: Props) => {
+
+    const { addSearch } = useRecentSearches();
+
     return (
         <TouchableOpacity 
             className={(cn(
                 "relative w-44 aspect-[3/4] flex flex-col rounded-lg overflow-hidden",
                 className
             ))}
-            onPress={()=>router.push({
-                pathname : "/(tabs)/artist/[artistId]",
-                params : { artistId : data.id }
-            })}
+            onPress={()=>{
+                router.push({
+                    pathname : "/(tabs)/artist/[artistId]",
+                    params : { artistId : data.id }
+                });
+                if (addToSearchHistory) {
+                    addSearch({
+                        content_id: data.id,
+                        type: "ARTIST",
+                        name: data.name,
+                        image: data.image,
+                    });
+                }
+            }}
             activeOpacity={0.7}
         >
             <Image

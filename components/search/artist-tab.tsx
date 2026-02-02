@@ -55,6 +55,7 @@ export const ArtistTab = ({ currentTab, query }: Props) => {
                             data={artist}
                             className='w-[48%]'
                             key={artist.id}
+                            addToSearchHistory={true}
                         />
                     ))
                 }

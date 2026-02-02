@@ -54,6 +54,7 @@ export const SongTab = ({ currentTab, query }: Props) => {
                         <SongItem
                             key={song.id}
                             data={song}
+                            addToSearchHistory={true}
                         />
                     ))
                 }

@@ -15,6 +15,7 @@ import { useSettings } from "@/hooks/use-settings";
 import { useQueue } from "@/hooks/use-queue";
 import usePlayerSettings from "@/hooks/use-player-settings";
 import "./global.css"
+import { useRecentSearches } from "@/hooks/use-recent-searches";
 
 
 SplashScreen.preventAutoHideAsync();
@@ -40,8 +41,10 @@ export default function RootLayout() {
     const { isAiShuffled } = usePlayerSettings();
     const [appIsReady, setAppIsReady] = useState(false);
     const { updateTokens, setUser, isLoggedIn } = useAuth();
-    const { initializeBackgroundFetch, processPendingRecommendations, setAiRecommendationEnabled } = useAiRecommendationStore();
+
     const appState = useRef(AppState.currentState);
+    const { hydrateFromServer } = useRecentSearches();
+    const { initializeBackgroundFetch, processPendingRecommendations, setAiRecommendationEnabled } = useAiRecommendationStore();
 
     const isAiRecommendationEnabled = isLoggedIn ? settings?.subscription.isActive ? isAiShuffled : false : false;
 
@@ -89,6 +92,7 @@ export default function RootLayout() {
     useEffect(() => {
         if (appIsReady) {
             SplashScreen.hideAsync();
+            hydrateFromServer();
             initializeBackgroundFetch();
         }
     }, [appIsReady]);

@@ -125,7 +125,7 @@ export const Sheet = ({
                         style={{ flex: 1, justifyContent: 'space-between', height: '100%', width: '100%' }}
                     >
                         {/* Top Header - Fixed Height */}
-                        <View className='px-6 pt-6 pb-3 flex-row items-center justify-between'>
+                        <View className='px-6 py-6 flex-row items-center justify-between'>
                             <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={onClose}
@@ -153,7 +153,7 @@ export const Sheet = ({
                             </TouchableOpacity>
                         </View>
 
-                        <View style={{ flex: 1, paddingHorizontal: 24, justifyContent: 'center' }}>
+                        <View style={{ flex: 1, paddingHorizontal: 24 }}>
                             <View style={{ width: '100%', maxWidth: 400, aspectRatio: 1, borderRadius: 16, overflow: 'hidden', backgroundColor: '#262626', alignSelf: 'center' }}>
                                 <Image
                                     source={{ uri: isAdvertisement && advertisement ? advertisement.image : data.image }}
@@ -294,7 +294,7 @@ export const Sheet = ({
                         {/* Bottom Buttons - Fixed Height */}
                         {
                             !isAdvertisement && (
-                                <View className='p-6 pb-10 flex flex-row items-center'>
+                                <View className='p-6 pb-20 flex flex-row items-center'>
                                     <View className='w-1/3 flex items-center justify-center'>
                                         <TouchableOpacity
                                             activeOpacity={0.7}

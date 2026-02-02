@@ -9,10 +9,11 @@ interface Props {
     link ?: {
         title: string;
         href: Href;
-    }
+    }   
+    addToSearchHistory?: boolean;
 }
 
-export const AlbumCarousel = ({ data, slug, link }: Props) => {
+export const AlbumCarousel = ({ data, slug, link, addToSearchHistory = false }: Props) => {
     return (
         <View className="flex flex-col gap-y-4 pt-10">
             {
@@ -39,7 +40,7 @@ export const AlbumCarousel = ({ data, slug, link }: Props) => {
                 showsHorizontalScrollIndicator={false}
                 ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
                 renderItem={({ item, index })=>(
-                    <Card album={item} key={index} />
+                    <Card album={item} key={index} addToSearchHistory={addToSearchHistory} />
                 )}
             />
         </View>

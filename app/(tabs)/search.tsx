@@ -21,12 +21,15 @@ import { SongTab } from '@/components/search/song-tab';
 import { NetworkProvider } from '@/providers/network.provider';
 import { Spacer } from '@/components/ui/spacer';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useRecentSearches } from '@/hooks/use-recent-searches';
+import { RecentCard } from '@/components/search/recent-card';
 
 
 
 const Search = () => {
 
     const [ query, setQuery ] = useState("");
+    const { searches } = useRecentSearches();
     const [currentTab, setCurrentTab] = useState<Tab>("DEFAULT");
 
     const tabs: Record<Tab, string> = {
@@ -105,6 +108,17 @@ const Search = () => {
                                 </View>
                             </LinearGradient>
                         </View>
+                        {
+                            query.length === 0 && (
+                                <View className='flex flex-col px-4 mt-6 gap-y-3'>
+                                    {
+                                        searches.sort((a, b) => b.created_at.getTime() - a.created_at.getTime()).map((search) => (
+                                            <RecentCard key={search.id} search={search} />
+                                        ))
+                                    }
+                                </View>
+                            )
+                        }
                         {
                             currentTab === "DEFAULT" && query && <AllTab currentTab={currentTab} query={query} />
                         }

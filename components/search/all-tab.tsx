@@ -60,7 +60,7 @@ export const AllTab = ({ currentTab, query }: Props) => {
                         <View className='flex flex-col gap-y-5'>
                             {
                                 data.songs.map((song) => (
-                                    <SongItem key={song.id} data={song} />
+                                    <SongItem key={song.id} data={song}  />
                                 ))
                             }
                         </View>
@@ -72,6 +72,7 @@ export const AllTab = ({ currentTab, query }: Props) => {
                     <AlbumCarousel
                         slug='Albums'
                         data={data.albums}
+                        addToSearchHistory={true}
                     />
                 )
             }

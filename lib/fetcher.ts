@@ -1,11 +1,11 @@
 import axios from "axios";
-import { PROTECTED_BASE_URL, PUBLIC_BASE_URL } from "@/constants/api.config";
+import { ACTIVITY_BASE_URL, PROTECTED_BASE_URL, PUBLIC_BASE_URL } from "@/constants/api.config";
 import { useAuth } from "@/hooks/use-auth";
 import { router } from "expo-router";
 import { log } from "@/services/log.service";
 
 interface Args {
-    prefix: "PUBLIC_BASE_URL" | "PROTECTED_BASE_URL"
+    prefix: "PUBLIC_BASE_URL" | "PROTECTED_BASE_URL" | "ACTIVITY_BASE_URL";
     suffix: string;
     token?: string;
 }
@@ -18,6 +18,8 @@ export async function fetcher({ prefix, suffix, token }: Args) {
     let base = "";
     if (prefix === "PUBLIC_BASE_URL") {
         base = PUBLIC_BASE_URL;
+    } else if (prefix === "ACTIVITY_BASE_URL") {
+        base = ACTIVITY_BASE_URL;
     } else {
         base = PROTECTED_BASE_URL;
     }

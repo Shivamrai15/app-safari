@@ -5,16 +5,19 @@ import { useQueue } from "@/hooks/use-queue";
 import { albumDuration, cn } from "@/lib/utils";
 import { SongResponse } from "@/types/response.types";
 import { Options } from "./options";
+import { useRecentSearches } from "@/hooks/use-recent-searches";
 
 interface Props {
     className?: string;
     data : SongResponse;
     playlistId?: string;
+    addToSearchHistory?: boolean;
 }
 
-export const SongItem = ({ className, data, playlistId }: Props) => {
+export const SongItem = ({ className, data, playlistId, addToSearchHistory = false }: Props) => {
 
     const { priorityEnqueue } = useQueue();
+    const { addSearch } = useRecentSearches();
     const [ openOptions, setOpenOptions ] = useState(false);
 
     return (
@@ -25,7 +28,17 @@ export const SongItem = ({ className, data, playlistId }: Props) => {
                     className
                 )}
                 activeOpacity={0.7}
-                onPress={()=>priorityEnqueue([data])}
+                onPress={()=>{
+                    priorityEnqueue([data]);
+                    if (addToSearchHistory) {
+                        addSearch({
+                            content_id: data.id,
+                            type: "SONG",
+                            name: data.name,
+                            image: data.image,
+                        });
+                    }
+                }}
                 onLongPress={()=>setOpenOptions(true)}
             >
                 <Image

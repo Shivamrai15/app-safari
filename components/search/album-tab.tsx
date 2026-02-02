@@ -55,6 +55,7 @@ export const AlbumTab = ({ currentTab, query }: Props) => {
                             key={album.id}
                             album={album}
                             className='w-[48%]'
+                            addToSearchHistory={true}
                         />
                     ))
                 }

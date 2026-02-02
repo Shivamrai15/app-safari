@@ -8,12 +8,16 @@ import { PlayButton } from "../album/play-button";
 import { PlayButton as ArtistPlayButton } from "../artist/play-button";
 import { Button } from "@/components/ui/button";
 import { SongPlayButton } from "../song/play-button";
+import { useRecentSearches } from "@/hooks/use-recent-searches";
 
 interface Props {
     data : SongResponse | Album | Artist;
 }
 
 export const TopResultCard = ({ data }: Props) => {
+
+    const { addSearch } = useRecentSearches();
+
     return (
         <View className="w-full rounded-xl overflow-hidden bg-neutral-800">
             <View className="flex flex-row gap-x-5 items-center p-3">
@@ -49,12 +53,20 @@ export const TopResultCard = ({ data }: Props) => {
                                     />
                                     <Button 
                                         className="rounded-full"
-                                        onPress={()=>router.push({
-                                            pathname : "/(tabs)/album/[albumId]",
-                                            params : {
-                                                albumId : data.id
-                                            }
-                                        })}
+                                        onPress={()=>{
+                                            router.push({
+                                                pathname : "/(tabs)/album/[albumId]",
+                                                params : {
+                                                    albumId : data.id
+                                                }
+                                            })
+                                            addSearch({
+                                                name : data.name,
+                                                type : "ALBUM",
+                                                content_id : data.id,
+                                                image : data.image
+                                            })
+                                        }}
                                     >
                                         <Text className="font-semibold">
                                             Go to Album
@@ -90,12 +102,20 @@ export const TopResultCard = ({ data }: Props) => {
                                     />
                                     <Button 
                                         className="rounded-full"
-                                        onPress={()=>router.push({
-                                            pathname : "/(tabs)/album/[albumId]",
-                                            params : {
-                                                albumId : data.albumId
-                                            }
-                                        })}
+                                        onPress={()=>{
+                                            router.push({
+                                                pathname : "/(tabs)/album/[albumId]",
+                                                params : {
+                                                    albumId : data.albumId
+                                                }
+                                            })
+                                            addSearch({
+                                                name : data.name,
+                                                type : "ALBUM",
+                                                content_id : data.albumId,
+                                                image : data.image
+                                            })
+                                        }}
                                     >
                                         <Text className="font-semibold">
                                             Go to Album
@@ -120,12 +140,20 @@ export const TopResultCard = ({ data }: Props) => {
                                     <ArtistPlayButton id={data.id} />
                                     <Button 
                                         className="rounded-full"
-                                        onPress={()=>router.push({
-                                            pathname : "/(tabs)/artist/[artistId]",
-                                            params : {
-                                                artistId : data.id
-                                            }
-                                        })}
+                                        onPress={()=>{
+                                            router.push({
+                                                pathname : "/(tabs)/artist/[artistId]",
+                                                params : {
+                                                    artistId : data.id
+                                                }
+                                            })
+                                            addSearch({
+                                                name : data.name,
+                                                type : "ARTIST",
+                                                content_id : data.id,
+                                                image : data.image
+                                            })
+                                        }}
                                     >
                                         <Text className="font-semibold">
                                             Go to Artist
