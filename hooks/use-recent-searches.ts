@@ -30,12 +30,18 @@ export const useRecentSearches = create(persist<Props>((set, get) => ({
             
             const res = await fetcher({
                 prefix: "ACTIVITY_BASE_URL",
-                suffix: "api/v2/search/recent",
+                suffix: "api/v3/search/recent",
                 token: useAuth.getState().user?.tokens.accessToken
             });
 
             const data = res.data as (Omit<SearchHistory, "created_at"> & { created_at: string })[] | null;
-            if (!data) return;
+            if (!data) {
+                set({
+                    searches: [],
+                    hydrated: true
+                });
+                return;
+            };
             set({
                 searches: data.map((item) => ({
                     ...item,
@@ -62,7 +68,7 @@ export const useRecentSearches = create(persist<Props>((set, get) => ({
         }
 
         try {
-            await axios.post(`${ACTIVITY_BASE_URL}/api/v2/search`, {
+            await axios.post(`${ACTIVITY_BASE_URL}/api/v3/search`, {
                 content_id: data.content_id,
                 type: data.type,
                 name: data.name,
@@ -72,7 +78,6 @@ export const useRecentSearches = create(persist<Props>((set, get) => ({
                     Authorization: `Bearer ${useAuth.getState().user?.tokens.accessToken}`
                 }
             });
-            await get().hydrateFromServer();
         } catch (error) {
             console.log(error);
             if (isAxiosError(error)) {
@@ -88,12 +93,39 @@ export const useRecentSearches = create(persist<Props>((set, get) => ({
                     },
                 });
             }
+        } finally {
+            await get().hydrateFromServer();
         }
     },
-    clearLocal: () => {
-        set({
-            searches: []
-        });
+    clearLocal: async() => {
+        try {
+            set({
+                searches: []
+            });
+            await axios.delete(`${ACTIVITY_BASE_URL}/api/v3/search/clear`, {
+                headers: {
+                    Authorization: `Bearer ${useAuth.getState().user?.tokens.accessToken}`
+                }
+            });
+        } catch (error) {
+            console.log(error);
+            if (isAxiosError(error)) {
+                log({
+                    errorCode: error.response?.data.error.code,
+                    message: "Failed to clear recent searches",
+                    networkInfo : {
+                        url: error.config?.url,
+                        method: error.config?.method,
+                        requestHeaders : error.config?.headers,
+                        responseBody : error.response?.data,
+                        responseTime : error.response?.headers['x-response-time'],
+                    },
+                });
+                return;
+            }
+        } finally {
+            await get().hydrateFromServer();
+        }
     },
     getRecentSearches: () => {
         return get().searches.sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
@@ -104,7 +136,7 @@ export const useRecentSearches = create(persist<Props>((set, get) => ({
             searches: searches.filter((item) => item.id !== id)
         });
         try {
-            await axios.delete(`${ACTIVITY_BASE_URL}/api/v2/search/${id}`, {
+            await axios.delete(`${ACTIVITY_BASE_URL}/api/v3/search/${id}`, {
                 headers: {
                     Authorization: `Bearer ${useAuth.getState().user?.tokens.accessToken}`
                 }

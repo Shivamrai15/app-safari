@@ -19,10 +19,12 @@ import { useSettings } from '@/hooks/use-settings';
 import { queryClient } from '@/lib/query-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { log } from '@/services/log.service';
+import { useRecentSearches } from '@/hooks/use-recent-searches';
 
 const SignIn = () => {
 
     const { setUser } = useAuth();
+    const { hydrateFromServer } = useRecentSearches();
     const [form, setForm] = useState({
         email: "",
         password: ""
@@ -42,8 +44,10 @@ const SignIn = () => {
 
             setUser(data);
             await fetchSettings(data.tokens.accessToken);
+            await hydrateFromServer();
             alert("User logged in successfully!");
             router.replace("/(tabs)/home");
+
         },
         onError(error) {
             if (axios.isAxiosError(error)) {

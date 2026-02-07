@@ -14,14 +14,16 @@ import { useSettings } from '@/hooks/use-settings';
 import { queryClient } from '@/lib/query-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { log } from '@/services/log.service';
+import { useRecentSearches } from '@/hooks/use-recent-searches';
 
 const CELL_COUNT = 6;
 
 const PasswordLess = () => {
 
-    const [code, setCode] = useState('');
     const { setUser } = useAuth();
+    const [code, setCode] = useState('');
     const { fetchSettings } = useSettings();
+    const { hydrateFromServer } = useRecentSearches();
     const [emailAddress, setEmailAddress] = useState('');
     const [pendingVerification, setPendingVerification] = useState(false);
 
@@ -71,6 +73,7 @@ const PasswordLess = () => {
 
             setUser(data);
             await fetchSettings(data.tokens.accessToken);
+            await hydrateFromServer();
             alert("User logged in successfully!");
             router.replace("/(tabs)/home");
         }

@@ -2,13 +2,13 @@ import axios from 'axios';
 import { useState } from 'react';
 import { Image } from 'expo-image';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { HistoryIcon } from '@/constants/icons';
 import { DeleteModal } from '../modals/delete.modal';
 import { useMutation } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/use-auth';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { log } from '@/services/log.service';
 
+const HistoryIcon = require("@/assets/accounts/time-past.png");
 
 export const DeleteHistoryButton = () => {
 
@@ -50,27 +50,24 @@ export const DeleteHistoryButton = () => {
     return (
         <>
             <TouchableOpacity
-                className='flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors'
+                className='flex flex-row items-center gap-x-4 py-2 px-6'
                 activeOpacity={0.7}
                 onPress={() => setVisible(true)}
             >
-                <View className='size-12 rounded-full flex items-center justify-center flex-shrink-0 bg-red-500/10'>
-                    <Image
-                        source={HistoryIcon}
-                        style={{ width: 20, height: 20 }}
-                        tintColor={"#ef4444"}
-                    />
-                </View>
+                <Image
+                    source={HistoryIcon}
+                    style={{ width: 24, height: 24 }}
+                />
                 <View className="flex-1 justify-center gap-y-0.5">
-                    <Text className={'font-medium text-[17px] text-red-500'}>
+                    <Text className="font-medium text-zinc-300 text-lg">
                         Delete history
-                    </Text>
-                    <Text className="text-zinc-500 text-xs font-medium">
-                        Clear listening data
                     </Text>
                 </View>
                 <View className="items-center justify-center opacity-30">
-                    <Text className="text-zinc-400 text-lg font-light leading-none">›</Text>
+                    <Image
+                        source={require('@/assets/accounts/chevron-right.png')}
+                        style={{ width: 24, height: 24 }}
+                    />
                 </View>
             </TouchableOpacity>
             <DeleteModal

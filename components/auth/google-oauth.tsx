@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useSettings } from "@/hooks/use-settings";
 import { router } from "expo-router";
 import { SyncingModal } from "../modals/syncing.modal";
+import { useRecentSearches } from "@/hooks/use-recent-searches";
 
 
 const AUTH_SCHEME = 'safarimusic://sign-in';
@@ -32,6 +33,7 @@ const GoogleOauth = () => {
     const { setUser } = useAuth();
     const { fetchSettings } = useSettings();
     const [loading, setLoading] = useState(false);
+    const { hydrateFromServer } = useRecentSearches();
 
     useEffect(() => {
         const subscription = Linking.addEventListener('url', (event) => {
@@ -112,6 +114,7 @@ const GoogleOauth = () => {
             }
 
             await fetchSettings(accessToken);
+            await hydrateFromServer();
             router.replace("/(tabs)/home");
 
         } catch {

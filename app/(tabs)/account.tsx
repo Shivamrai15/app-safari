@@ -1,111 +1,49 @@
+import Fuse from "fuse.js";
 import { Image } from 'expo-image';
-import { Href, router } from 'expo-router';
+import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { RefreshControl, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { DownloadIcon, PlaylistRecoverIcon, ReceiptIcon, SleepTimerIcon, UserIcon } from '@/constants/icons';
+import Animated, { FadeIn, FadeOut, LinearTransition } from 'react-native-reanimated';
+import {
+    View,
+    Text,
+    ScrollView,
+    RefreshControl,
+    TouchableOpacity,
+    TextInput,
+} from 'react-native';
+import { useAuth } from '@/hooks/use-auth';
+import { Spacer } from '@/components/ui/spacer';
+import { useSettings } from '@/hooks/use-settings';
 import { NetworkProvider } from '@/providers/network.provider';
 import { DeleteHistoryButton } from '@/components/account/delete-history-button';
-import { useSettings } from '@/hooks/use-settings';
-import { Spacer } from '@/components/ui/spacer';
-import { useAuth } from '@/hooks/use-auth';
+import { MenuItem } from '@/components/account/menu-item';
+import { AccountRoutes } from '@/constants/routes';
 
-const MenuItem = ({
-    item,
-    isLast,
-    isDestructive = false
-}: {
-    item: any,
-    isLast: boolean,
-    isDestructive?: boolean
-}) => (
-    <TouchableOpacity
-        onPress={() => router.push(item.path)}
-        className={`flex flex-row items-center gap-x-4 px-5 py-4 active:bg-neutral-800 transition-colors ${!isLast ? 'border-b border-neutral-800' : ''
-            }`}
-        activeOpacity={0.7}
-    >
-        <View className={`size-12 rounded-full flex items-center justify-center flex-shrink-0 ${isDestructive ? 'bg-red-500/10' : 'bg-neutral-700'
-            }`}>
-            <Image
-                source={item.icon}
-                style={{ width: item.width, height: item.height }}
-                tintColor={isDestructive ? "#ef4444" : "#e4e4e7"}
-            />
-        </View>
 
-        <View className="flex-1 justify-center gap-y-0.5">
-            <Text className={`font-medium text-[17px] ${isDestructive ? 'text-red-500' : 'text-white'}`}>
-                {item.name}
-            </Text>
-            {item.description && (
-                <Text className="text-zinc-500 text-xs font-medium">
-                    {item.description}
-                </Text>
-            )}
-        </View>
-        <View className="items-center justify-center opacity-30">
-            <Text className="text-zinc-400 text-lg font-light leading-none">›</Text>
-        </View>
-    </TouchableOpacity>
-);
+const fuseOptions = {
+    keys: ["name", "description"],
+    threshold: 0.3,
+    ignoreLocation: true,
+    includeScore: true,
+};
+
+const fuse = new Fuse(AccountRoutes.filter((route) => route.isActive), fuseOptions);
 
 const Account = () => {
 
-
-    const [isRefreshing, setIsRefreshing] = useState(false);
     const { user } = useAuth();
     const { settings, fetchSettings } = useSettings();
+    const [isRefreshing, setIsRefreshing] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
 
-    const profileRoute = {
-        name: "Your profile",
-        description: "Manage account details",
-        path: "/(tabs)/account/profile" as Href,
-        icon: UserIcon,
-        height: 18,
-        width: 18
-    };
+    const filteredRoutes = searchQuery.length > 0 ? fuse.search(searchQuery).sort((a, b) => (a.score || 0) - (b.score || 0)).map(result => result.item) : AccountRoutes.filter((route) => route.isActive && route.isFeatured);
 
     const onRefresh = useCallback(async () => {
         setIsRefreshing(true);
         await fetchSettings(user?.tokens.accessToken);
         setIsRefreshing(false);
     }, [fetchSettings]);
-
-    const generalRoutes = [
-        {
-            name: "Downloads",
-            description: "Manage offline content",
-            path: "/(tabs)/downloads" as Href,
-            icon: DownloadIcon,
-            height: 20,
-            width: 20
-        },
-        {
-            name: "Recover playlists",
-            description: "Restore deleted collections",
-            path: "/(tabs)/account/recover-playlist" as Href,
-            icon: PlaylistRecoverIcon,
-            height: 18,
-            width: 18
-        },
-        {
-            name: "Transaction history",
-            description: "Billing and receipts",
-            path: "/(tabs)/account/transaction-history" as Href,
-            icon: ReceiptIcon,
-            height: 18,
-            width: 18
-        },
-        {
-            name: "Sleep timer",
-            description: "Set a timer to stop playback",
-            path: "/(tabs)/timer" as Href,
-            icon: SleepTimerIcon,
-            height: 18,
-            width: 18
-        },
-    ];
 
     return (
         <NetworkProvider>
@@ -114,6 +52,7 @@ const Account = () => {
                     className='flex-1'
                     contentContainerStyle={{ paddingBottom: 40 }}
                     showsVerticalScrollIndicator={false}
+                    stickyHeaderIndices={[0]}
                     refreshControl={
                         <RefreshControl
                             refreshing={isRefreshing}
@@ -123,17 +62,48 @@ const Account = () => {
                         />
                     }
                 >
-                    <View className="px-6 pt-6 pb-4">
-                        <Text className="text-white text-3xl font-bold tracking-tight">Settings</Text>
+                    <View className='px-6 pt-6 pb-4 flex flex-col gap-y-6 bg-background'>
+                        <View className="flex flex-row gap-4 items-center justify-between">
+                            <View className='size-9 relative rounded-full overflow-hidden'>
+                                <Image
+                                    source={user?.user?.image ? { uri: user?.user.image } : require('@/assets/images/user.png')}
+                                    style={{ width: "100%", height: "100%" }}
+                                    contentFit='contain'
+                                />
+                            </View>
+                            <Text className="text-white text-2xl font-bold tracking-tight">Settings</Text>
+                            <View className='size-9' />
+                        </View>
+                        <View>
+                            <View className='w-full bg-neutral-900 rounded-full h-14 flex flex-row items-center gap-x-2'>
+                                <TextInput
+                                    placeholder="Search settings"
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    autoComplete="off"
+                                    importantForAutofill="no"
+                                    selectionColor="#a1a1aa"
+                                    placeholderTextColor="#71717a"
+                                    value={searchQuery}
+                                    onChangeText={setSearchQuery}
+                                    keyboardType="default"
+                                    className="bg-transparent rounded-xl flex-1 border px-3 pl-4 py-2 h-full text-zinc-200 border-transparent outline-none font-medium"
+                                />
+                                <Image
+                                    source={require("@/assets/accounts/search.png")}
+                                    style={{ width: 18, height: 18, marginRight : 14 }}
+                                />
+                            </View>
+                        </View>
                     </View>
                     {
                         !(settings?.subscription.isActive) && (
                             <TouchableOpacity
                                 onPress={() => router.push('/(tabs)/pricing')}
                                 activeOpacity={0.9}
-                                className="mx-5 mb-6 "
+                                className="mx-5 my-4"
                             >
-                                <View className="p-6 bg-neutral-800 rounded-2xl">
+                                <View className="p-6 bg-neutral-900 rounded-2xl">
                                     <Text className="text-white text-xl font-bold mb-1">
                                         Upgrade to Premium
                                     </Text>
@@ -149,26 +119,25 @@ const Account = () => {
                             </TouchableOpacity>
                         )
                     }
-                    <View className="px-5 gap-y-6">
-                        <View className="bg-secondary rounded-2xl overflow-hidden">
-                            <MenuItem item={profileRoute} isLast={true} />
-                        </View>
-                        <View className="bg-secondary rounded-2xl overflow-hidden">
-                            {generalRoutes.map((route, index) => (
-                                <MenuItem
+                    <Animated.View layout={LinearTransition} className='flex flex-col gap-y-2 my-4'>
+                        {
+                            filteredRoutes.map((route) => (
+                                <Animated.View
                                     key={route.name}
-                                    item={route}
-                                    isLast={index === generalRoutes.length - 1}
-                                />
-                            ))}
-                        </View>
-                        <View className="bg-secondary rounded-2xl overflow-hidden">
-                            <DeleteHistoryButton />
-                        </View>
-                        <View className="items-center py-4">
-                            <Text className="text-zinc-600 text-xs">Version 2.0.0</Text>
-                        </View>
-                    </View>
+                                    entering={FadeIn.duration(200)}
+                                    exiting={FadeOut.duration(150)}
+                                    layout={LinearTransition}
+                                >
+                                    <MenuItem
+                                        item={route}
+                                    />
+                                </Animated.View>
+                            ))
+                        }
+                        {
+                            searchQuery.length === 0 && <DeleteHistoryButton />
+                        }
+                    </Animated.View>
                     <Spacer />
                 </ScrollView>
             </SafeAreaView>
