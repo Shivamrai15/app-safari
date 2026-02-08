@@ -7,6 +7,7 @@ import { PUBLIC_BASE_URL } from '@/constants/api.config';
 import { useAuth } from '@/hooks/use-auth';
 import { useInfinite } from '@/hooks/use-infinite';
 import { Mood } from '@/types/response.types';
+import { Image } from 'expo-image';
 
 
 interface Props {
@@ -49,10 +50,7 @@ export const Moods = ({ isAtEnd }: Props) => {
                         {
                             group.items.map((mood: Mood) => (
                                 <TouchableOpacity
-                                    className='w-[48%] flex flex-row items-center justify-center p-4 rounded-2xl'
-                                    style={{
-                                        backgroundColor : mood.color
-                                    }}
+                                    className='w-[48%] flex flex-col'
                                     key={mood.id}
                                     activeOpacity={0.7}
                                     onPress={()=>router.push({
@@ -60,9 +58,25 @@ export const Moods = ({ isAtEnd }: Props) => {
                                         params : { moodId : mood.id }
                                     })}
                                 >
-                                    <Text className='text-white font-semibold text-center'>
-                                        {mood.name}
-                                    </Text>
+                                    <View
+                                        className='w-full p-4 rounded-lg relative flex flex-row items-center overflow-hidden'
+                                        style={{
+                                            backgroundColor : mood.color
+                                        }}
+                                    >
+                                        <View className='w-2/3 aspect-video pr-2'>
+                                            <Text className='text-white text-xl font-bold'>
+                                                {mood.name}
+                                            </Text>
+                                        </View>
+                                        <View className='w-1/2 aspect-square rounded-md overflow-hidden absolute -right-2 -bottom-2'>
+                                            <Image
+                                                source={{ uri : mood.image }}
+                                                style={{ width : "100%", height : "100%" }}
+                                                contentFit='cover'
+                                            />
+                                        </View>
+                                    </View>
                                 </TouchableOpacity>
                             ))
                         }

@@ -45,22 +45,23 @@ export const Genre = () => {
                             params : { genreId : genre.id }
                         })}
                     >
-                        <View className='aspect-[3/4] rounded-2xl overflow-hidden border border-zinc-800/50 shadow-lg'>
-                            <Image
-                                source={{
-                                    uri : genre.video?.image,
-                                }}
-                                style={{
-                                    height : "100%",
-                                    width : "100%",
-                                }}
-                                contentFit="cover"
-                            />
-                            <View className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent' />
-                            <View className='absolute bottom-0 left-0 right-0 p-4'>
-                                <Text className='text-white font-bold text-base' numberOfLines={2}>
+                        <View
+                            className='w-full p-4 rounded-lg relative flex flex-row items-center overflow-hidden'
+                            style={{
+                                backgroundColor : genre.color
+                            }}
+                        >
+                            <View className='w-2/3 aspect-video pr-2'>
+                                <Text className='text-white text-xl font-bold'>
                                     {genre.name}
                                 </Text>
+                            </View>
+                            <View className='w-1/2 aspect-square rounded-md overflow-hidden absolute -right-2 -bottom-2'>
+                                <Image
+                                    source={{ uri : genre.image }}
+                                    style={{ width : "100%", height : "100%" }}
+                                    contentFit='cover'
+                                />
                             </View>
                         </View>
                     </TouchableOpacity>
