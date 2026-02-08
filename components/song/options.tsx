@@ -1,3 +1,4 @@
+import NetInfo from "@react-native-community/netinfo";
 import { View, Text } from 'react-native';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BottomSheetModal, BottomSheetView, BottomSheetScrollView, BottomSheetBackdrop } from '@gorhom/bottom-sheet';
@@ -27,9 +28,21 @@ export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }:
     const insets = useSafeAreaInsets();
     const sheetRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => [], []);
-    const { enQueue, priorityEnqueue, playNext } = useQueue();
+    const { enQueue, playNext } = useQueue();
     const { settings } = useSettings();
     const { getSongById } = useDownloads();
+
+    const [isConnected, setIsConnected] = useState<boolean | null>(true);
+
+
+    useEffect(()=>{
+        const unsubscribe = NetInfo.addEventListener(state => {
+            setIsConnected(state.isConnected);
+        });
+        return () => {
+            unsubscribe();
+        }
+    }, []);
 
     const [isDownloading, setIsDownloading] = useState(false);
     const [downloadProgress, setDownloadProgress] = useState(0);
@@ -223,7 +236,7 @@ export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }:
                             }
                         </Button>
                         {
-                            playlistId && (!isDownloaded) &&(
+                            playlistId && (!isDownloaded) && (isConnected) &&(
                                 <DeleteSongButton
                                     playlistId={playlistId}
                                     songId={data?.id}
@@ -231,7 +244,7 @@ export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }:
                             )
                         }
                         {
-                            (!isDownloaded) && (
+                            (isConnected) && (
                                 <Button
                                     variant='ghost'
                                     className='justify-start gap-x-6'
@@ -246,7 +259,7 @@ export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }:
                             )
                         }
                         {
-                            (!isDownloaded) && (
+                            (isConnected) && (
                                 <Button
                                     variant='ghost'
                                     className='justify-start gap-x-6'
@@ -261,7 +274,7 @@ export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }:
                             )
                         }
                         {
-                            (!isDownloaded) && (
+                            (isConnected) && (
                                 <Button
                                     variant='ghost'
                                     className='justify-start gap-x-6'
@@ -285,7 +298,7 @@ export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }:
                         }
                     </View>
                     {
-                        (!isDownloaded) && (
+                        (isConnected) && (
                             <>
                                 <View className='h-[1px] bg-zinc-600 w-full mt-4' />
                                     <View className='flex flex-col mt-4 pb-12'>

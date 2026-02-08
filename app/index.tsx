@@ -11,8 +11,10 @@ const Index = () => {
     useLikedSongsSync(user?.tokens.accessToken);
     useFollowingSync(user?.tokens.accessToken);
 
+
     if (isLoggedIn) {
         return <Redirect href="/(tabs)/home" />;
+        // return <Redirect href="/(tabs)/account/privacy-policy" />;
     }
     
     return (

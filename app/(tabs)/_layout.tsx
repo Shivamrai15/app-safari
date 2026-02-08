@@ -316,6 +316,13 @@ const Layout = () => {
 						href : null
 					}}
 				/>
+				<Tabs.Screen
+					name="account/privacy-policy" 
+					options={{
+						tabBarIcon : ()=>null,
+						href : null
+					}}
+				/>
 			</Tabs>
 		</>
 	)

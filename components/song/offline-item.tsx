@@ -7,6 +7,7 @@ import { TrashIcon } from '@/constants/icons';
 import { useDownloads } from '@/hooks/use-downloads';
 import { useState } from 'react';
 import { DownloadManager } from '@/services/download';
+import { Options } from './options';
 
 
 interface Props {
@@ -27,49 +28,46 @@ interface Props {
 export const OfflineItem = ({ className, data }: Props) => {
 
     const { priorityEnqueue } = useQueue();
-    const { removeSong } = useDownloads();
     const [isDeleting, setIsDeleting] = useState(false);
-    const downloadManager = DownloadManager.getInstance();
+    const [ openOptions, setOpenOptions ] = useState(false);
 
-    const handleDelete = async () => {
-        setIsDeleting(true);
-        try {
-            await downloadManager.deleteDownload(data.id)
-        } finally {
-            setIsDeleting(false);
-        }
-    };
+    const { removeSong } = useDownloads();
 
     return (
-        <TouchableOpacity 
-            className={cn(
-                "w-full flex flex-row items-center justify-between gap-x-4",
-                className
-            )}
-            activeOpacity={0.7}
-            onPress={()=>priorityEnqueue([data])}
-        >
-            <Image
-                source={{ uri: data.image }}
-                style={{ width: 48, height: 48, borderRadius: 8 }}
-                contentFit="contain"
-            />
-            <View className="flex-1 flex flex-col gap-y-0.5">
-                <Text className="text-white font-semibold" numberOfLines={1} ellipsizeMode="tail" >{data.name}</Text>
-                <Text className="text-neutral-300 font-medium text-sm" numberOfLines={1} ellipsizeMode="tail" >{data.album.name}</Text>
-            </View>
-            <Text className="font-medium w-12 text-white" >{albumDuration(data.duration)}</Text>
+
+        <>
             <TouchableOpacity 
-                onPress={handleDelete}
-                disabled={isDeleting}
-                style={{ opacity: isDeleting ? 0.5 : 1 }}
+                className={cn(
+                    "w-full flex flex-row items-center justify-between gap-x-4",
+                    className
+                )}
+                activeOpacity={0.7}
+                onPress={()=>priorityEnqueue([data])}
+                onLongPress={()=>setOpenOptions(true)}
             >
                 <Image
-                    source={TrashIcon}
-                    style={{ width: 24, height: 24 }}
+                    source={{ uri: data.image }}
+                    style={{ width: 48, height: 48, borderRadius: 8 }}
                     contentFit="contain"
                 />
+                <View className="flex-1 flex flex-col gap-y-0.5">
+                    <Text className="text-white font-semibold" numberOfLines={1} ellipsizeMode="tail" >{data.name}</Text>
+                    <Text className="text-neutral-300 font-medium text-sm" numberOfLines={1} ellipsizeMode="tail" >{data.album.name}</Text>
+                </View>
+                <Text className="font-medium w-12 text-white" >{albumDuration(data.duration)}</Text>
+                <TouchableOpacity 
+                    onPress={()=>removeSong(data.id)}
+                    disabled={isDeleting}
+                    style={{ opacity: isDeleting ? 0.5 : 1 }}
+                >
+                    <Image
+                        source={TrashIcon}
+                        style={{ width: 24, height: 24 }}
+                        contentFit="contain"
+                    />
+                </TouchableOpacity>
             </TouchableOpacity>
-        </TouchableOpacity>
+            <Options data={data} open={openOptions} onClose={()=>setOpenOptions(false)} isDownloaded={true} />
+        </>
     )
 }
