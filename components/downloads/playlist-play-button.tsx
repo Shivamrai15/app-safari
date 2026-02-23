@@ -21,7 +21,7 @@ export const PlaylistPlayButton = ({ songs, id, className }: Props) => {
 
     const { priorityEnqueue, current, queue, stack } = useQueue();
     const { activeId, play, isPlaying: checkIsPlaying } = usePlaylistStack();
-    const { isPlaying } = usePlayer();
+    const { isPlaying, togglePlayback } = usePlayer();
 
     const isActive = useMemo(() => {
         if (!id) return false;
@@ -33,6 +33,10 @@ export const PlaylistPlayButton = ({ songs, id, className }: Props) => {
     }, [isActive, isPlaying]);
 
     const handlePlay = () => {
+        if (isActive) {
+            togglePlayback?.();
+            return;
+        }
         if (songs && songs.length > 0 && id) {
             play(id, songs);
             priorityEnqueue(songs);
@@ -46,7 +50,6 @@ export const PlaylistPlayButton = ({ songs, id, className }: Props) => {
                 className
             )}
             onPress={() => handlePlay()}
-            disabled={isActive}
         >
             <Image source={isPlaylistPlaying ? PauseDarkIcon : PlayDarkIcon} style={{ width: 16, height: 16 }} />
         </Button>

@@ -14,7 +14,7 @@ interface Props {
 
 export const SongPlayButton = ({song, className}: Props) => {
 
-    const { isPlaying } = usePlayer();
+    const { isPlaying, togglePlayback } = usePlayer();
     const { current, priorityEnqueue } = useQueue();
 
     const isActive = useMemo(() => {
@@ -22,6 +22,10 @@ export const SongPlayButton = ({song, className}: Props) => {
     }, [current, song, isPlaying]);
 
     const handlePlay = () => {
+        if (isActive) {
+            togglePlayback?.();
+            return;
+        }
         priorityEnqueue([song]);
     }
 
@@ -32,7 +36,6 @@ export const SongPlayButton = ({song, className}: Props) => {
                 className
             )}
             onPress={() => handlePlay()}
-            disabled={isActive}
         >
             <Image source={isActive ? PauseDarkIcon : PlayDarkIcon} style={{ width: 16, height: 16 }} />
         </Button>

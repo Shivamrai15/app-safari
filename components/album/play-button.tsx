@@ -29,7 +29,7 @@ export const PlayButton = ({ songs, id, className }: Props) => {
     const { isLoggedIn, user } = useAuth();
     const { priorityEnqueue, current, queue, stack } = useQueue();
     const { activeId, play, isPlaying: checkIsPlaying } = useAlbumStack();
-    const { isPlaying } = usePlayer();
+    const { isPlaying, togglePlayback } = usePlayer();
 
     const isActive = useMemo(() => {
         if (!id) return false;
@@ -54,6 +54,10 @@ export const PlayButton = ({ songs, id, className }: Props) => {
     });
 
     const handlePlay = async () => {
+        if (isActive) {
+            togglePlayback?.();
+            return;
+        }
         if (!isLoggedIn) {
             router.push("/(auth)/welcome");
             return;
@@ -79,7 +83,6 @@ export const PlayButton = ({ songs, id, className }: Props) => {
                 className
             )}
             onPress={() => handlePlay()}
-            disabled={isActive}
         >
             <Image source={isALbumPlaying ? PauseDarkIcon : PlayDarkIcon} style={{ width: 16, height: 16 }} />
         </Button>

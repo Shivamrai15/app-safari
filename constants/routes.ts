@@ -89,7 +89,7 @@ export const AccountRoutes = [
         height: 24,
         width: 24,
         isFeatured: false,
-        isActive: false
+        isActive: true
     },
     {
         name: "Support",

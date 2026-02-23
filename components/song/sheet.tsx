@@ -29,6 +29,7 @@ import {
 } from 'react';
 import {
     Animated,
+    BackHandler,
     Dimensions,
     Modal,
     Text,
@@ -100,6 +101,23 @@ export const Sheet = ({
         }).start();
         pagerRef.current?.setPage(featureNumber);
     }, [featureNumber]);
+
+    useEffect(() => {
+        const backAction = () => {
+            if (isOpen) {
+                onClose();
+                return true;
+            }
+            return false;
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => backHandler.remove();
+    }, [isOpen, onClose]);
 
     return (
         <>

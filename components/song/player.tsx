@@ -36,7 +36,7 @@ export const Player = ({ bottom, isOffline }: Props) => {
 	const { current, queue, deQueue } = useQueue();
 	const [isOpen, setIsOpen] = useState(false);
 	const { isLooped, isAiShuffled } = usePlayerSettings();
-	const { setIsPlaying, setSongId } = usePlayer();
+	const { setIsPlaying, setSongId, setTogglePlayback } = usePlayer();
 
 	const {
 		onSongStart,
@@ -264,6 +264,11 @@ export const Player = ({ bottom, isOffline }: Props) => {
 			setIsPlaying(true);
 		}
 	};
+
+	useEffect(() => {
+		setTogglePlayback(togglePlayback);
+		return () => setTogglePlayback(null);
+	}, [isPlaying, player]);
 
 	useEffect(() => {
 		if (player.currentStatus.didJustFinish) {

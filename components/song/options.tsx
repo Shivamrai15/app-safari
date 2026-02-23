@@ -243,7 +243,7 @@ export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }:
                                 />
                             )
                         }
-                        {
+                        {/* {
                             (isConnected) && (
                                 <Button
                                     variant='ghost'
@@ -257,7 +257,7 @@ export const Options = ({ data, playlistId, open, onClose, isDownloaded=false }:
                                     <Text className='text-zinc-100 text-lg'>Add to playlist</Text>
                                 </Button>
                             )
-                        }
+                        } */}
                         {
                             (isConnected) && (
                                 <Button

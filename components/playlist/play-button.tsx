@@ -24,7 +24,7 @@ export const PlayButton = ({ className, playlistId }: Props) => {
     const { isLoggedIn, user } = useAuth();
     const { priorityEnqueue, current, queue, stack } = useQueue();
     const { activeId, play, isPlaying: checkIsPlaying } = usePlaylistStack();
-    const { isPlaying } = usePlayer();
+    const { isPlaying, togglePlayback } = usePlayer();
 
     const isActive = useMemo(() => {
         if (!playlistId) return false;
@@ -78,8 +78,8 @@ export const PlayButton = ({ className, playlistId }: Props) => {
                 "rounded-full size-12",
                 className
             )}
-            onPress={() => handlePlay.mutate()}
-            disabled={handlePlay.isPending || isActive}
+            onPress={() => isActive ? togglePlayback?.() : handlePlay.mutate()}
+            disabled={handlePlay.isPending}
         >
             <Image source={isPlaylistPlaying ? PauseDarkIcon : PlayDarkIcon} style={{ width: 22, height: 22 }} />
         </Button>
