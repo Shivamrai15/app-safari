@@ -18,6 +18,17 @@ import "./global.css"
 import { useRecentSearches } from "@/hooks/use-recent-searches";
 
 
+import {
+    configureReanimatedLogger,
+    ReanimatedLogLevel,
+} from 'react-native-reanimated';
+
+
+configureReanimatedLogger({
+    level: ReanimatedLogLevel.warn,
+    strict: true,
+});
+
 SplashScreen.preventAutoHideAsync();
 
 async function refreshTokens(refreshToken: string) {

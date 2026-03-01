@@ -22,6 +22,8 @@ import { ADS } from '@/constants/ads';
 import { Ad } from '@/types/auth.types';
 import usePlayerSettings from '@/hooks/use-player-settings';
 import { useSleepTimer } from '@/hooks/use-sleep-timer';
+import { useHistoryQueue } from '@/hooks/use-history-queue';
+import { recordSongHistory, registerHistorySyncTask } from '@/services/history.service';
 
 
 interface Props {
@@ -59,6 +61,8 @@ export const Player = ({ bottom, isOffline }: Props) => {
 	const trackingTimeoutRef = useRef<number | null>(null);
 	const lockScreenInitialized = useRef(false);
 	const sleepTimerIntervalRef = useRef<number | null>(null);
+	const songPlayStartTime = useRef<number>(0);
+	const previousSongRef = useRef<{ id: string; duration: number } | null>(null);
 
 	const {
 		isActive: isSleepTimerActive,
@@ -68,6 +72,27 @@ export const Player = ({ bottom, isOffline }: Props) => {
 		onTimerComplete,
 		hydrateFromStorage: hydrateSleepTimer,
 	} = useSleepTimer();
+
+	// Record history for the song that was playing before a transition
+	const recordCurrentSongHistory = () => {
+		if (
+			previousSongRef.current &&
+			user?.user?.id &&
+			songPlayStartTime.current > 0
+		) {
+			const playedDuration = Math.floor(
+				(Date.now() - songPlayStartTime.current) / 1000
+			);
+			if (playedDuration > 0) {
+				recordSongHistory({
+					userId: user.user.id,
+					trackId: previousSongRef.current.id,
+					songDuration: previousSongRef.current.duration,
+					playedDuration,
+				});
+			}
+		}
+	};
 
 	useEffect(() => {
 		const configureAudio = async () => {
@@ -85,6 +110,16 @@ export const Player = ({ bottom, isOffline }: Props) => {
 		};
 		configureAudio();
 		hydrateSleepTimer();
+
+		// Start periodic foreground flush & app-state flush
+		const cleanupAutoFlush = useHistoryQueue.getState().startAutoFlush();
+
+		// Register expo-background-task for flushing when app is backgrounded
+		registerHistorySyncTask();
+
+		return () => {
+			cleanupAutoFlush();
+		};
 	}, []);
 
 	useEffect(() => {
@@ -174,6 +209,9 @@ export const Player = ({ bottom, isOffline }: Props) => {
 
 	useEffect(() => {
 		if (current && current?.url && current.url !== currentSongUrl.current) {
+			// Record history for the previous song before switching
+			recordCurrentSongHistory();
+
 			const needsAd = !isOffline && checkShouldShowAd(isSubscribed);
 
 			if (needsAd && ADS.length > 0) {
@@ -193,6 +231,10 @@ export const Player = ({ bottom, isOffline }: Props) => {
 				hasAutoPlayed.current = false;
 				currentSongUrl.current = current.url;
 				setIsPlaying(true);
+
+				// Track play start time for history
+				songPlayStartTime.current = Date.now();
+				previousSongRef.current = { id: current.id, duration: current.duration };
 
 				onSongStart(current.id);
 
@@ -285,6 +327,10 @@ export const Player = ({ bottom, isOffline }: Props) => {
 					pendingSongUrl.current = null;
 					setIsPlaying(true);
 
+					// Track play start time for history (after ad)
+					songPlayStartTime.current = Date.now();
+					previousSongRef.current = { id: current.id, duration: current.duration };
+
 					onSongStart(current.id);
 
 					if (trackingTimeoutRef.current) {
@@ -302,10 +348,14 @@ export const Player = ({ bottom, isOffline }: Props) => {
 					}
 				}
 			} else if (isSleepTimerActive && sleepTimerEndOfTrack) {
+				recordCurrentSongHistory();
 				player.pause();
 				setIsPlaying(false);
+				songPlayStartTime.current = 0;
 				onTimerComplete();
 			} else if (!isLooped) {
+				recordCurrentSongHistory();
+				songPlayStartTime.current = 0;
 				deQueue();
 				if (queue.length > 0) {
 					hasAutoPlayed.current = false;
