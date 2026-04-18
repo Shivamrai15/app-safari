@@ -6,11 +6,13 @@ import { MaterialIcons } from '@expo/vector-icons';
 const Page = () => {
 
     return (
-        <SafeAreaView className='flex-1 bg-background' edges={['top']}>
-            {/* Header */}
+        <SafeAreaView
+            className='flex-1 bg-background'
+            edges={["top", "left", "right"]}
+        >
             <View className='px-6 py-5 border-b border-white/5 bg-background/90'>
                 <View className='flex-row items-center justify-between'>
-                    <TouchableOpacity 
+                    <TouchableOpacity
                         onPress={() => router.back()}
                         className='p-2 -ml-2 rounded-full active:bg-white/10'
                         activeOpacity={0.7}
@@ -24,13 +26,11 @@ const Page = () => {
                 </View>
             </View>
 
-            {/* Main Content */}
-            <ScrollView 
+            <ScrollView
                 className='flex-1'
                 showsVerticalScrollIndicator={false}
                 contentContainerClassName='px-6 pt-6 pb-24'
             >
-                {/* Header Section */}
                 <View className='mb-10 items-center'>
                     <View className='items-center justify-center p-3 mb-4 rounded-full bg-primary/10'>
                         <MaterialIcons name="policy" size={24} color="#ef4444" />

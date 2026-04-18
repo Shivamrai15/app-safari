@@ -20,26 +20,25 @@ import Feather from "@expo/vector-icons/Feather";
 import { SongItem } from "@/components/song/item";
 import { PUBLIC_BASE_URL } from "@/constants/api.config";
 import { NetworkProvider } from "@/providers/network.provider";
-import { Spacer } from "@/components/ui/spacer";
 
 const GenreSongs = () => {
     const { user } = useAuth();
     const { genreId } = useLocalSearchParams();
-    
+
     const { data, isPending, error } = useQuery({
-        queryFn : async () => {
+        queryFn: async () => {
             const data = await fetcher({
-                prefix : "PUBLIC_BASE_URL",
-                suffix : `api/v2/genre/${genreId}`,
-                token : user?.tokens.accessToken
+                prefix: "PUBLIC_BASE_URL",
+                suffix: `api/v2/genre/${genreId}`,
+                token: user?.tokens.accessToken
             })
             return data.data as MoodResponse;
         },
-        queryKey : ["genre", genreId],
+        queryKey: ["genre", genreId],
     });
 
     const [atEnd, setAtEnd] = useState(false);
-    
+
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
         const isEnd = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20; // buffer of 20px
@@ -54,8 +53,8 @@ const GenreSongs = () => {
         paramValue: ""
     });
 
-    useEffect(()=>{
-        if(atEnd && hasNextPage){
+    useEffect(() => {
+        if (atEnd && hasNextPage) {
             fetchNextPage();
         }
     }, [atEnd, hasNextPage]);
@@ -67,10 +66,13 @@ const GenreSongs = () => {
     if (error || !data || status === "error") {
         return <Error />
     }
-    
+
     return (
         <NetworkProvider>
-            <SafeAreaView className="bg-background flex-1">
+            <SafeAreaView
+                className="bg-background flex-1"
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
@@ -95,18 +97,18 @@ const GenreSongs = () => {
                                 <Feather name="clock" size={20} color="white" />
                             </View>
                         </View>
-                        <View className="bg-zinc-600 h-0.5 w-full rounded-full"/>
+                        <View className="bg-zinc-600 h-0.5 w-full rounded-full" />
                         <View className='flex flex-col gap-y-5'>
                             {
-                                songData?.pages.map((group, i)=>(
-                                        <Fragment key={i} >
-                                            {
-                                                group.items.map((song: SongResponse) => (
-                                                    <SongItem key={song.id} data={song} />
-                                                ))
-                                            }
-                                        </Fragment>
-                                    ))
+                                songData?.pages.map((group, i) => (
+                                    <Fragment key={i} >
+                                        {
+                                            group.items.map((song: SongResponse) => (
+                                                <SongItem key={song.id} data={song} />
+                                            ))
+                                        }
+                                    </Fragment>
+                                ))
 
                             }
                             {
@@ -116,7 +118,6 @@ const GenreSongs = () => {
                             }
                         </View>
                     </View>
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

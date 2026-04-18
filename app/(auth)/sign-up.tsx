@@ -16,13 +16,13 @@ import { log } from '@/services/log.service';
 const SignUp = () => {
 
     const [form, setForm] = useState({
-        name : "",
-        email : "",
-        password : ""
+        name: "",
+        email: "",
+        password: ""
     });
 
     const { mutate, isPending } = useMutation({
-        mutationFn : async(data: { name: string; email: string; password: string; })=> {
+        mutationFn: async (data: { name: string; email: string; password: string; }) => {
             const response = await axios.post(`${AUTH_BASE_URL}/api/v2/auth/register`, data);
             return response.data;
         },
@@ -51,62 +51,62 @@ const SignUp = () => {
     });
 
     return (
-            <SafeAreaView className='size-full bg-background'>
-                <View className='flex-1 px-6 py-12 flex flex-col justify-between'>
-                    <View className='flex flex-col gap-y-10'>
-                        <View className='flex flex-col gap-y-3 mt-8'>
-                            <Text className='text-white text-4xl font-extrabold leading-tight'>Join Safari</Text>
-                            <Text className='text-zinc-400 text-base'>Create your account and start exploring</Text>
-                        </View>
-                        
-                        <View className='flex flex-col gap-y-8'>
-                            <View className='flex flex-col gap-y-5'>
-                                <Input
-                                    label='Full Name'
-                                    value={form.name}
-                                    onChange={(text) => setForm({ ...form, name: text })}
-                                    keyboardType='default'
-                                />
-                                <Input
-                                    label='Email Address'
-                                    value={form.email}
-                                    onChange={(text) => setForm({ ...form, email: text })}
-                                    keyboardType='email-address'
-                                />
-                                <Input
-                                    label='Password'
-                                    value={form.password}
-                                    onChange={(text) => setForm({ ...form, password: text })}
-                                    keyboardType='default'
-                                    secureTextEntry={true}
-                                />
-                                <Button 
-                                    className='bg-red-600 rounded-full h-14 mt-2'
-                                    disabled={isPending}
-                                    onPress={() => mutate(form)}
-                                >
-                                    <Text className='text-white text-base font-bold'>Create Account</Text>
-                                </Button>
-                            </View>
-                            
-                            <View className='flex flex-col gap-y-6'>
-                                <View className='flex flex-row items-center gap-x-4'>
-                                    <View className='flex-1 h-px bg-zinc-800' />
-                                    <Text className='text-zinc-500 text-sm font-medium'>OR SIGN UP WITH</Text>
-                                    <View className='flex-1 h-px bg-zinc-800' />
-                                </View>
-                                <GoogleOauth />
-                            </View>
-                        </View>
+        <SafeAreaView className='size-full bg-background'>
+            <View className='flex-1 px-6 py-12 flex flex-col justify-between'>
+                <View className='flex flex-col gap-y-10'>
+                    <View className='flex flex-col gap-y-3 mt-8'>
+                        <Text className='text-white text-4xl font-extrabold leading-tight'>Join Safari</Text>
+                        <Text className='text-zinc-400 text-base'>Create your account and start exploring</Text>
                     </View>
-                    
-                    <View className='flex flex-row items-center justify-center gap-x-2'>
-                        <Text className='text-zinc-500 text-sm'>Already have an account?</Text>
-                        <Link href='/(auth)/sign-in'>
-                            <Text className='text-red-600 text-sm font-bold'>Sign In</Text>
-                        </Link>
+
+                    <View className='flex flex-col gap-y-8'>
+                        <View className='flex flex-col gap-y-5'>
+                            <Input
+                                label='Full Name'
+                                value={form.name}
+                                onChange={(text) => setForm({ ...form, name: text })}
+                                keyboardType='default'
+                            />
+                            <Input
+                                label='Email Address'
+                                value={form.email}
+                                onChange={(text) => setForm({ ...form, email: text })}
+                                keyboardType='email-address'
+                            />
+                            <Input
+                                label='Password'
+                                value={form.password}
+                                onChange={(text) => setForm({ ...form, password: text })}
+                                keyboardType='default'
+                                secureTextEntry={true}
+                            />
+                            <Button
+                                className='bg-red-600 rounded-full h-14 mt-2'
+                                disabled={isPending}
+                                onPress={() => mutate(form)}
+                            >
+                                <Text className='text-white text-base font-bold'>Create Account</Text>
+                            </Button>
+                        </View>
+
+                        <View className='flex flex-col gap-y-6'>
+                            <View className='flex flex-row items-center gap-x-4'>
+                                <View className='flex-1 h-px bg-zinc-800' />
+                                <Text className='text-zinc-500 text-sm font-medium'>OR SIGN UP WITH</Text>
+                                <View className='flex-1 h-px bg-zinc-800' />
+                            </View>
+                            <GoogleOauth />
+                        </View>
                     </View>
                 </View>
+
+                <View className='flex flex-row items-center justify-center gap-x-2'>
+                    <Text className='text-zinc-500 text-sm'>Already have an account?</Text>
+                    <Link href='/(auth)/sign-in'>
+                        <Text className='text-red-600 text-sm font-bold'>Sign In</Text>
+                    </Link>
+                </View>
+            </View>
         </SafeAreaView>
     )
 }

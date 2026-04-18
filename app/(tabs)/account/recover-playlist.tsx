@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { fetcher } from '@/lib/fetcher';
 import { useAuth } from '@/hooks/use-auth';
-import { Spacer } from '@/components/ui/spacer';
 import { Error } from '@/components/ui/error';
 import { PrimaryLoader } from '@/components/ui/loader';
 import { PlaylistResponse } from '@/types/response.types';
@@ -56,7 +55,10 @@ const Page = () => {
     }
 
     return (
-        <SafeAreaView className='flex-1 bg-background'>
+        <SafeAreaView
+            className='flex-1 bg-background'
+            edges={["top", "left", "right"]}
+        >
             <ScrollView
                 className='flex-1'
                 showsVerticalScrollIndicator={false}
@@ -129,7 +131,6 @@ const Page = () => {
                         </View>
                     )}
                 </View>
-                <Spacer />
             </ScrollView>
         </SafeAreaView>
     )

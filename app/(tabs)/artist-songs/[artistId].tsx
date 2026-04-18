@@ -18,7 +18,6 @@ import { ArtistProfileResponse } from "@/types/response.types";
 import { Songs } from "@/components/artist/songs";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useQuery } from "@tanstack/react-query";
-import { Spacer } from "@/components/ui/spacer";
 
 
 const ArtistSongs = () => {
@@ -34,11 +33,11 @@ const ArtistSongs = () => {
     };
 
     const { data, isPending, error } = useQuery({
-        queryFn : async()=>{
+        queryFn: async () => {
             const data = await fetcher({
-                prefix : "PUBLIC_BASE_URL",
-                suffix : `api/v2/artist/${artistId}/profile`,
-                token : user?.tokens.accessToken
+                prefix: "PUBLIC_BASE_URL",
+                suffix: `api/v2/artist/${artistId}/profile`,
+                token: user?.tokens.accessToken
             });
             return data.data as ArtistProfileResponse;
         },
@@ -61,6 +60,7 @@ const ArtistSongs = () => {
         <NetworkProvider>
             <SafeAreaView
                 className="flex-1 bg-background"
+                edges={["top", "left", "right"]}
             >
                 <ScrollView
                     className="w-full flex-1 px-4 my-10"
@@ -73,9 +73,9 @@ const ArtistSongs = () => {
                         <View className="size-28 rounded-full overflow-hidden relative">
                             <Image
                                 source={{
-                                    uri : data.image
+                                    uri: data.image
                                 }}
-                                style={{ width : "100%", height : "100%" }}
+                                style={{ width: "100%", height: "100%" }}
                             />
                         </View>
                         <View className="flex-1 flex flex-col gap-y-3">
@@ -88,7 +88,6 @@ const ArtistSongs = () => {
                         </View>
                     </View>
                     <Songs isAtEnd={atEnd} artistId={data.id} />
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

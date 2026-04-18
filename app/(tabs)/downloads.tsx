@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { useDownloads } from '@/hooks/use-downloads';
 import { useSettings } from '@/hooks/use-settings';
 import { OfflineItem } from '@/components/song/offline-item';
-import { Spacer } from '@/components/ui/spacer';
 import { useState } from 'react';
 import { DeleteModal } from '@/components/modals/delete.modal';
 
@@ -25,9 +24,9 @@ const CollectionCard = ({ id, name, image, songCount, type, isDownloading, progr
     const handlePress = () => {
         if (type === 'playlist') {
             router.push({
-                pathname : "/(tabs)/downloads/playlist/[playlistId]",
-                params : {
-                    playlistId : id
+                pathname: "/(tabs)/downloads/playlist/[playlistId]",
+                params: {
+                    playlistId: id
                 }
             });
         } else {
@@ -86,8 +85,8 @@ const CollectionCard = ({ id, name, image, songCount, type, isDownloading, progr
 const Download = () => {
 
     const { settings } = useSettings();
-    const [ isPending, setIsPending ] = useState(false);
-    const [ openDeleteModal, setOpenDeleteModal ] = useState(false);
+    const [isPending, setIsPending] = useState(false);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const { songs, playlists, albums, deleteAllDownloads } = useDownloads();
 
     if (settings ? !settings.subscription.isActive : true) {
@@ -103,7 +102,10 @@ const Download = () => {
     const hasContent = downloadedPlaylists.length > 0 || downloadedAlbums.length > 0 || downloadedSongs.length > 0;
 
     return (
-        <SafeAreaView className='bg-background flex-1 relative'>
+        <SafeAreaView
+            className="flex-1 bg-background relative"
+            edges={["top", "left", "right"]}
+        >
             <ScrollView
                 className='flex-1 p-6'
                 showsVerticalScrollIndicator={false}
@@ -183,7 +185,6 @@ const Download = () => {
                         </View>
                     </View>
                 )}
-                <Spacer />
             </ScrollView>
             <DeleteModal
                 isPending={isPending}

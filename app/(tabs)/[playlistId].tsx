@@ -100,7 +100,10 @@ const PlaylistSearch = () => {
     }
 
     return (
-        <SafeAreaView className='flex-1 bg-background'>
+        <SafeAreaView
+            className="flex-1 bg-background"
+            edges={["top", "left", "right"]}
+        >
             <LinearGradient
                 colors={['#320707', 'transparent']}
                 start={{ x: 1, y: 0 }}
@@ -165,7 +168,6 @@ const PlaylistSearch = () => {
                             </>
                         }
                     </View>
-                    <Spacer />
                 </ScrollView>
             </LinearGradient>
         </SafeAreaView>

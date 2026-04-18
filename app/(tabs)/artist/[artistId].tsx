@@ -16,7 +16,6 @@ import { AlbumCarousel } from "@/components/carousel/album";
 import { SongItem } from "@/components/song/item";
 import { ShuffleButton } from "@/components/song/shuffle-button";
 import { useQueries } from "@tanstack/react-query";
-import { Spacer } from "@/components/ui/spacer";
 
 
 const ArtistPage = () => {
@@ -24,25 +23,25 @@ const ArtistPage = () => {
     const { user } = useAuth();
     const { artistId } = useLocalSearchParams();
 
-    const [ artist, discography ] = useQueries({
-        queries : [
+    const [artist, discography] = useQueries({
+        queries: [
             {
-                queryFn : async()=>{
+                queryFn: async () => {
                     const data = await fetcher({
-                        prefix : "PUBLIC_BASE_URL",
-                        suffix : `api/v2/artist/${artistId}`,
-                        token : user?.tokens.accessToken
+                        prefix: "PUBLIC_BASE_URL",
+                        suffix: `api/v2/artist/${artistId}`,
+                        token: user?.tokens.accessToken
                     });
                     return data.data as ArtistResponse;
                 },
                 queryKey: ["artist", artistId]
             },
             {
-                queryFn : async()=>{
+                queryFn: async () => {
                     const data = await fetcher({
-                        prefix : "PUBLIC_BASE_URL",
-                        suffix : `api/v2/artist/${artistId}/discography`,
-                        token : user?.tokens.accessToken
+                        prefix: "PUBLIC_BASE_URL",
+                        suffix: `api/v2/artist/${artistId}/discography`,
+                        token: user?.tokens.accessToken
                     });
                     return data.items as Album[];
                 },
@@ -59,13 +58,16 @@ const ArtistPage = () => {
 
     if (artist.isError || discography.isError || !artist.data || !discography.data) {
         return (
-            <Error/>
+            <Error />
         )
     }
 
     return (
         <NetworkProvider>
-            <SafeAreaView className="flex-1 bg-background">
+            <SafeAreaView
+                className="flex-1 bg-background"
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className="w-full flex-1"
                     showsVerticalScrollIndicator={false}
@@ -85,7 +87,7 @@ const ArtistPage = () => {
                         <Text className="text-white font-bold text-2xl">Popular</Text>
                         <View className="flex flex-col gap-y-4">
                             {
-                                artist.data.songs.map((song)=>(
+                                artist.data.songs.map((song) => (
                                     <SongItem
                                         key={song.id}
                                         data={song}
@@ -98,9 +100,9 @@ const ArtistPage = () => {
                         <Button
                             variant="outline"
                             className="rounded-full"
-                            onPress={()=>router.push({
-                                pathname : "/(tabs)/artist-songs/[artistId]",
-                                params : { artistId : artist.data.id }
+                            onPress={() => router.push({
+                                pathname: "/(tabs)/artist-songs/[artistId]",
+                                params: { artistId: artist.data.id }
                             })}
                         >
                             <Text className="text-white font-semibold">See More</Text>
@@ -114,7 +116,6 @@ const ArtistPage = () => {
                         image={artist.data.image}
                         description={artist.data.about}
                     />
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

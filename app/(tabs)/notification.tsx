@@ -7,7 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { PrimaryLoader, SecondaryLoader } from '@/components/ui/loader';
 import { Error } from '@/components/ui/error';
 import { Notification as NotificationType, NotificationType as NotificationEnum } from '@/types/response.types';
-import { Spacer } from '@/components/ui/spacer';
 import { NetworkProvider } from '@/providers/network.provider';
 import { NotificationCard } from '@/components/notification/card';
 import { useQueryClient } from '@tanstack/react-query';
@@ -44,7 +43,6 @@ const Notification = () => {
                 }
             );
             Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["notification"] }),
                 queryClient.invalidateQueries({ queryKey: ["notification-count"] }),
             ]);
         } catch (error) {
@@ -93,7 +91,10 @@ const Notification = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className='flex-1 bg-background' edges={['top']}>
+            <SafeAreaView
+                className='flex-1 bg-background'
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className='flex-1'
                     onScroll={handleScroll}
@@ -133,7 +134,6 @@ const Notification = () => {
                             </View>)
                         }
                     </View>
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

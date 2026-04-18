@@ -7,7 +7,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDownloads } from '@/hooks/use-downloads';
 import { Header } from '@/components/downloads/playlist-header';
 import { SongList } from '@/components/downloads/song-list';
-import { Spacer } from '@/components/ui/spacer';
 
 
 const PlaylistSongs = () => {
@@ -22,7 +21,10 @@ const PlaylistSongs = () => {
     }
 
     return (
-        <SafeAreaView className='flex-1 bg-background'>
+        <SafeAreaView
+            className='flex-1 bg-background'
+            edges={["top", "left", "right"]}
+        >
             <ScrollView
                 className='flex-1'
                 scrollEventThrottle={16}
@@ -30,8 +32,7 @@ const PlaylistSongs = () => {
                 showsHorizontalScrollIndicator={false}
             >
                 <Header data={data} />
-                <SongList data={data.songs} /> 
-                <Spacer />
+                <SongList data={data.songs} />
             </ScrollView>
         </SafeAreaView>
     )

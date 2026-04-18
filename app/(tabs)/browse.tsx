@@ -6,15 +6,14 @@ import { Moods } from '@/components/browse/moods';
 import { useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Spacer } from '@/components/ui/spacer';
 
 type tab = "genre" | "mood";
 
 const Browse = () => {
 
-    const [ activeTab, setActiveTab ] = useState<tab>("genre");
+    const [activeTab, setActiveTab] = useState<tab>("genre");
     const [atEnd, setAtEnd] = useState(false);
-    
+
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
         const isEnd = layoutMeasurement.height + contentOffset.y >= contentSize.height - 20; // buffer of 20px
@@ -23,7 +22,10 @@ const Browse = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className="bg-background flex-1">
+            <SafeAreaView
+                className="flex-1 bg-background"
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className='flex-1'
                     stickyHeaderIndices={[1]}
@@ -37,10 +39,10 @@ const Browse = () => {
                         <Text className="text-zinc-400 text-sm mt-2">Discover music by genre and mood</Text>
                     </View>
                     <View className='flex flex-row items-center gap-x-3 px-6 py-4 bg-background/95 backdrop-blur-lg'>
-                        <Button 
+                        <Button
                             variant={activeTab === "genre" ? "primary" : "secondary"}
                             className="rounded-full px-6 h-11"
-                            onPress={()=>setActiveTab("genre")}
+                            onPress={() => setActiveTab("genre")}
                         >
                             <Text
                                 className={cn(
@@ -54,7 +56,7 @@ const Browse = () => {
                         <Button
                             variant={activeTab === "mood" ? "primary" : "secondary"}
                             className="rounded-full px-6 h-11"
-                            onPress={()=>setActiveTab("mood")}
+                            onPress={() => setActiveTab("mood")}
                         >
                             <Text
                                 className={cn(
@@ -75,7 +77,6 @@ const Browse = () => {
                             )
                         }
                     </View>
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

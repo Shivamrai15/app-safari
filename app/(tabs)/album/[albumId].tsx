@@ -12,7 +12,6 @@ import { fetcher } from "@/lib/fetcher";
 import { Error } from "@/components/ui/error";
 import { useAuth } from "@/hooks/use-auth";
 import { NetworkProvider } from "@/providers/network.provider";
-import { Spacer } from "@/components/ui/spacer";
 
 
 const AlbumPage = () => {
@@ -42,7 +41,10 @@ const AlbumPage = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className="flex-1 bg-background">
+            <SafeAreaView
+                className="flex-1 bg-background"
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className="flex-1"
                     showsVerticalScrollIndicator={false}
@@ -63,7 +65,6 @@ const AlbumPage = () => {
                                 <AlbumLabel label={data.label} releaseDate={data.release} />
                             )
                         }
-                        <Spacer />
                     </LinearGradient>
                 </ScrollView>
             </SafeAreaView>

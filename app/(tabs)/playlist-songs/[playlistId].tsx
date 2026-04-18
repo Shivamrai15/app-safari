@@ -23,7 +23,6 @@ import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { useInfinite } from '@/hooks/use-infinite';
 import { SongItem } from '@/components/song/item';
 import { UpdatePlaylistModal } from '@/components/modals/update-playlist.modal';
-import { Spacer } from '@/components/ui/spacer';
 
 
 const PlaylistSongs = () => {
@@ -87,7 +86,10 @@ const PlaylistSongs = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className='flex-1 bg-background'>
+            <SafeAreaView
+                className='flex-1 bg-background'
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className='flex-1'
                     onScroll={handleScroll}
@@ -140,7 +142,6 @@ const PlaylistSongs = () => {
                         onCloseModal={() => setIsUpdateModalVisible(false)}
                         data={data}
                     />
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

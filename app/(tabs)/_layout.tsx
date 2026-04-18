@@ -1,6 +1,7 @@
 import { Tabs, usePathname, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import { HomeIcon,
+import {
+	HomeIcon,
 	HomeOutlineIcon,
 	BrowseIcon,
 	BrowseOutlineIcon,
@@ -76,19 +77,18 @@ const Layout = () => {
 					tabBarStyle: {
 						backgroundColor: "#111111",
 						borderTopWidth: 0,
-						height: 60 + insets.bottom,
-						paddingBottom: insets.bottom,
-						paddingTop: 8,
-						position: 'absolute',
-						bottom: 0,
-						left: 0,
-						right: 0,
+						height: 56,
+						paddingTop: 7,
+						marginBottom: insets.bottom,
+						marginTop: 0,
+						elevation: 0,
+						shadowOpacity: 0,
 					},
 				}}
 			>
-				<Tabs.Screen 
-					name="home" 
-					options={{ 
+				<Tabs.Screen
+					name="home"
+					options={{
 						tabBarIcon: ({ focused }) => {
 							return focused ? (
 								<Image
@@ -102,11 +102,11 @@ const Layout = () => {
 								/>
 							)
 						}
-					}} 
+					}}
 				/>
-				<Tabs.Screen 
-					name="search" 
-					options={{ 
+				<Tabs.Screen
+					name="search"
+					options={{
 						tabBarIcon: ({ focused }) => {
 							return focused ? (
 								<Image
@@ -122,9 +122,9 @@ const Layout = () => {
 						}
 					}}
 				/>
-				<Tabs.Screen 
-					name="browse" 
-					options={{ 
+				<Tabs.Screen
+					name="browse"
+					options={{
 						tabBarIcon: ({ focused }) => {
 							return focused ? (
 								<Image
@@ -140,9 +140,9 @@ const Layout = () => {
 						}
 					}}
 				/>
-				<Tabs.Screen 
-					name="playlist" 
-					options={{ 
+				<Tabs.Screen
+					name="playlist"
+					options={{
 						tabBarIcon: ({ focused }) => {
 							return focused ? (
 								<Image
@@ -158,11 +158,11 @@ const Layout = () => {
 						}
 					}}
 				/>
-				<Tabs.Screen 
-					name="account" 
-					options={{ 
+				<Tabs.Screen
+					name="account"
+					options={{
 						tabBarIcon: () => {
-							return (isLoggedIn && user && user.user?.image !==undefined) ? (
+							return (isLoggedIn && user && user.user?.image !== undefined) ? (
 								<View className='size-7 rounded-full relative overflow-hidden'>
 									<Image
 										source={{
@@ -183,144 +183,144 @@ const Layout = () => {
 						}
 					}}
 				/>
-				<Tabs.Screen 
-					name="album/[albumId]" 
+				<Tabs.Screen
+					name="album/[albumId]"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}} 
-				/>
-				<Tabs.Screen 
-					name="artist/[artistId]" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="artist-songs/[artistId]" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="mood-songs/[moodId]" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="genre-songs/[genreId]" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="playlist-songs/[playlistId]" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="account/profile" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="account/delete-history" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="liked-songs" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="history" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
-					}}
-				/>
-				<Tabs.Screen 
-					name="downloads" 
-					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="account/recover-playlist" 
+					name="artist/[artistId]"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="account/transaction-history" 
+					name="artist-songs/[artistId]"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="downloads/album/[albumId]" 
+					name="mood-songs/[moodId]"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="downloads/playlist/[playlistId]" 
+					name="genre-songs/[genreId]"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="[playlistId]" 
+					name="playlist-songs/[playlistId]"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="pricing" 
+					name="account/profile"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="timer" 
+					name="account/delete-history"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="notification" 
+					name="liked-songs"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 				<Tabs.Screen
-					name="account/privacy-policy" 
+					name="history"
 					options={{
-						tabBarIcon : ()=>null,
-						href : null
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="downloads"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="account/recover-playlist"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="account/transaction-history"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="downloads/album/[albumId]"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="downloads/playlist/[playlistId]"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="[playlistId]"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="pricing"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="timer"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="notification"
+					options={{
+						tabBarIcon: () => null,
+						href: null
+					}}
+				/>
+				<Tabs.Screen
+					name="account/privacy-policy"
+					options={{
+						tabBarIcon: () => null,
+						href: null
 					}}
 				/>
 			</Tabs>

@@ -6,7 +6,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useSleepTimer, TIMER_PRESETS } from '@/hooks/use-sleep-timer';
 import { SleepTimerOrb } from './sleep-timer-orb';
-import { Spacer } from '../ui/spacer';
 import Entypo from '@expo/vector-icons/Entypo';
 
 const { width } = Dimensions.get('window');
@@ -218,7 +217,6 @@ export const SleepTimer = () => {
                                         <Text style={styles.stopButtonText}>STOP TIMER</Text>
                                     </TouchableOpacity>
                                 )}
-                                <Spacer />
                             </ScrollView>
                         </BlurView>
                     )}

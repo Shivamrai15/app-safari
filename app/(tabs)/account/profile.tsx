@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/use-auth';
 import { NetworkProvider } from '@/providers/network.provider';
 import { SubscriptionCard } from '@/components/account/subscription-card';
 import { useSettings, useSettingsUpdater } from '@/hooks/use-settings';
-import { Spacer } from '@/components/ui/spacer';
 import { useCallback, useState } from 'react';
 
 
@@ -26,7 +25,10 @@ const Profile = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className='flex-1 bg-background'>
+            <SafeAreaView
+                className='flex-1 bg-background'
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className='flex-1 p-6'
                     showsVerticalScrollIndicator={false}
@@ -86,7 +88,6 @@ const Profile = () => {
                             </View>
                         </View>
                     </View>
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

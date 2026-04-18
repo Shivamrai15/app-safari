@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import { 
+import {
     View,
     Text,
     FlatList,
@@ -19,7 +19,6 @@ import { AlbumTab } from '@/components/search/album-tab';
 import { ArtistTab } from '@/components/search/artist-tab';
 import { SongTab } from '@/components/search/song-tab';
 import { NetworkProvider } from '@/providers/network.provider';
-import { Spacer } from '@/components/ui/spacer';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRecentSearches } from '@/hooks/use-recent-searches';
 import { RecentCard } from '@/components/search/recent-card';
@@ -28,7 +27,7 @@ import { RecentCard } from '@/components/search/recent-card';
 
 const Search = () => {
 
-    const [ query, setQuery ] = useState("");
+    const [query, setQuery] = useState("");
     const { searches } = useRecentSearches();
     const [currentTab, setCurrentTab] = useState<Tab>("DEFAULT");
 
@@ -41,7 +40,10 @@ const Search = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className="bg-background flex-1">
+            <SafeAreaView
+                className="bg-background flex-1"
+                edges={["top", "left", "right"]}    
+            >
                 <KeyboardAvoidingView className='flex-1' behavior={Platform.OS === "ios" ? "padding" : "height"}>
                     <ScrollView
                         className='flex-1'
@@ -131,7 +133,6 @@ const Search = () => {
                         {
                             currentTab === "SONG" && query && <SongTab currentTab={currentTab} query={query} />
                         }
-                        <Spacer />
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>

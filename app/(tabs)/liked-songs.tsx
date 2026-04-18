@@ -11,7 +11,6 @@ import { PrimaryLoader } from '@/components/ui/loader';
 import { Error } from '@/components/ui/error';
 import Feather from '@expo/vector-icons/Feather';
 import { NetworkProvider } from '@/providers/network.provider';
-import { Spacer } from '@/components/ui/spacer';
 import { useCallback, useState } from 'react';
 
 const LikedSongs = () => {
@@ -50,7 +49,10 @@ const LikedSongs = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className="flex-1 bg-background">
+            <SafeAreaView
+                className="flex-1 bg-background"
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className="flex flex-col gap-y-10"
                     showsVerticalScrollIndicator={false}
@@ -93,7 +95,6 @@ const LikedSongs = () => {
                                 ))}
                             </View>
                         </View>
-                        <Spacer />
                     </LinearGradient>
                 </ScrollView>
             </SafeAreaView>

@@ -2,7 +2,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { Spacer } from '@/components/ui/spacer';
 
 const PriceLists = {
     "price_1PLVQoSF9kH75ipG3YQe4k4Y": {
@@ -53,7 +52,10 @@ const Pricing = () => {
     const priceListArray = Object.entries(PriceLists);
 
     return (
-        <SafeAreaView className='bg-background flex-1'>
+        <SafeAreaView
+            className='bg-background flex-1'
+            edges={["top", "left", "right"]}
+        >
             <ScrollView className='flex-1' showsVerticalScrollIndicator={false}>
                 <LinearGradient
                     colors={['#454545ff', '#2b2b2bff', '#00000000']}
@@ -190,7 +192,6 @@ const Pricing = () => {
                         })}
                     </View>
                 </View>
-                <Spacer />
             </ScrollView>
         </SafeAreaView>
     );

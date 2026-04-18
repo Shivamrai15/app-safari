@@ -11,8 +11,6 @@ import { SongItem } from '@/components/song/item';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { useAuth } from '@/hooks/use-auth';
 import { NetworkProvider } from '@/providers/network.provider';
-import { Spacer } from '@/components/ui/spacer';
-
 
 
 
@@ -63,7 +61,10 @@ const History = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className='flex-1 bg-background'>
+            <SafeAreaView
+                className='flex-1 bg-background'
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className='flex-1 p-4'
                     onScroll={handleScroll}
@@ -114,7 +115,6 @@ const History = () => {
                             <SecondaryLoader />
                         </View>)
                     }
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

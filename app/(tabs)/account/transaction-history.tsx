@@ -1,12 +1,11 @@
 import { Error } from '@/components/ui/error';
 import { PrimaryLoader, SecondaryLoader } from '@/components/ui/loader';
-import { Spacer } from '@/components/ui/spacer';
 import { PROTECTED_BASE_URL } from '@/constants/api.config';
 import { ReceiptIcon } from '@/constants/icons';
 import { useAuth } from '@/hooks/use-auth';
 import { useInfinite } from '@/hooks/use-infinite';
 import { NetworkProvider } from '@/providers/network.provider';
-import { Image } from 'expo-image';
+import { Image } from 'expo-image'; 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, NativeSyntheticEvent, NativeScrollEvent, TouchableOpacity } from 'react-native';
 import { RefreshControl } from 'react-native-gesture-handler';
@@ -181,7 +180,7 @@ const TransactionHistory = () => {
         paramValue: "",
         queryKey: "transactions-history",
         token: user?.tokens.accessToken,
-        persist : false
+        persist: false
     });
 
     useEffect(() => {
@@ -206,7 +205,10 @@ const TransactionHistory = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className='flex-1 bg-background'>
+            <SafeAreaView
+                className='flex-1 bg-background'
+                edges={["top", "left", "right"]}
+            >
                 <View className="flex-row items-center px-4 py-6">
                     <Text className="text-white text-2xl font-bold tracking-tight">Transaction History</Text>
                 </View>
@@ -244,8 +246,6 @@ const TransactionHistory = () => {
                             <SecondaryLoader />
                         </View>
                     )}
-
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

@@ -13,7 +13,6 @@ import {
     TextInput,
 } from 'react-native';
 import { useAuth } from '@/hooks/use-auth';
-import { Spacer } from '@/components/ui/spacer';
 import { useSettings } from '@/hooks/use-settings';
 import { NetworkProvider } from '@/providers/network.provider';
 import { DeleteHistoryButton } from '@/components/account/delete-history-button';
@@ -47,7 +46,10 @@ const Account = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className="bg-background flex-1" edges={['top']}>
+            <SafeAreaView
+                className="flex-1 bg-background"
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
                     className='flex-1'
                     contentContainerStyle={{ paddingBottom: 40 }}
@@ -91,7 +93,7 @@ const Account = () => {
                                 />
                                 <Image
                                     source={require("@/assets/accounts/search.png")}
-                                    style={{ width: 18, height: 18, marginRight : 14 }}
+                                    style={{ width: 18, height: 18, marginRight: 14 }}
                                 />
                             </View>
                         </View>
@@ -138,7 +140,6 @@ const Account = () => {
                             searchQuery.length === 0 && <DeleteHistoryButton />
                         }
                     </Animated.View>
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

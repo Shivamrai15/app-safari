@@ -140,9 +140,11 @@ const Home = () => {
 
     return (
         <NetworkProvider>
-            <SafeAreaView className="flex-1 bg-background">
+            <SafeAreaView
+                className="flex-1 bg-background"
+                edges={["top", "left", "right"]}
+            >
                 <ScrollView
-                    className="pb-28"
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     refreshControl={
@@ -223,7 +225,7 @@ const Home = () => {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <View className="px-4">
+                    <View className="px-4 pb-8">
                         <ListenAgainCarousel
                             data={listenAgainSongs.data}
                         />
@@ -243,7 +245,6 @@ const Home = () => {
                             slug="Your favorite artists"
                         />
                     </View>
-                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>
