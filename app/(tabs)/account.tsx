@@ -18,6 +18,7 @@ import { NetworkProvider } from '@/providers/network.provider';
 import { DeleteHistoryButton } from '@/components/account/delete-history-button';
 import { MenuItem } from '@/components/account/menu-item';
 import { AccountRoutes } from '@/constants/routes';
+import { Spacer } from "@/components/ui/spacer";
 
 
 const fuseOptions = {
@@ -140,6 +141,7 @@ const Account = () => {
                             searchQuery.length === 0 && <DeleteHistoryButton />
                         }
                     </Animated.View>
+                    <Spacer/>
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

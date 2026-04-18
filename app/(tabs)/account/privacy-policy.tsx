@@ -2,6 +2,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
+import { Spacer } from '@/components/ui/spacer';
 
 const Page = () => {
 
@@ -265,6 +266,7 @@ const Page = () => {
                         <Text className='text-xs text-zinc-500'>Cookies</Text>
                     </View>
                 </View>
+                <Spacer/>
             </ScrollView>
         </SafeAreaView>
     )

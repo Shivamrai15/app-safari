@@ -22,6 +22,7 @@ import { NetworkProvider } from '@/providers/network.provider';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRecentSearches } from '@/hooks/use-recent-searches';
 import { RecentCard } from '@/components/search/recent-card';
+import { Spacer } from '@/components/ui/spacer';
 
 
 
@@ -133,6 +134,7 @@ const Search = () => {
                         {
                             currentTab === "SONG" && query && <SongTab currentTab={currentTab} query={query} />
                         }
+                        <Spacer/>
                     </ScrollView>
                 </KeyboardAvoidingView>
             </SafeAreaView>

@@ -11,6 +11,7 @@ import { NetworkProvider } from '@/providers/network.provider';
 import { NotificationCard } from '@/components/notification/card';
 import { useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
+import { Spacer } from '@/components/ui/spacer';
 
 const Notification = () => {
 
@@ -134,6 +135,7 @@ const Notification = () => {
                             </View>)
                         }
                     </View>
+                    <Spacer/>
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

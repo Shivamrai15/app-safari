@@ -9,6 +9,7 @@ import { useSettings } from '@/hooks/use-settings';
 import { OfflineItem } from '@/components/song/offline-item';
 import { useState } from 'react';
 import { DeleteModal } from '@/components/modals/delete.modal';
+import { Spacer } from '@/components/ui/spacer';
 
 interface CollectionCardProps {
     id: string;
@@ -185,6 +186,7 @@ const Download = () => {
                         </View>
                     </View>
                 )}
+                <Spacer/>
             </ScrollView>
             <DeleteModal
                 isPending={isPending}

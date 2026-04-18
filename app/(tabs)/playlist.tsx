@@ -13,6 +13,7 @@ import { Artist, LikedSongTracksResponse, PlayList } from '@/types/response.type
 import { Card } from '@/components/artist/card';
 import { CreatePlaylistModal } from '@/components/modals/create-playlist.modal';
 import { RefreshControl } from 'react-native-gesture-handler';
+import { Spacer } from '@/components/ui/spacer';
 
 
 const Playlist = () => {
@@ -180,6 +181,7 @@ const Playlist = () => {
                             }
                         </View>
                     </View>
+                    <Spacer/>
                 </ScrollView>
                 <CreatePlaylistModal
                     isModalVisible={isModalVisible}

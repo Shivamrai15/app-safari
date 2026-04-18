@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { Spacer } from '@/components/ui/spacer';
 
 const PriceLists = {
     "price_1PLVQoSF9kH75ipG3YQe4k4Y": {
@@ -192,6 +193,7 @@ const Pricing = () => {
                         })}
                     </View>
                 </View>
+                <Spacer/>
             </ScrollView>
         </SafeAreaView>
     );

@@ -7,6 +7,7 @@ import { BlurView } from 'expo-blur';
 import { useSleepTimer, TIMER_PRESETS } from '@/hooks/use-sleep-timer';
 import { SleepTimerOrb } from './sleep-timer-orb';
 import Entypo from '@expo/vector-icons/Entypo';
+import { Spacer } from '../ui/spacer';
 
 const { width } = Dimensions.get('window');
 
@@ -88,7 +89,10 @@ export const SleepTimer = () => {
                 end={{ x: 0.5, y: 1 }}
             />
 
-            <SafeAreaView style={styles.safeArea}>
+            <SafeAreaView
+                style={styles.safeArea}
+                edges={['top', 'left', 'right']}
+            >
                 <View style={styles.header}>
                     <TouchableOpacity
                         onPress={() => router.back()}
@@ -217,6 +221,7 @@ export const SleepTimer = () => {
                                         <Text style={styles.stopButtonText}>STOP TIMER</Text>
                                     </TouchableOpacity>
                                 )}
+                                <Spacer />
                             </ScrollView>
                         </BlurView>
                     )}

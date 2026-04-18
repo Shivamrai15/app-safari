@@ -168,6 +168,7 @@ const PlaylistSearch = () => {
                             </>
                         }
                     </View>
+                    <Spacer/>
                 </ScrollView>
             </LinearGradient>
         </SafeAreaView>

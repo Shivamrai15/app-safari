@@ -6,10 +6,10 @@ export const Spacer = () => {
     const { current } = useQueue();
 
     if (current) {
-        return <View className="h-40 flex-shrink-0"/>
+        return <View className="h-24 flex-shrink-0"/>
     }
 
     return (
-        <View className="h-24 flex-shrink-0"/>
+        <View className="h-6 flex-shrink-0"/>
     )
 }

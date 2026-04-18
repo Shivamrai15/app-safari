@@ -225,7 +225,7 @@ const Home = () => {
                             </Text>
                         </TouchableOpacity>
                     </View>
-                    <View className="px-4 pb-8">
+                    <View className="px-4">
                         <ListenAgainCarousel
                             data={listenAgainSongs.data}
                         />
@@ -245,6 +245,7 @@ const Home = () => {
                             slug="Your favorite artists"
                         />
                     </View>
+                    <Spacer />
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

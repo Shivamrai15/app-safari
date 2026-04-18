@@ -10,6 +10,7 @@ import { PlaylistResponse } from '@/types/response.types';
 import { RestoreButton } from '@/components/playlist/restore-button';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useState } from 'react';
+import { Spacer } from '@/components/ui/spacer';
 
 const formatDate = (date: Date | string | null) => {
     if (!date) return '';
@@ -131,6 +132,7 @@ const Page = () => {
                         </View>
                     )}
                 </View>
+                <Spacer/>
             </ScrollView>
         </SafeAreaView>
     )

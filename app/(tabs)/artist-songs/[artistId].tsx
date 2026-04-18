@@ -18,6 +18,7 @@ import { ArtistProfileResponse } from "@/types/response.types";
 import { Songs } from "@/components/artist/songs";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useQuery } from "@tanstack/react-query";
+import { Spacer } from "@/components/ui/spacer";
 
 
 const ArtistSongs = () => {
@@ -63,7 +64,7 @@ const ArtistSongs = () => {
                 edges={["top", "left", "right"]}
             >
                 <ScrollView
-                    className="w-full flex-1 px-4 my-10"
+                    className="w-full flex-1 px-4 mt-10"
                     onScroll={handleScroll}
                     scrollEventThrottle={16}
                     showsVerticalScrollIndicator={false}
@@ -88,6 +89,7 @@ const ArtistSongs = () => {
                         </View>
                     </View>
                     <Songs isAtEnd={atEnd} artistId={data.id} />
+                    <Spacer/>
                 </ScrollView>
             </SafeAreaView>
         </NetworkProvider>

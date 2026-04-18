@@ -5,6 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useDownloads } from "@/hooks/use-downloads";
 import { SongList } from "@/components/downloads/song-list";
 import { AlbumHeader } from "@/components/downloads/album-header";
+import { Spacer } from "@/components/ui/spacer";
 
 
 const AlbumPage = () => {
@@ -38,6 +39,7 @@ const AlbumPage = () => {
                 >
                     <AlbumHeader data={data} />
                     <SongList data={data.songs} />
+                    <Spacer />
                 </LinearGradient>
             </ScrollView>
         </SafeAreaView>

@@ -12,6 +12,7 @@ import { Error } from '@/components/ui/error';
 import Feather from '@expo/vector-icons/Feather';
 import { NetworkProvider } from '@/providers/network.provider';
 import { useCallback, useState } from 'react';
+import { Spacer } from '@/components/ui/spacer';
 
 const LikedSongs = () => {
 
@@ -95,6 +96,7 @@ const LikedSongs = () => {
                                 ))}
                             </View>
                         </View>
+                        <Spacer/>
                     </LinearGradient>
                 </ScrollView>
             </SafeAreaView>
